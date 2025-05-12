@@ -1,0 +1,31 @@
+{
+    "downloadOnStart": false,
+    "modelEntries": [
+        {
+            "label": "",
+            "filename": "gemma-3-4b-it-Q4_K_M.gguf",
+            "path": "gemma-3-4b-it-Q4_K_M.gguf",
+            "lora": false,
+            "chatTemplate": "gemma",
+            "url": "https://huggingface.co/lmstudio-community/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it-Q4_K_M.gguf",
+            "embeddingOnly": false,
+            "embeddingLength": 2560,
+            "includeInBuild": true,
+            "contextLength": 131072
+        },
+        {
+            "label": "",
+            "filename": "LLM/gemma3-4b-it-abliterated.Q8_0.gguf",
+            "path": "LLM/gemma3-4b-it-abliterated.Q8_0.gguf",
+            "lora": false,
+            "chatTemplate": "gemma",
+            "url": "",
+            "embeddingOnly": false,
+            "embeddingLength": 2560,
+            "includeInBuild": true,
+            "contextLength": 131072
+        }
+    ],
+    "debugMode": 0,
+    "fullLlamaLib": false
+}
