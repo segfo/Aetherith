@@ -10,15 +10,15 @@ public class ChatManager : MonoBehaviour
 {
     [SerializeField] private ChatUIController chatUI;
     [SerializeField] private string logFilePath = "chat_log.txt";
-    [SerializeField] private string waitMessage = "\"il‚¦’†‚Å‚·cj\"";
+    [SerializeField] private string waitMessage = "\"ï¼ˆè€ƒãˆä¸­ã§ã™â€¦ï¼‰\"";
     [SerializeField] private LLMCharacter llmCharacter;
     [SerializeField] private LLM llm;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
-    // İ’èƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ñ‚ÅALLMCharacter‚ğ‰Šú‰»‚·‚éB
-    // ƒvƒƒ“ƒvƒg‚Ì‰Šú‰»Aƒ†[ƒU–¼EAIƒLƒƒƒ‰ƒNƒ^–¼‚Ì‰Šú‰»Ag—p‚·‚éƒ‚ƒfƒ‹‚Ì‰Šú‰»‚È‚Ç‚ğs‚¤B
+    // è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚“ã§ã€LLMCharacterã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚
+    // ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã®åˆæœŸåŒ–ã€ãƒ¦ãƒ¼ã‚¶åãƒ»AIã‚­ãƒ£ãƒ©ã‚¯ã‚¿åã®åˆæœŸåŒ–ã€ä½¿ç”¨ã™ã‚‹ãƒ¢ãƒ‡ãƒ«ã®åˆæœŸåŒ–ãªã©ã‚’è¡Œã†ã€‚
     private void Awake()
     {
-        
+        // ãƒ­ãƒ¼ã‚«ãƒ«LLMã®åˆæœŸåŒ–
         LLMConfig llmConfig = AppConfigManager.Instance.Config.llm;
         llmCharacter.SetPrompt(llmConfig.agentSystemPromptFile);
         llmCharacter.playerName = llmConfig.userName;
@@ -27,13 +27,14 @@ public class ChatManager : MonoBehaviour
         llm.maxContextLength = llmConfig.maxContextLength;
         llm.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", llmConfig.modelName));
         waitMessage = llmConfig.waitMessage;
-    }
-    void Start()
-    {
         _ = llmCharacter.Warmup(WarmupCompleted);
         chatUI.SetText("Loading LLM...");
         chatUI.SetEnable(false);
+
     }
+    //void Start()
+    //{
+    //}
 
     private void WarmupCompleted()
     {
@@ -48,10 +49,13 @@ public class ChatManager : MonoBehaviour
         string userInput = chatUI.GetInputField();
         Debug.Log("OnSubmit called");
         Debug.Log("Input: " + userInput);
-            // enter ’P‘Ì ¨ ‘—Mˆ—
+            // enter å˜ä½“ â†’ é€ä¿¡å‡¦ç†
         if (!string.IsNullOrWhiteSpace(userInput))
         {
-        _ = llmCharacter.Chat(userInput, HandleReply, OnComplete);
+            // ãƒ­ãƒ¼ã‚«ãƒ«LLMã‚’å‘¼ã³å‡ºã—ã¦ã„ã‚‹ã®ã§ãƒªãƒ¢ãƒ¼ãƒˆLLMã‚‚å‘¼ã³å‡ºã›ã‚‹ã‚ˆã†ã«ãƒ­ã‚¸ãƒƒã‚¯ã‚’å¤‰æ›´ã™ã‚‹
+            _ = llmCharacter.Chat(userInput, HandleReply, OnComplete);
+            // å¾…æ©Ÿãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã€å…¥åŠ›ãƒ•ã‚©ãƒ¼ãƒ ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
+            // ã“ã“ã¯ãƒ­ãƒ¼ã‚«ãƒ«LLM/ãƒªãƒ¢ãƒ¼ãƒˆLLMã®ã©ã¡ã‚‰ã§ã‚‚å‡¦ç†ã™ã‚‹
             chatUI.SetText(waitMessage);
             chatUI.ClearInputField();
         }
@@ -74,7 +78,7 @@ public class ChatManager : MonoBehaviour
         int commonLength = 0;
         int minLength = Math.Min(previous.Length, current.Length);
 
-        // æ“ª‚©‚çˆê’v‚µ‚Ä‚¢‚é•¶š”‚ğƒJƒEƒ“ƒg
+        // å…ˆé ­ã‹ã‚‰ä¸€è‡´ã—ã¦ã„ã‚‹æ–‡å­—æ•°ã‚’ã‚«ã‚¦ãƒ³ãƒˆ
         for (int i = 0; i < minLength; i++)
         {
             if (previous[i] != current[i])

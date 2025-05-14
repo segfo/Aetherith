@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -13,21 +13,21 @@ public static class SafeFileReader
         {
             using (FileStream fs = new FileStream(
                 path,
-                FileMode.OpenOrCreate,  // ƒtƒ@ƒCƒ‹‚ª‚ ‚ê‚ÎŠJ‚­A‚È‚¯‚ê‚Îì‚é  
-                FileAccess.ReadWrite,   // “Ç‚İ‘‚«—¼•û‚ğ‹–‰Â  
-                FileShare.None          // ‘¼‚ÌƒvƒƒZƒX‚ÌƒAƒNƒZƒX‚ğƒuƒƒbƒNi•K—v‚É‰‚¶‚ÄRead‚Éj  
+                FileMode.OpenOrCreate,  // ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚Œã°é–‹ãã€ãªã‘ã‚Œã°ä½œã‚‹  
+                FileAccess.ReadWrite,   // èª­ã¿æ›¸ãä¸¡æ–¹ã‚’è¨±å¯  
+                FileShare.None          // ä»–ã®ãƒ—ãƒ­ã‚»ã‚¹ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚’ãƒ–ãƒ­ãƒƒã‚¯ï¼ˆå¿…è¦ã«å¿œã˜ã¦Readã«ï¼‰  
             ))
             {
                 if (fs.Length == 0 && !string.IsNullOrEmpty(defaultContent))
                 {
-                    // V‹Kì¬‚³‚ê‚½‚Ì‚Å‰Šú“à—e‚ğ‘‚«‚Ş  
+                    // æ–°è¦ä½œæˆã•ã‚ŒãŸã®ã§åˆæœŸå†…å®¹ã‚’æ›¸ãè¾¼ã‚€  
                     using (var writer = new StreamWriter(fs, encoding, 4096, leaveOpen: true))
                     {
                         writer.Write(defaultContent);
                         writer.Flush();
                     }
 
-                    fs.Seek(0, SeekOrigin.Begin); // “Ç‚İ’¼‚µ‚Ì‚½‚ßæ“ª‚Ö–ß‚·  
+                    fs.Seek(0, SeekOrigin.Begin); // èª­ã¿ç›´ã—ã®ãŸã‚å…ˆé ­ã¸æˆ»ã™  
                 }
 
                 using (var reader = new StreamReader(fs, encoding, detectEncodingFromByteOrderMarks: true))
@@ -38,7 +38,7 @@ public static class SafeFileReader
         }
         catch (IOException ex)
         {
-            Debug.LogError($"ƒtƒ@ƒCƒ‹“Ç‚İ‘‚«ƒGƒ‰[: {ex.Message}");
+            Debug.LogError($"ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿æ›¸ãã‚¨ãƒ©ãƒ¼: {ex.Message}");
             return null;
         }
     }

@@ -1,4 +1,4 @@
-using System.Threading;
+ï»¿using System.Threading;
 using System;
 using uDesktopMascot;
 using UnityEngine;
@@ -10,13 +10,13 @@ public class VRMLoader : MonoBehaviour
 
     public GameObject LoadedModel { get; private set; }
 
-    public event Action<GameObject> OnModelLoaded; // © ‘¼ƒNƒ‰ƒX‚É’Ê’m
+    public event Action<GameObject> OnModelLoaded; // â† ä»–ã‚¯ãƒ©ã‚¹ã«é€šçŸ¥
 
     private async void Start()
     {
-        // İ’èƒtƒ@ƒCƒ‹‚©‚çVRMƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚éB
+        // è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰VRMãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹ã€‚
         vrmFileName = AppConfigManager.Instance.Config.vrmFileName;
-        Debug.Log("VRMLoader - VRMƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ‚ğŠJn‚µ‚Ü‚·B");
+        Debug.Log("VRMLoader - VRMãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿ã‚’é–‹å§‹ã—ã¾ã™ã€‚");
         var cancellationToken = new CancellationTokenSource().Token;
         var loadedModelInfo = await LoadVRM.LoadModelAsync(Path.Combine("VRM",vrmFileName), cancellationToken);
 
@@ -26,20 +26,20 @@ public class VRMLoader : MonoBehaviour
             model.transform.position = Vector3.zero;
             Animator animator = model.GetComponent<Animator>() ?? model.AddComponent<Animator>();
             LoadVRM.UpdateAnimationController(animator);
-            //model.transform.localScale = new Vector3(2f, 2f,2f); // ƒXƒP[ƒ‹‚ğ‘å‚«‚­‚·‚é
+            //model.transform.localScale = new Vector3(2f, 2f,2f); // ã‚¹ã‚±ãƒ¼ãƒ«ã‚’å¤§ããã™ã‚‹
             LoadedModel = model;
 
-            Debug.Log($"ƒ‚ƒfƒ‹–¼: {loadedModelInfo.ModelName}");
+            Debug.Log($"ãƒ¢ãƒ‡ãƒ«å: {loadedModelInfo.ModelName}");
 
-            // © ‘¼‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚É’Ê’m
+            // â† ä»–ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã«é€šçŸ¥
             OnModelLoaded?.Invoke(model);
         }
         else
         {
-            Debug.LogError("ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½B");
+            Debug.LogError("ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
         }
     }
-    // [‚¢ŠK‘w‚©‚ç–¼‘O‚ÅTransform‚ğ’T‚·
+    // æ·±ã„éšå±¤ã‹ã‚‰åå‰ã§Transformã‚’æ¢ã™
     Transform FindDeepChild(Transform parent, string name)
     {
         foreach (Transform child in parent)

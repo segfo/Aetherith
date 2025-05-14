@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class MToonMaterialUpdater : MonoBehaviour
 {
     void Start()
     {
-        // VRM‚ÌƒIƒuƒWƒFƒNƒg‚ğæ“¾i—áFq‘·‚©‚çƒ}ƒeƒŠƒAƒ‹‚ğæ“¾j
+        // VRMã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—ï¼ˆä¾‹ï¼šå­å­«ã‹ã‚‰ãƒãƒ†ãƒªã‚¢ãƒ«ã‚’å–å¾—ï¼‰
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
 
         foreach (var renderer in renderers)
@@ -13,15 +13,15 @@ public class MToonMaterialUpdater : MonoBehaviour
             {
                 if (mat != null && mat.shader.name.Contains("MToon"))
                 {
-                    // RenderingMode ‚ğ Transparent ‚É
+                    // RenderingMode ã‚’ Transparent ã«
                     mat.SetFloat("_BlendMode", 2); // 0: Opaque, 1: Cutout, 2: Transparent
 
-                    // •K—v‚É‰‚¶‚ÄRenderQueue‚àİ’è
+                    // å¿…è¦ã«å¿œã˜ã¦RenderQueueã‚‚è¨­å®š
                     mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 
-                    // ƒAƒ‹ƒtƒ@‚ğ0‚É‚µ‚½‚¢ê‡‚ÍF‚ÌA‚ğ•ÏX
+                    // ã‚¢ãƒ«ãƒ•ã‚¡ã‚’0ã«ã—ãŸã„å ´åˆã¯è‰²ã®Aã‚’å¤‰æ›´
                     //Color color = mat.color;
-                    //color.a = 0.5f; // ”¼“§–¾‚È‚Ç
+                    //color.a = 0.5f; // åŠé€æ˜ãªã©
                     //mat.color = color;
                 }
             }

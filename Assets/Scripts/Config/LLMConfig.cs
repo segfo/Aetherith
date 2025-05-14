@@ -1,21 +1,21 @@
 [System.Serializable]
 public class LLMConfig
 {
-    // Dify‚ÌAPI‚ğg‚¤
+    // Difyã®APIã‚’ä½¿ã†
     public bool useDify = false;
     public string difyApiUrl = "";
-    // ƒ[ƒJƒ‹‚ÌLLM‚ğg‚¤ê‡‚Íƒ‚ƒfƒ‹–¼‚ğw’è‚·‚é(ggufƒtƒ@ƒCƒ‹)
-    public string modelName = "gpt-3.5-turbo.gguf";
-    // Dify‚ÌAPI‚ğg‚¤ê‡‚ÍAPIƒL[‚ğw’è‚·‚é
+    // ãƒ­ãƒ¼ã‚«ãƒ«ã®LLMã‚’ä½¿ã†å ´åˆã¯ãƒ¢ãƒ‡ãƒ«åã‚’æŒ‡å®šã™ã‚‹(ggufãƒ•ã‚¡ã‚¤ãƒ«)
+    public string modelName = "gemma3.gguf";
+    // Difyã®APIã‚’ä½¿ã†å ´åˆã¯APIã‚­ãƒ¼ã‚’æŒ‡å®šã™ã‚‹
     public string difyApiKey = "";
-    // À‰“šLLMƒVƒXƒeƒ€ƒvƒƒ“ƒvƒg‚Ì‹Lq‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼
+    // å®Ÿå¿œç­”LLMã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã®è¨˜è¿°ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«å
     public string agentSystemPromptFile = "";
-    // Š´î”»’èLLMƒVƒXƒeƒ€ƒvƒƒ“ƒvƒg‚Ì‹Lq‚³‚ê‚½ƒtƒ@ƒCƒ‹–¼
+    // æ„Ÿæƒ…åˆ¤å®šLLMã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã®è¨˜è¿°ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«å
     public string emotionSystemPromptFile = "";
     public string userName = "User";
     public string assistantName = "Assistant";
     public int maxContextLength = 8192;
-    public string welcomeMessage = "‰½‚Å‚à•·‚¢‚Ä‚­‚¾‚³‚¢‚ËI";
-    public string waitMessage = "\"il‚¦’†‚Å‚·cj\"";
+    public string welcomeMessage = "ä½•ã§ã‚‚èã„ã¦ãã ã•ã„ã­ï¼";
+    public string waitMessage = "\"ï¼ˆè€ƒãˆä¸­ã§ã™â€¦ï¼‰\"";
     public float temperature = 0.7f;
 }

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * UniWindowDragMove.cs
  * 
  * Author: Kirurobo http://twitter.com/kirurobo
@@ -21,13 +21,13 @@ namespace App
     {
         private Kirurobo.UniWindowController _uniwinc;
         /// <summary>
-        /// ƒEƒBƒ“ƒhƒE‚ªÅ‘å‰»‚³‚ê‚Ä‚¢‚é‚Æ‚«‚ÍˆÚ“®‚ğ–³Œø‚É‚·‚é‚©
+        /// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒæœ€å¤§åŒ–ã•ã‚Œã¦ã„ã‚‹ã¨ãã¯ç§»å‹•ã‚’ç„¡åŠ¹ã«ã™ã‚‹ã‹
         /// </summary>
         [Tooltip("Disable drag-move when the window is zoomed (maximized).")]
         public bool disableOnZoomed = true;
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒO’†‚È‚ç true
+        /// ãƒ‰ãƒ©ãƒƒã‚°ä¸­ãªã‚‰ true
         /// </summary>
         public bool IsDragging
         {
@@ -36,7 +36,7 @@ namespace App
         private bool _isDragging = false;
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒO‚ğs‚È‚¤‚©”Û‚©
+        /// ãƒ‰ãƒ©ãƒƒã‚°ã‚’è¡Œãªã†ã‹å¦ã‹
         /// </summary>
         private bool IsEnabled
         {
@@ -44,7 +44,7 @@ namespace App
         }
 
         /// <summary>
-        /// ƒ‚ƒjƒ^‚ÉƒtƒBƒbƒg‚³‚¹‚é‚©AÅ‘å‰»‚µ‚Ä‚¢‚é
+        /// ãƒ¢ãƒ‹ã‚¿ã«ãƒ•ã‚£ãƒƒãƒˆã•ã›ã‚‹ã‹ã€æœ€å¤§åŒ–ã—ã¦ã„ã‚‹
         /// </summary>
         private bool IsZoomed
         {
@@ -52,28 +52,28 @@ namespace App
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒO‘O‚É‚Í©“®ƒqƒbƒgƒeƒXƒg‚ª—LŒø‚¾‚Á‚½‚©‚ğ‹L‰¯
+        /// ãƒ‰ãƒ©ãƒƒã‚°å‰ã«ã¯è‡ªå‹•ãƒ’ãƒƒãƒˆãƒ†ã‚¹ãƒˆãŒæœ‰åŠ¹ã ã£ãŸã‹ã‚’è¨˜æ†¶
         /// </summary>
         private bool _isHitTestEnabled;
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOŠJn‚ÌƒEƒBƒ“ƒhƒE“àÀ•W[px]
+        /// ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹æ™‚ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å†…åº§æ¨™[px]
         /// </summary>
         private Vector2 _dragStartedPosition;
 
         // Start is called before the first frame update
         void Start()
         {
-            // ƒV[ƒ“’†‚Ì UniWindowController ‚ğæ“¾
+            // ã‚·ãƒ¼ãƒ³ä¸­ã® UniWindowController ã‚’å–å¾—
             _uniwinc = GameObject.FindAnyObjectByType<Kirurobo.UniWindowController>();
             if (_uniwinc) _isHitTestEnabled = _uniwinc.isHitTestEnabled;
 
-            //// «‚È‚­‚Ä‚à—Ç‚³‚»‚¤‚È‚Ì‚ÅŸè‚É•ÏX‚µ‚È‚¢‚æ‚¤ƒRƒƒ“ƒgƒAƒEƒg
+            //// â†“ãªãã¦ã‚‚è‰¯ã•ãã†ãªã®ã§å‹æ‰‹ã«å¤‰æ›´ã—ãªã„ã‚ˆã†ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ
             //Input.simulateMouseWithTouches = false;
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOŠJn‚Ìˆ—
+        /// ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹æ™‚ã®å‡¦ç†
         /// </summary>
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -84,19 +84,19 @@ namespace App
                 return;
             }
 
-            // Mac‚¾‚Æ‹““®‚ğ•Ï‚¦‚é
-            //  ÀÛ‚ÍRetinaƒTƒ|[ƒg‚ª—LŒø‚Ì‚Æ‚«‚¾‚¯‚¾‚ªA
-            //  eventData.position ‚ÌŒn‚ÆAƒEƒBƒ“ƒhƒEÀ•WŒn‚ÅƒXƒP[ƒ‹‚ªˆê’v‚µ‚È‚­‚È‚Á‚Ä‚µ‚Ü‚¤
+            // Macã ã¨æŒ™å‹•ã‚’å¤‰ãˆã‚‹
+            //  å®Ÿéš›ã¯Retinaã‚µãƒãƒ¼ãƒˆãŒæœ‰åŠ¹ã®ã¨ãã ã‘ã ãŒã€
+            //  eventData.position ã®ç³»ã¨ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åº§æ¨™ç³»ã§ã‚¹ã‚±ãƒ¼ãƒ«ãŒä¸€è‡´ã—ãªããªã£ã¦ã—ã¾ã†
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
             _dragStartedPosition = _uniwinc.windowPosition - _uniwinc.cursorPosition;
 #else
             _dragStartedPosition = eventData.position;
 #endif
 
-            // _isDragging ‚ª false ‚È‚ç‚±‚ê‚©‚çƒhƒ‰ƒbƒOŠJn‚Æ”»’f
+            // _isDragging ãŒ false ãªã‚‰ã“ã‚Œã‹ã‚‰ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹ã¨åˆ¤æ–­
             if (!_isDragging)
             {
-                // ƒhƒ‰ƒbƒO’†‚ÍƒqƒbƒgƒeƒXƒg‚ğ–³Œø‚É‚·‚é
+                // ãƒ‰ãƒ©ãƒƒã‚°ä¸­ã¯ãƒ’ãƒƒãƒˆãƒ†ã‚¹ãƒˆã‚’ç„¡åŠ¹ã«ã™ã‚‹
                 _isHitTestEnabled = _uniwinc.isHitTestEnabled;
                 _uniwinc.isHitTestEnabled = false;
                 _uniwinc.isClickThrough = false;
@@ -106,7 +106,7 @@ namespace App
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOI—¹‚Ìˆ—
+        /// ãƒ‰ãƒ©ãƒƒã‚°çµ‚äº†æ™‚ã®å‡¦ç†
         /// </summary>
         public void OnEndDrag(PointerEventData eventData)
         {
@@ -114,7 +114,7 @@ namespace App
         }
 
         /// <summary>
-        /// ƒ}ƒEƒX‚ªã‚ª‚Á‚½Û‚àƒhƒ‰ƒbƒOI—¹‚Æ‚İ‚È‚·
+        /// ãƒã‚¦ã‚¹ãŒä¸ŠãŒã£ãŸéš›ã‚‚ãƒ‰ãƒ©ãƒƒã‚°çµ‚äº†ã¨ã¿ãªã™
         /// </summary>
         /// <param name="eventData"></param>
         public void OnPointerUp(PointerEventData eventData)
@@ -123,7 +123,7 @@ namespace App
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOI—¹‚Æ‚·‚é
+        /// ãƒ‰ãƒ©ãƒƒã‚°çµ‚äº†ã¨ã™ã‚‹
         /// </summary>
         private void EndDragging()
         {
@@ -135,13 +135,13 @@ namespace App
         }
 
         /// <summary>
-        /// Å‘å‰»ˆÈŠO‚È‚çAƒ}ƒEƒXƒhƒ‰ƒbƒO‚É‚æ‚Á‚ÄƒEƒBƒ“ƒhƒE‚ğˆÚ“®
+        /// æœ€å¤§åŒ–æ™‚ä»¥å¤–ãªã‚‰ã€ãƒã‚¦ã‚¹ãƒ‰ãƒ©ãƒƒã‚°ã«ã‚ˆã£ã¦ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ç§»å‹•
         /// </summary>
         public void OnDrag(PointerEventData eventData)
         {
             if (!_uniwinc || !_isDragging) return;
 
-            // ƒhƒ‰ƒbƒO‚Å‚ÌˆÚ“®‚ª–³Œø‰»‚³‚ê‚Ä‚¢‚½ê‡
+            // ãƒ‰ãƒ©ãƒƒã‚°ã§ã®ç§»å‹•ãŒç„¡åŠ¹åŒ–ã•ã‚Œã¦ã„ãŸå ´åˆ
             if (!IsEnabled)
             {
                 EndDragging();
@@ -162,8 +162,8 @@ namespace App
                 || Keyboard.current[Key.LeftAlt].isPressed || Keyboard.current[Key.RightAlt].isPressed) return;
 #endif
 
-            // ƒtƒ‹ƒXƒNƒŠ[ƒ“‚È‚çƒEƒBƒ“ƒhƒEˆÚ“®‚Ís‚í‚È‚¢
-            //  ƒGƒfƒBƒ^‚¾‚Æ true ‚É‚È‚Á‚Ä‚µ‚Ü‚¤‚æ‚¤‚È‚Ì‚ÅAƒGƒfƒBƒ^ˆÈŠO‚Å‚Ì‚İŠm”F
+            // ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãªã‚‰ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç§»å‹•ã¯è¡Œã‚ãªã„
+            //  ã‚¨ãƒ‡ã‚£ã‚¿ã ã¨ true ã«ãªã£ã¦ã—ã¾ã†ã‚ˆã†ãªã®ã§ã€ã‚¨ãƒ‡ã‚£ã‚¿ä»¥å¤–ã§ã®ã¿ç¢ºèª
 #if !UNITY_EDITOR
             if (Screen.fullScreen)
             {
@@ -173,11 +173,11 @@ namespace App
 #endif
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            // Mac‚Ìê‡AƒlƒCƒeƒBƒuƒvƒ‰ƒOƒCƒ“‚Å‚ÌƒJ[ƒ\ƒ‹ˆÊ’uæ“¾Eİ’è
+            // Macã®å ´åˆã€ãƒã‚¤ãƒ†ã‚£ãƒ–ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã§ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®å–å¾—ãƒ»è¨­å®š
             _uniwinc.windowPosition = _uniwinc.cursorPosition + _dragStartedPosition;
 #else
-            // Windows‚È‚çAƒ^ƒbƒ`‘€ì‚à‘Î‰‚³‚¹‚é‚½‚ß‚É eventData.position ‚ğg—p‚·‚é
-            // ƒXƒNƒŠ[ƒ“ƒ|ƒWƒVƒ‡ƒ“‚ªŠJn‚ÌˆÊ’u‚Æˆê’v‚³‚¹‚é•ª‚¾‚¯ƒEƒBƒ“ƒhƒE‚ğˆÚ“®
+            // Windowsãªã‚‰ã€ã‚¿ãƒƒãƒæ“ä½œã‚‚å¯¾å¿œã•ã›ã‚‹ãŸã‚ã« eventData.position ã‚’ä½¿ç”¨ã™ã‚‹
+            // ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒã‚¸ã‚·ãƒ§ãƒ³ãŒé–‹å§‹æ™‚ã®ä½ç½®ã¨ä¸€è‡´ã•ã›ã‚‹åˆ†ã ã‘ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ç§»å‹•
             _uniwinc.windowPosition += eventData.position - _dragStartedPosition;
 #endif
         }

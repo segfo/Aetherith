@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UniVRM10;
 using Kirurobo;
 
@@ -12,7 +12,7 @@ public class CharacterController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("CharacterController - VRMLoader‚©‚ç‚Ì’Ê’m‚ğ‘Ò‹@’†...");
+        Debug.Log("CharacterController - VRMLoaderã‹ã‚‰ã®é€šçŸ¥ã‚’å¾…æ©Ÿä¸­...");
     }
     private void Awake()
     {
@@ -21,13 +21,13 @@ public class CharacterController : MonoBehaviour
 
     private void OnModelReady(GameObject model)
     {
-        // VRMƒ‚ƒfƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Û‚µ‚Ä‚¨‚­BŠO•”‚©‚çˆµ‚¦‚é‚æ‚¤‚É‚·‚é‚½‚ßB
+        // VRMãƒ¢ãƒ‡ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ä¿æŒã—ã¦ãŠãã€‚å¤–éƒ¨ã‹ã‚‰æ‰±ãˆã‚‹ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã€‚
         vrmInstance = model.GetComponent<Vrm10Instance>();
-        // ƒ‚ƒfƒ‹‚ª“Ç‚İ‚Ü‚ê‚½‚Æ‚«‚Ìˆ—
+        // ãƒ¢ãƒ‡ãƒ«ãŒèª­ã¿è¾¼ã¾ã‚ŒãŸã¨ãã®å‡¦ç†
         armMotionManager = model.AddComponent<ArmMotionManager>();
         blinkController = model.AddComponent<BlinkControllerVrm10>();
-        Debug.Log("ArmMotionManager‚ğƒ‚ƒfƒ‹‚É’Ç‰Á‚µ‚Ü‚µ‚½B");
-        // ƒ‚ƒfƒ‹‚ÌˆÊ’u‚ğ’²®(Y²‚ğ’†S‚É180“x‰ñ“]‚·‚é)
+        Debug.Log("ArmMotionManagerã‚’ãƒ¢ãƒ‡ãƒ«ã«è¿½åŠ ã—ã¾ã—ãŸã€‚");
+        // ãƒ¢ãƒ‡ãƒ«ã®ä½ç½®ã‚’èª¿æ•´(Yè»¸ã‚’ä¸­å¿ƒã«180åº¦å›è»¢ã™ã‚‹)
         int vrmLayer = LayerMask.NameToLayer("VRM");
         SetLayerRecursively(model, vrmLayer);
         //AdjustModelScaleAndPosition(model);
@@ -56,21 +56,21 @@ public class CharacterController : MonoBehaviour
 
         Vector3 faceDir = head.forward.normalized;
 
-        // ƒJƒƒ‰‚ÌˆÊ’u‚ğ’²®‚·‚é
+        // ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‚’èª¿æ•´ã™ã‚‹
         cam.transform.position = head.position + faceDir * 2 + Vector3.up * 0.2f;
         Vector3 pos = cam.transform.position;
 
-        // ‚QjƒJƒƒ‰‚ğVRM‚Ì•ûŒü‚ÖŒü‚¯‚é
+        // ï¼’ï¼‰ã‚«ãƒ¡ãƒ©ã‚’VRMã®æ–¹å‘ã¸å‘ã‘ã‚‹
         Vector3 flatDir = (head.position - cam.transform.position);
         flatDir.y = 0;
         cam.transform.rotation = Quaternion.LookRotation(flatDir.normalized, Vector3.up);
-        // ‚RjƒJƒƒ‰‚ÌX/YÀ•W‚ğ’²®‚·‚é
+        // ï¼“ï¼‰ã‚«ãƒ¡ãƒ©ã®X/Yåº§æ¨™ã‚’èª¿æ•´ã™ã‚‹
         pos.y = head.position.y - cam.orthographicSize + 0.3f;
         pos.x = head.position.x - cam.orthographicSize + 0.3f;
         cam.transform.position = pos;
     }
 
-    // ƒ‚ƒfƒ‹‚Ì‘S‘Ì‚Ì‚‚³‚ğ„’è‚·‚é
+    // ãƒ¢ãƒ‡ãƒ«ã®å…¨ä½“ã®é«˜ã•ã‚’æ¨å®šã™ã‚‹
     float GetModelHeight(GameObject model)
     {
         var renderers = model.GetComponentsInChildren<Renderer>();
@@ -82,7 +82,7 @@ public class CharacterController : MonoBehaviour
         return bounds.size.y;
     }
 
-    // [‚¢ŠK‘w‚©‚ç–¼‘O‚ÅTransform‚ğ’T‚·
+    // æ·±ã„éšå±¤ã‹ã‚‰åå‰ã§Transformã‚’æ¢ã™
     Transform FindDeepChild(Transform parent, string name)
     {
         foreach (Transform child in parent)
@@ -103,17 +103,17 @@ public class CharacterController : MonoBehaviour
 
         model.transform.localScale = Vector3.one * scaleFactor;
 
-        // ˆÊ’u’²®i’†‰›‚©‚ç¶Šñ‚èj
-        model.transform.position = new Vector3(-0.5f, -1.0f, 0); // “K‹X’²®
+        // ä½ç½®èª¿æ•´ï¼ˆä¸­å¤®ã‹ã‚‰å·¦å¯„ã‚Šï¼‰
+        model.transform.position = new Vector3(-0.5f, -1.0f, 0); // é©å®œèª¿æ•´
     }
 
-    // ŠO•”‚©‚çŒÄ‚×‚é§Œäƒƒ\ƒbƒh
+    // å¤–éƒ¨ã‹ã‚‰å‘¼ã¹ã‚‹åˆ¶å¾¡ãƒ¡ã‚½ãƒƒãƒ‰
     public void SetBlinking(bool enabled,float open)
     {
         blinkController?.SetBlinkEnabled(enabled, open);
     }
 
-    // è‚ğU‚éAPIiŒ»İ–¢À‘•j
+    // æ‰‹ã‚’æŒ¯ã‚‹APIï¼ˆç¾åœ¨æœªå®Ÿè£…ï¼‰
     public void PlayWaveHand()
     {
         armMotionManager?.PlayWaveHand();
