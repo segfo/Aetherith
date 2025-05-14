@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -27,11 +27,11 @@ public class UIResizer : MonoBehaviour, IPointerDownHandler, IDragHandler
         Vector2 delta = currentMousePosition - originalMousePosition;
         Vector2 newSize = originalSize + new Vector2(delta.x, -delta.y);
 
-        newSize.x = Mathf.Max(xMinSize, newSize.x); // Å¬•
-        newSize.y = Mathf.Max(yMinSize, newSize.y); // Å¬‚‚³
+        newSize.x = Mathf.Max(xMinSize, newSize.x); // æœ€å°å¹…
+        newSize.y = Mathf.Max(yMinSize, newSize.y); // æœ€å°é«˜ã•
 
         targetRect.sizeDelta = newSize;
-        // še‚ÌLayoutGroup‚ğÄŒvZ‚³‚¹‚é
+        // â˜…è¦ªã®LayoutGroupã‚’å†è¨ˆç®—ã•ã›ã‚‹
         LayoutRebuilder.MarkLayoutForRebuild(targetRect.parent as RectTransform);
     }
 }

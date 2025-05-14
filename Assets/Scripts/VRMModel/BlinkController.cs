@@ -1,12 +1,12 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UniVRM10;
 
 public class BlinkControllerVrm10 : MonoBehaviour
 {
     private Vrm10Instance vrmInstance;
-    private float blinkInterval = 4f; // lŠÔ‚Ì•½‹Ï“I‚Èu‚«‚Ì‰ñ”‚Í‚¨‚¨‚æ‚»3•b‚É1‰ñ‚È‚Ì‚ÅA3‚ğŠî€‚É2`4•b‚¨‚«‚Éu‚«‚·‚é‚æ‚¤‚É‚·‚éB
-    private float blinkDuration = 0.1f; // u‚«‚Ì‘±ŠÔ
+    private float blinkInterval = 4f; // äººé–“ã®å¹³å‡çš„ãªç¬ãã®å›æ•°ã¯ãŠãŠã‚ˆã3ç§’ã«1å›ãªã®ã§ã€3ã‚’åŸºæº–ã«2ï½4ç§’ãŠãã«ç¬ãã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ã€‚
+    private float blinkDuration = 0.1f; // ç¬ãã®æŒç¶šæ™‚é–“
     private bool isBlinkEnabled = true;
 
     void Start()
@@ -18,12 +18,12 @@ public class BlinkControllerVrm10 : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Vrm10Instance ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+            Debug.LogWarning("Vrm10Instance ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
         }
     }
     // <summary>
-    // enabled: true=—LŒø, false=–³Œø   // u‚«‚Ì—LŒø/–³Œø‚ğİ’è‚·‚é 
-    // open: 0.0=•Â‚¶‚é, 1.0=ŠJ‚­   // u‚«‚ÌŠJ‚«‹ï‡‚ğ0`1‚ÌÀ”‚Åİ’è‚·‚éB
+    // enabled: true=æœ‰åŠ¹, false=ç„¡åŠ¹   // ç¬ãã®æœ‰åŠ¹/ç„¡åŠ¹ã‚’è¨­å®šã™ã‚‹ 
+    // open: 0.0=é–‰ã˜ã‚‹, 1.0=é–‹ã   // ç¬ãã®é–‹ãå…·åˆã‚’0ï½1ã®å®Ÿæ•°ã§è¨­å®šã™ã‚‹ã€‚
     // </summary>
     public void SetBlinkEnabled(bool enabled,float open)
     {
@@ -44,11 +44,11 @@ public class BlinkControllerVrm10 : MonoBehaviour
             }
             yield return new WaitForSeconds(Random.Range(blinkInterval - 2f, blinkInterval + 1f));
 
-            // u‚«ON
+            // ç¬ãON
             vrmInstance.Runtime.Expression.SetWeight(ExpressionKey.Blink, 1.0f);
             yield return new WaitForSeconds(blinkDuration);
 
-            // u‚«OFF
+            // ç¬ãOFF
             vrmInstance.Runtime.Expression.SetWeight(ExpressionKey.Blink, 0.0f);
         }
     }

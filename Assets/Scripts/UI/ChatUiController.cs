@@ -11,7 +11,7 @@ public class ChatUIController : MonoBehaviour
     [SerializeField] private GameObject chatWindow;
     [SerializeField] private TextMeshProUGUI tmpText;
     [SerializeField] private InputField inputField;
-    [SerializeField] private Vector3 offset = new Vector3(-0.25f, 1.6f, 0f); // ƒ‚ƒfƒ‹‚Ì‰¡
+    [SerializeField] private Vector3 offset = new Vector3(-0.25f, 1.6f, 0f); // ãƒ¢ãƒ‡ãƒ«ã®æ¨ª
     bool isMinimized = false;
     bool ime = false;
     Keyboard _keyboard;
@@ -28,23 +28,23 @@ public class ChatUIController : MonoBehaviour
 
         Transform modelTransform = characterController.vrmInstance.transform;
         transform.position = modelTransform.position + modelTransform.rotation * offset;
-        transform.rotation = Camera.main.transform.rotation; // UI‚ÍƒJƒƒ‰‚ÉŒü‚¯‚é
-        // InputTextField‚Ìˆ—
-        // ƒtƒH[ƒJƒX‚ª‚È‚¢ or IME•ÏŠ·’† ‚Í–³‹
+        transform.rotation = Camera.main.transform.rotation; // UIã¯ã‚«ãƒ¡ãƒ©ã«å‘ã‘ã‚‹
+        // InputTextFieldã®å‡¦ç†
+        // ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãŒãªã„ or IMEå¤‰æ›ä¸­ ã¯ç„¡è¦–
         if (!inputField.isFocused || !string.IsNullOrEmpty(Input.compositionString))
         {
             return;
         }
 
-        // Return ƒL[‚ª‰Ÿ‚³‚ê‚½uŠÔ
+        // Return ã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸç¬é–“
         if (Input.GetKeyDown(KeyCode.Return))
         {
             bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
             if (shift)
             {
-                // Shift+Enter ¨ ‘—M
+                // Shift+Enter â†’ é€ä¿¡
                 onInputTextSubmit(inputField.text);
-                // ÄƒtƒH[ƒJƒX
+                // å†ãƒ•ã‚©ãƒ¼ã‚«ã‚¹
                 inputField.ActivateInputField();
             }
         }
@@ -93,8 +93,6 @@ public class ChatUIController : MonoBehaviour
     private UnityEngine.Events.UnityAction<string> onInputTextSubmit;
     public void AddInputFieldEventHandler(UnityEngine.Events.UnityAction<string> onSubmit)
     {
-        Debug.Log("ChatUIController - OnEndEditƒCƒxƒ“ƒgƒnƒ“ƒhƒ‰‚ªİ’è‚³‚ê‚Ü‚µ‚½B");
-        //inputField.onEndEdit.AddListener(onSubmit);
         onInputTextSubmit = onSubmit;
 
     }

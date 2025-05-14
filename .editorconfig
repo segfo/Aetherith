@@ -1,0 +1,10 @@
+root = true
+
+# c#のファイルを指定
+[*.cs]
+
+# 改行設定
+end_of_line = lf
+
+# UTF-8に変換
+charset = utf-8-bom

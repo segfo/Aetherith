@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.IO;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -13,19 +13,19 @@ using Unity.Burst.CompilerServices;
 namespace uDesktopMascot
 {
     /// <summary>
-    /// VRMƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+    /// VRMãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
     /// </summary>
     public static class LoadVRM
     {
         /// <summary>
-        /// ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ğİ’è
+        /// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’è¨­å®š
         /// </summary>
         /// <param name="animator"></param>
         public static void UpdateAnimationController(Animator animator)
         {
             if (animator == null)
             {
-                Log.Error("Animator ‚ª null ‚Å‚·BƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ğİ’è‚Å‚«‚Ü‚¹‚ñB");
+                Log.Error("Animator ãŒ null ã§ã™ã€‚ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’è¨­å®šã§ãã¾ã›ã‚“ã€‚");
                 return;
             }
 
@@ -33,21 +33,21 @@ namespace uDesktopMascot
             if (controller != null)
             {
                 animator.runtimeAnimatorController = controller;
-                Log.Info("ƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ğİ’è‚µ‚Ü‚µ‚½B");
+                Log.Info("ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’è¨­å®šã—ã¾ã—ãŸã€‚");
 
                 if (animator.avatar == null)
                 {
-                    Log.Warning("Animator ‚Ì avatar ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñBƒAƒjƒ[ƒVƒ‡ƒ“‚ª³‚µ‚­Ä¶‚³‚ê‚È‚¢‰Â”\«‚ª‚ ‚è‚Ü‚·B");
+                    Log.Warning("Animator ã® avatar ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒæ­£ã—ãå†ç”Ÿã•ã‚Œãªã„å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚");
                 }
             }
             else
             {
-                Log.Error("CharacterAnimationController ‚ª Resources ‚ÉŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½BƒAƒjƒ[ƒVƒ‡ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚ª³‚µ‚­İ’è‚³‚ê‚Ä‚¢‚é‚©Šm”F‚µ‚Ä‚­‚¾‚³‚¢B");
+                Log.Error("CharacterAnimationController ãŒ Resources ã«è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ãŒæ­£ã—ãè¨­å®šã•ã‚Œã¦ã„ã‚‹ã‹ç¢ºèªã—ã¦ãã ã•ã„ã€‚");
             }
         }
 
         /// <summary>
-        /// ƒ‚ƒfƒ‹‚ğƒ[ƒh‚·‚é
+        /// ãƒ¢ãƒ‡ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹
         /// </summary>
         public static async UniTask<LoadedVRMInfo> LoadModelAsync(string modelPath, CancellationToken cancellationToken)
         {
@@ -55,33 +55,33 @@ namespace uDesktopMascot
             {
                 if (!string.IsNullOrEmpty(modelPath))
                 {
-                    Log.Info($"w’è‚³‚ê‚½ƒ‚ƒfƒ‹ƒpƒX: {modelPath}");
+                    Log.Info($"æŒ‡å®šã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹: {modelPath}");
 
-                    // StreamingAssets ƒtƒHƒ‹ƒ_“à‚Ìƒtƒ‹ƒpƒX‚ğì¬
+                    // StreamingAssets ãƒ•ã‚©ãƒ«ãƒ€å†…ã®ãƒ•ãƒ«ãƒ‘ã‚¹ã‚’ä½œæˆ
                     var fullModelPath = Path.Combine(Application.streamingAssetsPath, modelPath);
                     
-                    // ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚é‚©Šm”F
+                    // ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹ã‹ç¢ºèª
                     if (File.Exists(fullModelPath))
                     {
-                        Log.Info($"w’è‚³‚ê‚½ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğƒ[ƒh‚µ‚Ü‚·: {fullModelPath}");
-                        // w’è‚³‚ê‚½ƒ‚ƒfƒ‹‚ğƒ[ƒh
+                        Log.Info($"æŒ‡å®šã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™: {fullModelPath}");
+                        // æŒ‡å®šã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰
                         return await LoadAndDisplayModel(fullModelPath, cancellationToken);
                     }
                     else
                     {
-                        Log.Warning($"w’è‚³‚ê‚½ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½: {fullModelPath}");
-                        // ‚±‚ÌŒãA‘¼‚Ìƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ’T‚µ‚Ü‚·
+                        Log.Warning($"æŒ‡å®šã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸ: {fullModelPath}");
+                        // ã“ã®å¾Œã€ä»–ã®ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¢ã—ã¾ã™
                     }
                 }
                 else
                 {
-                    Log.Info("ƒ‚ƒfƒ‹ƒpƒX‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB");
+                    Log.Info("ãƒ¢ãƒ‡ãƒ«ãƒ‘ã‚¹ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚");
                     return null;
                 }
             }
             catch (Exception e)
             {
-                Log.Error($"ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ‚Ü‚½‚Í•\¦’†‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: {e.Message}");
+                Log.Error($"ãƒ¢ãƒ‡ãƒ«ã®èª­ã¿è¾¼ã¿ã¾ãŸã¯è¡¨ç¤ºä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: {e.Message}");
                 return null;
             }
 
@@ -89,9 +89,9 @@ namespace uDesktopMascot
         }
 
         /// <summary>
-        /// VRMƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚İAƒ‚ƒfƒ‹‚ğ•\¦‚·‚é
+        /// VRMãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã¿ã€ãƒ¢ãƒ‡ãƒ«ã‚’è¡¨ç¤ºã™ã‚‹
         /// </summary>
-        /// <param name="path">ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ÌƒpƒX</param>
+        /// <param name="path">ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹</param>
         /// <param name="cancellationToken"></param>
         private static async UniTask<LoadedVRMInfo> LoadAndDisplayModel(string path,
             CancellationToken cancellationToken)
@@ -100,7 +100,7 @@ namespace uDesktopMascot
         }
 
         /// <summary>
-        /// ƒtƒ@ƒCƒ‹ƒpƒX‚©‚çƒ‚ƒfƒ‹‚ğƒ[ƒh‚µ‚Ä•\¦‚·‚é
+        /// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã‹ã‚‰ãƒ¢ãƒ‡ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¦è¡¨ç¤ºã™ã‚‹
         /// </summary>
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
@@ -108,8 +108,8 @@ namespace uDesktopMascot
         private static async UniTask<LoadedVRMInfo> LoadAndDisplayModelFromPath(string path,
             CancellationToken cancellationToken)
         {
-            Debug.Log($"ƒ[ƒh‚µ‚Ä‚¢‚Ü‚·: {path}");
-            // ƒtƒ@ƒCƒ‹‚ÌŠg’£q‚ğæ“¾
+            Debug.Log($"ãƒ­ãƒ¼ãƒ‰ã—ã¦ã„ã¾ã™: {path}");
+            // ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã‚’å–å¾—
             var extension = Path.GetExtension(path).ToLowerInvariant();
 
             GameObject model = null;
@@ -117,114 +117,114 @@ namespace uDesktopMascot
             Texture2D thumbnailTexture = null;
             if (extension == ".vrm")
             {
-                // VRMƒtƒ@ƒCƒ‹‚ğƒ[ƒhiVRM 0.x ‚¨‚æ‚Ñ 1.x ‚É‘Î‰j
+                // VRMãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ï¼ˆVRM 0.x ãŠã‚ˆã³ 1.x ã«å¯¾å¿œï¼‰
                 try
                 {
                     Vrm10Instance instance = await Vrm10.LoadPathAsync(path, canLoadVrm0X: false, ct: cancellationToken);
                     title = instance.Vrm.Meta.Name;
                     thumbnailTexture = instance.Vrm.Meta.Thumbnail;
-                    // ƒ‚ƒfƒ‹‚ÌGameObject‚ğæ“¾
+                    // ãƒ¢ãƒ‡ãƒ«ã®GameObjectã‚’å–å¾—
                     model = instance.gameObject;
-                    // MToon ƒVƒF[ƒ_[‚ğ“K—p
+                    // MToon ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’é©ç”¨
                     //ApplyMToonShader(model);
                 }
                 catch (Exception e)
                 {
-                    Debug.Log($"VRMƒtƒ@ƒCƒ‹‚Ìƒ[ƒh’†‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: {e.Message}");
+                    Debug.Log($"VRMãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: {e.Message}");
                 }
             }
             else
             {
-                Log.Error($"ƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢ƒtƒ@ƒCƒ‹Œ`®‚Å‚·: {extension}");
+                Log.Error($"ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ãªã„ãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼ã§ã™: {extension}");
                 return null;
             }
 
             if (model == null)
             {
-                Log.Error("ƒ‚ƒfƒ‹‚Ìƒ[ƒh‚É¸”s‚µ‚Ü‚µ‚½B");
+                Log.Error("ãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ã«å¤±æ•—ã—ã¾ã—ãŸã€‚");
                 return null;
             }
 
-            Log.Info("ƒ‚ƒfƒ‹‚Ìƒ[ƒh‚Æ•\¦‚ªŠ®—¹‚µ‚Ü‚µ‚½: " + path);
+            Log.Info("ãƒ¢ãƒ‡ãƒ«ã®ãƒ­ãƒ¼ãƒ‰ã¨è¡¨ç¤ºãŒå®Œäº†ã—ã¾ã—ãŸ: " + path);
 
             return new LoadedVRMInfo(model, title, thumbnailTexture);
         }
 
         /// <summary>
-        /// VRM 1.0 ƒ‚ƒfƒ‹‚É MToon ƒVƒF[ƒ_[‚ğ“K—p‚·‚é
+        /// VRM 1.0 ãƒ¢ãƒ‡ãƒ«ã« MToon ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’é©ç”¨ã™ã‚‹
         /// </summary>
-        /// <param name="model">VRMƒ‚ƒfƒ‹‚ÌGameObject</param>
+        /// <param name="model">VRMãƒ¢ãƒ‡ãƒ«ã®GameObject</param>
         private static void ApplyMToonShader(GameObject model)
         {
-            // ƒ‚ƒfƒ‹“à‚Ì‚·‚×‚Ä‚ÌRenderer‚ğæ“¾
+            // ãƒ¢ãƒ‡ãƒ«å†…ã®ã™ã¹ã¦ã®Rendererã‚’å–å¾—
             var renderers = model.GetComponentsInChildren<Renderer>();
 
             foreach (var renderer in renderers)
             {
-                // ‚·‚×‚Ä‚Ìƒ}ƒeƒŠƒAƒ‹‚É MToon ƒVƒF[ƒ_[‚ğ“K—p
+                // ã™ã¹ã¦ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã« MToon ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’é©ç”¨
                 foreach (var material in renderer.sharedMaterials)
                 {
-                    // ‚à‚µƒVƒF[ƒ_[‚ªŠù‚É MToon ‚Å‚È‚¢ê‡
+                    // ã‚‚ã—ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãŒæ—¢ã« MToon ã§ãªã„å ´åˆ
                     if (material.shader.name != "VRM10/Universal Render Pipeline/MToon10")
                     {
                         material.shader = Shader.Find("VRM10/Universal Render Pipeline/MToon10");
                     }
 
-                    // ƒVƒF[ƒ_[‚Ìİ’è
+                    // ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®è¨­å®š
                     SetMToonShaderSettings(material);
                 }
             }
 
-            Log.Info("MToon ƒVƒF[ƒ_[‚ğ‚·‚×‚Ä‚Ìƒ}ƒeƒŠƒAƒ‹‚É“K—p‚µ‚Ü‚µ‚½B");
+            Log.Info("MToon ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’ã™ã¹ã¦ã®ãƒãƒ†ãƒªã‚¢ãƒ«ã«é©ç”¨ã—ã¾ã—ãŸã€‚");
         }
         /// <summary>
-        /// MToon ƒVƒF[ƒ_[‚Ìİ’è‚ğs‚¤
+        /// MToon ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®è¨­å®šã‚’è¡Œã†
         /// </summary>
-        /// <param name="material">MToonƒVƒF[ƒ_[‚ğ“K—p‚·‚éƒ}ƒeƒŠƒAƒ‹</param>
+        /// <param name="material">MToonã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’é©ç”¨ã™ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«</param>
         private static void SetMToonShaderSettings(Material material)
         {
-            // “§‰ßİ’è
+            // é€éè¨­å®š
             material.SetFloat("_CullMode", 2); // Back-face culling
-            material.SetFloat("_RenderQueue", 3000); // ’Êí‚Ì•s“§–¾‚ÈƒŒƒ“ƒ_ƒŠƒ“ƒO‡˜‚Éİ’è
+            material.SetFloat("_RenderQueue", 3000); // é€šå¸¸ã®ä¸é€æ˜ãªãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°é †åºã«è¨­å®š
             material.SetFloat("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
             material.SetFloat("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            material.SetFloat("_ZWrite", 0); // [“x‘‚«‚İ‚ğ—LŒø‚É‚·‚é
+            material.SetFloat("_ZWrite", 0); // æ·±åº¦æ›¸ãè¾¼ã¿ã‚’æœ‰åŠ¹ã«ã™ã‚‹
 
-            // åF (—á)
-            material.SetColor("_Color", new Color(1f, 1f, 1f, 1f)); // ”’F
-            // ‰e‚Ìİ’è
-            material.SetColor("_ShadeColor", new Color(0.5f, 0.5f, 0.5f, 1f)); // ‰eF‚ğŠDF‚É
+            // ä¸»è‰² (ä¾‹)
+            material.SetColor("_Color", new Color(1f, 1f, 1f, 1f)); // ç™½è‰²
+            // å½±ã®è¨­å®š
+            material.SetColor("_ShadeColor", new Color(0.5f, 0.5f, 0.5f, 1f)); // å½±è‰²ã‚’ç°è‰²ã«
 
-            // ƒ‰ƒCƒeƒBƒ“ƒOİ’è (—á)
-            material.SetFloat("_ShadingToony", 0.1f); // Toony‚Èƒ‰ƒCƒeƒBƒ“ƒO
-            material.SetFloat("_ShadingShift", 0.1f); // –¾‚é‚¢•”•ª‚Ì‹­’²
-            material.SetFloat("_OutlineWidth", 0.0f); // —ÖŠsü‚Ì‘¾‚³
-            material.SetColor("_OutlineColor", new Color(0f, 0f, 0f, 0f)); // —ÖŠsü‚ÌFi•j
+            // ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°è¨­å®š (ä¾‹)
+            material.SetFloat("_ShadingToony", 0.1f); // Toonyãªãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°
+            material.SetFloat("_ShadingShift", 0.1f); // æ˜ã‚‹ã„éƒ¨åˆ†ã®å¼·èª¿
+            material.SetFloat("_OutlineWidth", 0.0f); // è¼ªéƒ­ç·šã®å¤ªã•
+            material.SetColor("_OutlineColor", new Color(0f, 0f, 0f, 0f)); // è¼ªéƒ­ç·šã®è‰²ï¼ˆé»’ï¼‰
 
-            Log.Info("MToon ƒVƒF[ƒ_[‚Ìİ’è‚ª“K—p‚³‚ê‚Ü‚µ‚½B");
+            Log.Info("MToon ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®è¨­å®šãŒé©ç”¨ã•ã‚Œã¾ã—ãŸã€‚");
         }
         /// <summary>
-        /// VRMƒtƒ@ƒCƒ‹‚Ìƒƒ^î•ñ‚ğæ“¾
+        /// VRMãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ¡ã‚¿æƒ…å ±ã‚’å–å¾—
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         public static async UniTask<(string title, Texture2D thumbnailTexture)> LoadVrmMetaAsync(string path)
         {
-            // ƒLƒƒƒbƒVƒ…‚Ì—LŒø«‚ğƒ`ƒFƒbƒN
+            // ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã®æœ‰åŠ¹æ€§ã‚’ãƒã‚§ãƒƒã‚¯
             if (ModelCacheUtility.IsCacheValid(path))
             {
-                // ƒLƒƒƒbƒVƒ…‚©‚çƒf[ƒ^‚ğ“Ç‚İ‚Ş
+                // ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‹ã‚‰ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
                 var (cachedTitle, cachedThumbnail) = ModelCacheUtility.LoadFromCache(path);
-                Log.Info($"ƒLƒƒƒbƒVƒ…‚©‚çƒƒ^î•ñ‚ğ“Ç‚İ‚İ‚Ü‚µ‚½: {cachedTitle}");
+                Log.Info($"ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã‹ã‚‰ãƒ¡ã‚¿æƒ…å ±ã‚’èª­ã¿è¾¼ã¿ã¾ã—ãŸ: {cachedTitle}");
                 return (cachedTitle, cachedThumbnail);
             }
 
             try
             {
-                // VRMƒtƒ@ƒCƒ‹‚ğƒ[ƒhiVRM 0.x ‚¨‚æ‚Ñ 1.x ‚É‘Î‰j
+                // VRMãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ï¼ˆVRM 0.x ãŠã‚ˆã³ 1.x ã«å¯¾å¿œï¼‰
                 Vrm10Instance instance = await Vrm10.LoadPathAsync(path, canLoadVrm0X: true);
 
-                // Metaî•ñ‚©‚çƒ^ƒCƒgƒ‹‚ÆƒTƒ€ƒlƒCƒ‹‚ğæ“¾
+                // Metaæƒ…å ±ã‹ã‚‰ã‚¿ã‚¤ãƒˆãƒ«ã¨ã‚µãƒ ãƒã‚¤ãƒ«ã‚’å–å¾—
                 var meta = instance.Vrm.Meta;
                 string title = meta.Name;
                 Texture2D originalThumbnail = meta.Thumbnail;
@@ -232,14 +232,14 @@ namespace uDesktopMascot
                 Texture2D thumbnailTexture = null;
                 if (originalThumbnail != null)
                 {
-                    // ƒTƒ€ƒlƒCƒ‹‚ÌÅ‘åƒTƒCƒYiƒsƒNƒZƒ‹’PˆÊj
+                    // ã‚µãƒ ãƒã‚¤ãƒ«ã®æœ€å¤§ã‚µã‚¤ã‚ºï¼ˆãƒ”ã‚¯ã‚»ãƒ«å˜ä½ï¼‰
                     int maxThumbnailSize = 100;
 
-                    // ƒIƒŠƒWƒiƒ‹‚ÌƒeƒNƒXƒ`ƒƒƒTƒCƒY‚ğæ“¾
+                    // ã‚ªãƒªã‚¸ãƒŠãƒ«ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚µã‚¤ã‚ºã‚’å–å¾—
                     int originalWidth = originalThumbnail.width;
                     int originalHeight = originalThumbnail.height;
 
-                    // ƒAƒXƒyƒNƒg”ä‚ğˆÛ‚µ‚È‚ª‚çAƒŠƒTƒCƒYŒã‚Ì•‚Æ‚‚³‚ğŒvZ
+                    // ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’ç¶­æŒã—ãªãŒã‚‰ã€ãƒªã‚µã‚¤ã‚ºå¾Œã®å¹…ã¨é«˜ã•ã‚’è¨ˆç®—
                     int targetWidth = originalWidth;
                     int targetHeight = originalHeight;
 
@@ -260,31 +260,31 @@ namespace uDesktopMascot
                         }
                     }
 
-                    // ƒŠƒTƒCƒY‚µ‚½ƒeƒNƒXƒ`ƒƒ‚ğì¬
+                    // ãƒªã‚µã‚¤ã‚ºã—ãŸãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ä½œæˆ
                     thumbnailTexture = ResizeTexture(originalThumbnail, targetWidth, targetHeight);
                 }
 
-                // ƒƒ^î•ñ‚Ì‚İæ“¾‚µ‚½‚Ì‚ÅAƒCƒ“ƒXƒ^ƒ“ƒX‚ğ”jŠü
+                // ãƒ¡ã‚¿æƒ…å ±ã®ã¿å–å¾—ã—ãŸã®ã§ã€ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç ´æ£„
                 if (instance != null && instance.gameObject != null)
                 {
                     Object.Destroy(instance.gameObject);
                 }
 
-                // ƒLƒƒƒbƒVƒ…‚É•Û‘¶
+                // ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã«ä¿å­˜
                 ModelCacheUtility.SaveToCache(path, title, thumbnailTexture);
-                Log.Info($"ƒƒ^î•ñ‚ğƒLƒƒƒbƒVƒ…‚É•Û‘¶‚µ‚Ü‚µ‚½: {title}");
+                Log.Info($"ãƒ¡ã‚¿æƒ…å ±ã‚’ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã«ä¿å­˜ã—ã¾ã—ãŸ: {title}");
 
                 return (title, thumbnailTexture);
             }
             catch (Exception e)
             {
-                Log.Error($"VRMƒƒ^î•ñ‚Ì“Ç‚İ‚İ’†‚ÉƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½: {e.Message}");
+                Log.Error($"VRMãƒ¡ã‚¿æƒ…å ±ã®èª­ã¿è¾¼ã¿ä¸­ã«ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ: {e.Message}");
                 return (null, null);
             }
         }
 
         /// <summary>
-        /// ƒeƒNƒXƒ`ƒƒ‚ğƒŠƒTƒCƒY
+        /// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ãƒªã‚µã‚¤ã‚º
         /// </summary>
         /// <param name="source"></param>
         /// <param name="targetWidth"></param>
@@ -292,42 +292,42 @@ namespace uDesktopMascot
         /// <returns></returns>
         private static Texture2D ResizeTexture(Texture2D source, int targetWidth, int targetHeight)
         {
-            // RenderTexture‚ğg—p‚µ‚ÄAƒeƒNƒXƒ`ƒƒ‚ğƒŠƒTƒCƒY‚µ‚Ü‚·
+            // RenderTextureã‚’ä½¿ç”¨ã—ã¦ã€ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ãƒªã‚µã‚¤ã‚ºã—ã¾ã™
             RenderTexture rt = RenderTexture.GetTemporary(targetWidth, targetHeight);
             rt.filterMode = FilterMode.Bilinear;
 
-            // Œ³‚ÌƒAƒNƒeƒBƒu‚ÈRenderTexture‚ğ•Û‘¶
+            // å…ƒã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªRenderTextureã‚’ä¿å­˜
             RenderTexture previous = RenderTexture.active;
 
-            // RenderTexture‚ğƒAƒNƒeƒBƒu‚Éİ’è
+            // RenderTextureã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«è¨­å®š
             RenderTexture.active = rt;
 
-            // ƒ\[ƒXƒeƒNƒXƒ`ƒƒ‚ğRenderTexture‚ÉƒRƒs[
+            // ã‚½ãƒ¼ã‚¹ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’RenderTextureã«ã‚³ãƒ”ãƒ¼
             Graphics.Blit(source, rt);
 
-            // V‚µ‚¢ƒeƒNƒXƒ`ƒƒ‚ğì¬
+            // æ–°ã—ã„ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ä½œæˆ
             Texture2D result = new Texture2D(targetWidth, targetHeight, TextureFormat.RGBA32, false);
 
-            // RenderTexture‚©‚çƒsƒNƒZƒ‹‚ğ“Ç‚İ‚Ş
+            // RenderTextureã‹ã‚‰ãƒ”ã‚¯ã‚»ãƒ«ã‚’èª­ã¿è¾¼ã‚€
             result.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), 0, 0);
             result.Apply();
 
-            // RenderTexture‚ğ‰ğ•ú
+            // RenderTextureã‚’è§£æ”¾
             RenderTexture.ReleaseTemporary(rt);
 
-            // ƒAƒNƒeƒBƒu‚ÈRenderTexture‚ğŒ³‚É–ß‚·
+            // ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªRenderTextureã‚’å…ƒã«æˆ»ã™
             RenderTexture.active = previous;
 
             return result;
         }
 
         /// <summary>
-        /// ƒ[ƒh‚³‚ê‚½VRM‚Ìî•ñ‚ğ•Û‚·‚éƒNƒ‰ƒX
+        /// ãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸVRMã®æƒ…å ±ã‚’ä¿æŒã™ã‚‹ã‚¯ãƒ©ã‚¹
         /// </summary>
         public class LoadedVRMInfo
         {
             /// <summary>
-            /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+            /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
             /// </summary>
             /// <param name="model"></param>
             /// <param name="modelName"></param>
@@ -340,17 +340,17 @@ namespace uDesktopMascot
             }
 
             /// <summary>
-            /// ƒ[ƒh‚³‚ê‚½ƒ‚ƒfƒ‹‚ÌGameObject
+            /// ãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸãƒ¢ãƒ‡ãƒ«ã®GameObject
             /// </summary>
             public GameObject Model { get; private set; }
 
             /// <summary>
-            /// ƒ‚ƒfƒ‹‚Ìƒ^ƒCƒgƒ‹
+            /// ãƒ¢ãƒ‡ãƒ«ã®ã‚¿ã‚¤ãƒˆãƒ«
             /// </summary>
             public string ModelName { get; private set; }
 
             /// <summary>
-            /// ƒTƒ€ƒlƒCƒ‹‰æ‘œ
+            /// ã‚µãƒ ãƒã‚¤ãƒ«ç”»åƒ
             /// </summary>
             public Texture2D ThumbnailTexture { get; private set; }
         }

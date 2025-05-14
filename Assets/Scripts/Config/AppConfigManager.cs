@@ -1,4 +1,4 @@
-using System.IO;
+ï»¿using System.IO;
 using System.Text;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ public class AppConfigManager
     private AppConfigManager()
     {
         string defConfig = JsonUtility.ToJson(new AppConfig(), prettyPrint: true);
-        Debug.Log($"AppConfigManager - ƒfƒtƒHƒ‹ƒgİ’è: {defConfig}");
+        Debug.Log($"AppConfigManager - ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®š: {defConfig}");
         configPath = Path.Combine(Application.streamingAssetsPath, "appconfig.json");
         Config = JsonUtility.FromJson<AppConfig>(SafeFileReader.ReadOrCreateTextFile(configPath, Encoding.UTF8, defConfig));
     }

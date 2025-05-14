@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class ArmMotionManager : MonoBehaviour
@@ -13,7 +13,7 @@ public class ArmMotionManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("ArmMotionManager‚ª‰Šú‰»‚³‚ê‚Ü‚µ‚½B");
+        Debug.Log("ArmMotionManagerãŒåˆæœŸåŒ–ã•ã‚Œã¾ã—ãŸã€‚");
         StartCoroutine(RandomArmSequence());
     }
 
@@ -36,14 +36,14 @@ public class ArmMotionManager : MonoBehaviour
     {
         isRunningSequence = true;
 
-        // 1. ˜r‚ğã‚°‚é
+        // 1. è…•ã‚’ä¸Šã’ã‚‹
         animator.Play(startMotion, 1);
         yield return new WaitForSeconds(GetClipLength(startMotion, 1));
 
-        // 2. ƒ‰ƒ“ƒ_ƒ€‚ÉÃ~
+        // 2. ãƒ©ãƒ³ãƒ€ãƒ ã«é™æ­¢
         yield return new WaitForSeconds(Random.Range(2f, 5f));
 
-        // 3. ˜r‚ğ‰º‚ë‚·
+        // 3. è…•ã‚’ä¸‹ã‚ã™
         animator.Play(endMotion, 1);
         yield return new WaitForSeconds(GetClipLength(endMotion, 1));
 
@@ -58,7 +58,7 @@ public class ArmMotionManager : MonoBehaviour
             return clipInfo[0].clip.length;
         }
 
-        // ƒtƒH[ƒ‹ƒoƒbƒN‚Æ‚µ‚Ä‰¼ŠÔ
+        // ãƒ•ã‚©ãƒ¼ãƒ«ãƒãƒƒã‚¯ã¨ã—ã¦ä»®æ™‚é–“
         return 2f;
     }
     public void PlayWaveHand()
