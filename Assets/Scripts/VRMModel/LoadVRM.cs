@@ -17,6 +17,7 @@ namespace uDesktopMascot
     /// </summary>
     public static class LoadVRM
     {
+
         /// <summary>
         /// アニメーションコントローラーを設定
         /// </summary>
@@ -125,8 +126,6 @@ namespace uDesktopMascot
                     thumbnailTexture = instance.Vrm.Meta.Thumbnail;
                     // モデルのGameObjectを取得
                     model = instance.gameObject;
-                    // MToon シェーダーを適用
-                    //ApplyMToonShader(model);
                 }
                 catch (Exception e)
                 {
@@ -144,65 +143,11 @@ namespace uDesktopMascot
                 Log.Error("モデルのロードに失敗しました。");
                 return null;
             }
-
             Log.Info("モデルのロードと表示が完了しました: " + path);
 
             return new LoadedVRMInfo(model, title, thumbnailTexture);
         }
 
-        /// <summary>
-        /// VRM 1.0 モデルに MToon シェーダーを適用する
-        /// </summary>
-        /// <param name="model">VRMモデルのGameObject</param>
-        private static void ApplyMToonShader(GameObject model)
-        {
-            // モデル内のすべてのRendererを取得
-            var renderers = model.GetComponentsInChildren<Renderer>();
-
-            foreach (var renderer in renderers)
-            {
-                // すべてのマテリアルに MToon シェーダーを適用
-                foreach (var material in renderer.sharedMaterials)
-                {
-                    // もしシェーダーが既に MToon でない場合
-                    if (material.shader.name != "VRM10/Universal Render Pipeline/MToon10")
-                    {
-                        material.shader = Shader.Find("VRM10/Universal Render Pipeline/MToon10");
-                    }
-
-                    // シェーダーの設定
-                    SetMToonShaderSettings(material);
-                }
-            }
-
-            Log.Info("MToon シェーダーをすべてのマテリアルに適用しました。");
-        }
-        /// <summary>
-        /// MToon シェーダーの設定を行う
-        /// </summary>
-        /// <param name="material">MToonシェーダーを適用するマテリアル</param>
-        private static void SetMToonShaderSettings(Material material)
-        {
-            // 透過設定
-            material.SetFloat("_CullMode", 2); // Back-face culling
-            material.SetFloat("_RenderQueue", 3000); // 通常の不透明なレンダリング順序に設定
-            material.SetFloat("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            material.SetFloat("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            material.SetFloat("_ZWrite", 0); // 深度書き込みを有効にする
-
-            // 主色 (例)
-            material.SetColor("_Color", new Color(1f, 1f, 1f, 1f)); // 白色
-            // 影の設定
-            material.SetColor("_ShadeColor", new Color(0.5f, 0.5f, 0.5f, 1f)); // 影色を灰色に
-
-            // ライティング設定 (例)
-            material.SetFloat("_ShadingToony", 0.1f); // Toonyなライティング
-            material.SetFloat("_ShadingShift", 0.1f); // 明るい部分の強調
-            material.SetFloat("_OutlineWidth", 0.0f); // 輪郭線の太さ
-            material.SetColor("_OutlineColor", new Color(0f, 0f, 0f, 0f)); // 輪郭線の色（黒）
-
-            Log.Info("MToon シェーダーの設定が適用されました。");
-        }
         /// <summary>
         /// VRMファイルのメタ情報を取得
         /// </summary>
