@@ -2,15 +2,28 @@
     "llm": {
         "useDify": false,
         "difyApiUrl": "",
-        "modelName": "gemma-3-4b-it-q4_0.gguf",
+        "modelName": "gemma3.gguf",
+        "llmEmotionModelName": "gemma3.gguf",
         "difyApiKey": "",
-        "systemPrompt": "あなたの名前はアテリナです。あなたはアシスタントです。あなたは日本語を話します。あなたは、ユーザーの質問に答えたり、情報を提供したりするためにここにいます。あなたは親切で、知識が豊富で、ユーザーを助けることに情熱を持っています。あなたは、ユーザーが必要とする情報を見つけるために最善を尽くします。",
+        "agentSystemPromptFile": "systemprompt.txt",
+        "emotionSystemPromptFile": "emotion_systemprompt.txt",
         "userName": "User",
         "assistantName": "Assistant",
         "maxContextLength": 8192,
+        "llmEmotionMaxContextLength": 8192,
         "welcomeMessage": "何でも聞いてくださいね！",
         "waitMessage": "\"（考え中です…）\"",
-        "temperature": 0.0
+        "temperature": 0.699999988079071,
+        "emotionalTemperature": 0.0
     },
-    "vrmFileName": "Default.vrm"
+    "vrm": {
+        "Scale": 1.5,
+        "VrmDisplayOffsetX": -1.6,
+        "VrmDisplayOffsetY": -0.15,
+        "ToneMappingMode": 0,
+        "LightIntensity": 1,
+        "LightColorRGBA": "#FFF0E0FF",
+        "ShadowStrength": 0.3,
+        "FileName": "Default.vrm"
+    }
 }
