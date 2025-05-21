@@ -5,6 +5,8 @@ using Kirurobo;
 public class CharacterController : MonoBehaviour
 {
     [SerializeField] private VRMLoader vrmLoader;
+    [SerializeField] private ChatManager chatManager;
+    [SerializeField] private Vector3 offset = new Vector3(-1.5f, -0.15f, 0f);
 
     public Vrm10Instance vrmInstance { get; private set; }
     private BlinkControllerVrm10 blinkController;
@@ -12,14 +14,16 @@ public class CharacterController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("CharacterController - VRMLoaderからの通知を待機中...");
+        offset.x = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX;
+        offset.y = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
     }
     private void Awake()
     {
-        vrmLoader.OnModelLoaded += OnModelReady;
+        vrmLoader.OnVrmLoaded += OnVrmLoaded;
+        chatManager.AppendTextLine("SYSTEM - VRM Loader: VRMモデルを読み込んでいます...");
     }
 
-    private void OnModelReady(GameObject model)
+    private void OnVrmLoaded(GameObject model)
     {
         // VRMモデルのインスタンスを保持しておく。外部から扱えるようにするため。
         vrmInstance = model.GetComponent<Vrm10Instance>();
@@ -27,11 +31,10 @@ public class CharacterController : MonoBehaviour
         armMotionManager = model.AddComponent<ArmMotionManager>();
         blinkController = model.AddComponent<BlinkControllerVrm10>();
         Debug.Log("ArmMotionManagerをモデルに追加しました。");
-        // モデルの位置を調整(Y軸を中心に180度回転する)
         int vrmLayer = LayerMask.NameToLayer("VRM");
         SetLayerRecursively(model, vrmLayer);
-        //AdjustModelScaleAndPosition(model);
         AdjustCameraToVrm(model);
+        chatManager.VrmLoadCompleted();
     }
 
     void SetLayerRecursively(GameObject obj, int layer)
@@ -42,44 +45,37 @@ public class CharacterController : MonoBehaviour
             SetLayerRecursively(child.gameObject, layer);
         }
     }
-
-    private void AdjustCameraToVrm(GameObject model)
+ 
+    void AdjustCameraToVrm(GameObject model)
     {
         var animator = model.GetComponent<Animator>();
         if (animator == null) return;
         Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
-        if (head == null) return;
+        Transform hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+        if (head == null || hips == null) return;
         var cam = Camera.main;
         cam.orthographic = true;
         cam.orthographicSize = 1.5f;
-        Debug.Log(head.forward.normalized);
-
+        Vector3 centerPos = new Vector3(cam.transform.position.x, cam.transform.position.y, hips.position.z);
+        hips.position -= hips.position - centerPos;
+        // VRMの向いている方向を取得
         Vector3 faceDir = head.forward.normalized;
+        // カメラの向いている方向をVRMの逆向きにして、2m程度引く
+        cam.transform.rotation = Quaternion.LookRotation(-faceDir, Vector3.up);
+        Vector3 angles = cam.transform.rotation.eulerAngles;
+        angles.x = 0f;
+        angles.z = 0f;
+        cam.transform.rotation = Quaternion.Euler(angles);
+        ///
+        float modelScale = model.transform.lossyScale.y;
+        float modelHeight = Mathf.Abs(head.position.y - hips.position.y) / modelScale;
+        ///
 
-        // カメラの位置を調整する
-        cam.transform.position = head.position + faceDir * 2 + Vector3.up * 0.2f;
-        Vector3 pos = cam.transform.position;
-
-        // ２）カメラをVRMの方向へ向ける
-        Vector3 flatDir = (head.position - cam.transform.position);
-        flatDir.y = 0;
-        cam.transform.rotation = Quaternion.LookRotation(flatDir.normalized, Vector3.up);
-        // ３）カメラのX/Y座標を調整する
-        pos.y = head.position.y - cam.orthographicSize + 0.3f;
-        pos.x = head.position.x - cam.orthographicSize + 0.3f;
-        cam.transform.position = pos;
-    }
-
-    // モデルの全体の高さを推定する
-    float GetModelHeight(GameObject model)
-    {
-        var renderers = model.GetComponentsInChildren<Renderer>();
-        Bounds bounds = renderers[0].bounds;
-        foreach (var rend in renderers)
-        {
-            bounds.Encapsulate(rend.bounds);
-        }
-        return bounds.size.y;
+        /// VRMの腰ボーンを画面の中央に調整する場合は以下をコメントアウトする
+        // cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y + offset.y, faceDir.z * 2);
+        float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale;
+        /// VRMの頭の先端を画面の上部に調整する
+        cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f* scaleFactor, faceDir.z * 2);
     }
 
     // 深い階層から名前でTransformを探す
@@ -94,25 +90,15 @@ public class CharacterController : MonoBehaviour
         return null;
     }
 
-    void AdjustModelScaleAndPosition(GameObject model)
-    {
-        float referenceHeight = 768f;
-        float currentHeight = Screen.height;
-
-        float scaleFactor = referenceHeight / currentHeight;
-
-        model.transform.localScale = Vector3.one * scaleFactor;
-
-        // 位置調整（中央から左寄り）
-        model.transform.position = new Vector3(-0.5f, -1.0f, 0); // 適宜調整
-    }
-
     // 外部から呼べる制御メソッド
     public void SetBlinking(bool enabled,float open)
     {
         blinkController?.SetBlinkEnabled(enabled, open);
     }
-
+    public void PlayThinkMotion(bool enabled)
+    {
+        // 思考モーションを再生する
+    }
     // 手を振るAPI（現在未実装）
     public void PlayWaveHand()
     {

@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Text;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public class AppConfigManager
 {
@@ -12,9 +14,8 @@ public class AppConfigManager
 
     private AppConfigManager()
     {
-        string defConfig = JsonUtility.ToJson(new AppConfig(), prettyPrint: true);
-        Debug.Log($"AppConfigManager - デフォルト設定: {defConfig}");
+        string defConfig = JsonConvert.SerializeObject(new AppConfig());
         configPath = Path.Combine(Application.streamingAssetsPath, "appconfig.json");
-        Config = JsonUtility.FromJson<AppConfig>(SafeFileReader.ReadOrCreateTextFile(configPath, Encoding.UTF8, defConfig));
+        Config = JsonConvert.DeserializeObject<AppConfig>(SafeFileReader.ReadOrCreateTextFile(configPath, Encoding.UTF8, defConfig));
     }
 }
