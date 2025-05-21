@@ -17,13 +17,18 @@
         "emotionalTemperature": 0.0
     },
     "vrm": {
-        "Scale": 1.5,
-        "VrmDisplayOffsetX": -1.6,
-        "VrmDisplayOffsetY": -0.15,
         "ToneMappingMode": 0,
-        "LightIntensity": 1,
+        "LightIntensity": 1.0,
         "LightColorRGBA": "#FFF0E0FF",
         "ShadowStrength": 0.3,
-        "FileName": "Default.vrm"
+        "Scale": 1.0,
+        "VrmDisplayOffsetX": -1.5,
+        "VrmDisplayOffsetY": 0.15,
+        "BackgroundWindowTransparent": true,
+        "FileName": "Default.vrm",
+        "springBone": {
+            "ExternalForceMultiplier": 0.01,
+            "MovementThreshold": 0.5
+        }
     }
 }

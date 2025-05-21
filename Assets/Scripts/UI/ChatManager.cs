@@ -37,7 +37,7 @@ public class ChatManager : MonoBehaviour
         await Task.Delay(2000);
         chatUI.AppendTextLine("SYSTEM - LLM Loader: ローカルLLMをセットアップしています...");
         Debug.Log("ChatManager - LLMの初期化を開始します。");
-        //await Task.Run(()=> { LoadLLM(); });
+        await Task.Run(()=> { LoadLLM(); });
     }
     void LoadLLM()
     {

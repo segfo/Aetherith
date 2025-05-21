@@ -2,7 +2,6 @@
 using System.Text;
 using UnityEngine;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 public class AppConfigManager
 {
