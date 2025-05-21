@@ -10,4 +10,11 @@ public class VRMConfig
     public float VrmDisplayOffsetX = -1.5f;
     public bool BackgroundWindowTransparent = true;
     public string FileName = "Default.vrm";
+    public SpringBone springBone = new SpringBone();
+}
+public class SpringBone
+{
+    // 外力の適用度合い
+    public float ExternalForceMultiplier = 0.01f;
+    public float MovementThreshold = 0.5f;
 }
