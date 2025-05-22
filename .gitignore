@@ -13,7 +13,16 @@
 *.log
 *.lnk
 *.vrm
-/Assets/StreamingAssets/
+*.vrm.meta
+*.gguf
+*.gguf.meta
+appconfig.json
+emotion_systemprompt.txt
+systemprompt.txt
+appconfig.json.meta
+emotion_systemprompt.txt.meta
+systemprompt.txt.meta
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
@@ -75,3 +84,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+# 自動的にダウンロードされるのでこのアセットは取りこまない
+/[Aa]ssets/[Ss]treamingAssets/undreamai-v1.2.5-llamacpp/
+/[Aa]ssets/[Ss]treamingAssets/undreamai-v1.2.5-llamacpp.meta
