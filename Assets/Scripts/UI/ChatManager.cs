@@ -7,10 +7,7 @@ using UniVRM10;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using System.Collections;
-using Unity.VisualScripting;
 using System.Threading;
-
 
 public class ChatManager : MonoBehaviour
 {
@@ -49,24 +46,19 @@ public class ChatManager : MonoBehaviour
     void LoadLLM()
     {
         // ローカルLLMの初期化
-        LLMConfig llmConfig = AppConfigManager.Instance.Config.llm;
-        string systemPromptPath = Path.Combine(Application.streamingAssetsPath, llmConfig.agentSystemPromptFile);
-        string emotionalSystemPromptPath = Path.Combine(Application.streamingAssetsPath, llmConfig.emotionSystemPromptFile);
+        AppConfig config = AppConfigManager.Instance.Config;
+        string systemPromptPath = Path.Combine(Application.streamingAssetsPath, config.characterLlm.systemPromptFile);
+        string emotionalSystemPromptPath = Path.Combine(Application.streamingAssetsPath, config.emotionLlm.systemPromptFile);
         string systemPrompt = SafeFileReader.ReadOrCreateTextFile(systemPromptPath, Encoding.UTF8, "あなたは優秀なAIアシスタントです。");
         string emotionalSystemprompt = SafeFileReader.ReadOrCreateTextFile(emotionalSystemPromptPath, Encoding.UTF8, "あなたは優秀な感情判定アシスタントです。あなたはユーザの発言に応じて、AIの感情を推定します。");
         // 実LLMキャラクターのセットアップ
-        llmCharacter.SetPrompt(systemPrompt);
-        llmCharacter.playerName = llmConfig.userName;
-        llmCharacter.AIName = llmConfig.assistantName;
-        llmCharacter.temperature = (float)llmConfig.temperature;
-        llmCharacterEmotional.SetPrompt(emotionalSystemprompt);
-        llmCharacterEmotional.playerName = llmConfig.userName;
-        llmCharacterEmotional.AIName = llmConfig.assistantName;
-        llmCharacter.temperature = (float)llmConfig.emotionalTemperature;
-        llm.maxContextLength = llmConfig.maxContextLength;
-        llmEmotional.maxContextLength = llmConfig.llmEmotionMaxContextLength;
+        SetupLLMCharactor(systemPrompt, config.characterLlm, llmCharacter);
+        llm.maxContextLength = config.characterLlm.maxContextLength;
+        // 感情推測LLMのセットアップ
+        SetupLLMCharactor(emotionalSystemprompt, config.emotionLlm, llmCharacterEmotional);
+        llmEmotional.maxContextLength = config.emotionLlm.maxContextLength;
         // 待機メッセージを設定する
-        waitMessage = llmConfig.waitMessage;
+        waitMessage = config.waitMessage;
         // ここからLLMのロード処理
         // SetModelメソッドはUnityEditorで実行したとき
         // LLM.csでメインスレッドで動かさないと例外吐くのでその対策する。
@@ -76,15 +68,25 @@ public class ChatManager : MonoBehaviour
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
 #endif
-            llm.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", llmConfig.modelName));
-            llmEmotional.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", llmConfig.llmEmotionModelName));
+            llm.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", config.characterLlm.modelName));
+            llmEmotional.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", config.emotionLlm.modelName));
 #if UNITY_EDITOR
         });
 #endif
         _ =llmCharacterEmotional.Warmup(EmotionAiWarmupCompleted);
         _ = llmCharacter.Warmup(CharacterAiWarmupCompleted);
     }
-    
+
+    private void SetupLLMCharactor(string systemPrompt,LLMConfig config, LLMCharacter charactor)
+    {
+        charactor.SetPrompt(systemPrompt);
+        charactor.playerName = config.userName;
+        charactor.AIName = config.assistantName;
+        charactor.temperature = config.temperature;
+        charactor.topK = config.topK;
+        charactor.topP = config.topP;
+    }
+
 
     enum LoadResources{
         VRM,MainCharacterLLM, EmotionCharacterLLM
@@ -99,8 +101,8 @@ public class ChatManager : MonoBehaviour
                 // 全てのリソースが読み込まれたのでチャットUIを有効にする
                 if (loadResources.Count == 0)
                 {
-                    LLMConfig llmConfig = AppConfigManager.Instance.Config.llm;
-                    chatUI.SetText(llmConfig.welcomeMessage);
+                    AppConfig config = AppConfigManager.Instance.Config;
+                    chatUI.SetText(config.welcomeMessage);
                     chatUI.InputFieldSetEnable(true);
                     chatUI.AddInputFieldEventHandler(OnSubmit);
                     chatUI.ActivateInputField();
