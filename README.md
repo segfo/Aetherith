@@ -2,7 +2,23 @@
 Avatar Engine THE Responsive Interface Tunable Helperの略
 好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。
 たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）
-  
+
+# ビルド方法（Unityでの開き方）
+1. UnityHubをインストールします
+2. UnityHubで`Unity Editor 6000.0.47f1`をインストールします
+3. GitHubからプロジェクトをクローンします
+`git clone https://github.com/segfo/Aetherith`
+4. シーンファイルをダブルクリックします
+`./Aetherith/Assets/Scenes/SampleScene.unity`
+5. ロードされてウィンドウが開いたらいったん閉じます
+6. もう一度シーンファイルをダブルクリックします
+`./Aetherith/Assets/Scenes/SampleScene.unity`
+7. 多分いい感じにGameObjectとかが配置されるはずなのでVRMとLLMを以下のディレクトリ直下に配置します
+VRM `Assets/StreamingAssets/VRM/`
+LLM `Assets/StreamingAssets/LLM/`
+5. UnityEditorのメニューバー > File > Build And Run
+でビルドできます。（初回ビルドはEditor上で実行してから、ログを見て実行時エラーが無いことを確認するとよいでしょう。）
+
 # 実装済みの機能
 - VRM 1.0のみに対応しています。0.x系は使えません。挙動を安定させるために切り捨ててます。
 - ローカルLLMを用いた表情モーフィング及び会話
