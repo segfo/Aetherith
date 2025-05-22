@@ -24,11 +24,18 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private LLM llmEmotional;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
     MainThreadDispatcher dispatcher;
-
+    // 残リソース一覧
+    private Dictionary<LoadResources, string> loadResources;
     // 設定ファイルを読み込んで、LLMCharacterを初期化する。
     // プロンプトの初期化、ユーザ名・AIキャラクタ名の初期化、使用するモデルの初期化などを行う。
     void Awake()
     {
+        loadResources = new Dictionary<LoadResources, string>
+        {
+            { LoadResources.VRM,"VRMモデル"},
+            { LoadResources.MainCharacterLLM, "メインキャラクターAI(Local)" },
+            { LoadResources.EmotionCharacterLLM, "感情・表情推定AI(Local)"},
+        };
         dispatcher = MainThreadDispatcher.Instance;
     }
     async void Start()
@@ -78,58 +85,67 @@ public class ChatManager : MonoBehaviour
         _ = llmCharacter.Warmup(CharacterAiWarmupCompleted);
     }
     
-    // 残リソース一覧
-    static Dictionary<LoadResources, string> loadResources = new Dictionary<LoadResources, string>
-    {
-        { LoadResources.VRM,"VRMモデル"},
-        { LoadResources.MainCharacterLLM, "メインキャラクターAI(Local)" },
-        { LoadResources.EmotionCharacterLLM, "感情・表情推定AI(Local)"},
-    };
+
     enum LoadResources{
         VRM,MainCharacterLLM, EmotionCharacterLLM
     }
     private void LoadedResource(LoadResources loadResource)
     {
-        if (loadResources.ContainsKey(loadResource))
-        {
-            chatUI.AppendTextLine($"SYSTEM：{loadResources[loadResource]}を読み込みました。");
-            loadResources.Remove(loadResource);
-            // 全てのリソースが読み込まれたのでチャットUIを有効にする
-            if (loadResources.Count == 0)
+        try {
+            if (loadResources.ContainsKey(loadResource))
             {
-                LLMConfig llmConfig = AppConfigManager.Instance.Config.llm;
-                chatUI.SetText(llmConfig.welcomeMessage);
-                chatUI.InputFieldSetEnable(true);
-                chatUI.AddInputFieldEventHandler(OnSubmit);
-                chatUI.ActivateInputField();
-                return;
+                chatUI.AppendTextLine($"SYSTEM：{loadResources[loadResource]}を読み込みました。");
+                loadResources.Remove(loadResource);
+                // 全てのリソースが読み込まれたのでチャットUIを有効にする
+                if (loadResources.Count == 0)
+                {
+                    LLMConfig llmConfig = AppConfigManager.Instance.Config.llm;
+                    chatUI.SetText(llmConfig.welcomeMessage);
+                    chatUI.InputFieldSetEnable(true);
+                    chatUI.AddInputFieldEventHandler(OnSubmit);
+                    chatUI.ActivateInputField();
+                    return;
+                }
+                // 残りのリソースを表示する
+                chatUI.AppendTextLine("SYSTEM：しばらくお待ちください。");
+                chatUI.AppendTextLine("SYSTEM：読み込み中のリソース");
+                string reamining_resource = "";
+                foreach (var resource in loadResources)
+                {
+                    reamining_resource += " - "+resource.Value+"\n";
+                }
+                chatUI.AppendTextLine(reamining_resource);
             }
-            // 残りのリソースを表示する
-            chatUI.AppendTextLine("SYSTEM：しばらくお待ちください。");
-            chatUI.AppendTextLine("SYSTEM：読み込み中のリソース");
-            string reamining_resource = "";
-            foreach (var resource in loadResources)
+            else
             {
-                reamining_resource += " - "+resource.Value+"\n";
+                Debug.LogError("ChatManager: loadedResource - " + loadResource.ToString() + " is not found.");
             }
-            chatUI.AppendTextLine(reamining_resource);
         }
-        else
+        catch (Exception e)
         {
-            Debug.LogError("ChatManager: loadedResource - " + loadResource.ToString() + " is not found.");
+            Debug.LogError("ChatManager-Exception: " + e.Message);
         }
     }
     private void CharacterAiWarmupCompleted()
     {
-        LoadedResource(LoadResources.MainCharacterLLM);
+        MainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            LoadedResource(LoadResources.MainCharacterLLM);
+        });
     }
     private void EmotionAiWarmupCompleted()
     {
-        LoadedResource(LoadResources.EmotionCharacterLLM);  
+        MainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            LoadedResource(LoadResources.EmotionCharacterLLM);
+        });
     }
     public void VrmLoadCompleted()
     {
-        LoadedResource(LoadResources.VRM);
+        MainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            LoadedResource(LoadResources.VRM);
+        });
     }
     public void AppendTextLine(string msg)
     {
