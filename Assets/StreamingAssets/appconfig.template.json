@@ -1,24 +1,33 @@
 ﻿{
-    "llm": {
+    "characterLlm": {
         "useDify": false,
         "difyApiUrl": "",
-        "modelName": "gemma-3.gguf",
-        "llmEmotionModelName": "gemma-3.gguf",
+        "modelName": "gemma3.gguf",
         "difyApiKey": "",
-        "agentSystemPromptFile": "systemprompt.txt",
-        "emotionSystemPromptFile": "emotion_systemprompt.txt",
+        "systemPromptFile": "systemprompt.txt",
         "userName": "User",
         "assistantName": "Assistant",
         "maxContextLength": 8192,
-        "llmEmotionMaxContextLength": 8192,
-        "welcomeMessage": "何でも聞いてくださいね！",
-        "waitMessage": "\"（考え中です…）\"",
         "temperature": 0.7,
-        "emotionalTemperature": 0.0
+        "topP": 0.95,
+        "topK": 40
+    },
+    "emotionLlm": {
+        "useDify": false,
+        "difyApiUrl": "",
+        "modelName": "gemma3.gguf",
+        "difyApiKey": "",
+        "systemPromptFile": "emotion_systemprompt.txt",
+        "userName": "User",
+        "assistantName": "Assistant",
+        "maxContextLength": 8192,
+        "temperature": 0.0,
+        "topP": 0.95,
+        "topK": 40
     },
     "vrm": {
         "ToneMappingMode": 0,
-        "LightIntensity": 1.0,
+        "LightIntensity": 1,
         "LightColorRGBA": "#FFF0E0FF",
         "ShadowStrength": 0.3,
         "Scale": 1.0,
@@ -28,7 +37,9 @@
         "FileName": "Default.vrm",
         "springBone": {
             "ExternalForceMultiplier": 0.01,
-            "MovementThreshold": 0.8
+            "MovementThreshold": 0.5
         }
-    }
+    },
+    "welcomeMessage": "何でも聞いてくださいね！",
+    "waitMessage": "\"（考え中です…）\""
 }
