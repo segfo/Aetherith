@@ -17,4 +17,10 @@ public class LLMConfig
     public float temperature = 0.7f;
     public float topP = 0.95f;
     public int topK = 40;
+    public LLMConfig() { }
+    public LLMConfig(string promptFileName,float temperature)
+    {
+        this.systemPromptFile = promptFileName;
+        this.temperature = temperature;
+    }
 }
