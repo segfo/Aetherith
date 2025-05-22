@@ -1,22 +1,22 @@
 # Aetherith
-Avatar Engine THE Responsive Interface Tunable Helperの略
-好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。
-たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）
+Avatar Engine THE Responsive Interface Tunable Helperの略。  
+好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。  
+たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）  
 
 # ビルド方法（Unityでの開き方）
 1. UnityHubをインストールします
 2. UnityHubで`Unity Editor 6000.0.47f1`をインストールします
-3. GitHubからプロジェクトをクローンします
+3. GitHubからプロジェクトをクローンします  
 `git clone https://github.com/segfo/Aetherith`
-4. シーンファイルをダブルクリックします
+4. シーンファイルをダブルクリックします  
 `./Aetherith/Assets/Scenes/SampleScene.unity`
 5. ロードされてウィンドウが開いたらいったん閉じます
-6. もう一度シーンファイルをダブルクリックします
+6. もう一度シーンファイルをダブルクリックします  
 `./Aetherith/Assets/Scenes/SampleScene.unity`
-7. 多分いい感じにGameObjectとかが配置されるはずなのでVRMとLLMを以下のディレクトリ直下に配置します
-VRM `Assets/StreamingAssets/VRM/`
-LLM `Assets/StreamingAssets/LLM/`
-5. UnityEditorのメニューバー > File > Build And Run
+7. 多分いい感じにGameObjectとかが配置されるはずなのでVRMとLLMを以下のディレクトリ直下に配置します  
+VRM `Assets/StreamingAssets/VRM/`  
+LLM `Assets/StreamingAssets/LLM/`  
+5. UnityEditorのメニューバー > File > Build And Run  
 でビルドできます。（初回ビルドはEditor上で実行してから、ログを見て実行時エラーが無いことを確認するとよいでしょう。）
 
 # 実装済みの機能
@@ -69,7 +69,7 @@ LLM `Assets/StreamingAssets/LLM/`
 表情推定用のLLMはJSON形式で返却してもらう必要があるので、LLMに対して正確なJSONを返却してもらう必要があります。
 以下のような制約を付けたプロンプトを書く形です。
 ただし、LLMのモデルによっては正確なJSONを返さないこともあるので以下の例を参考にチューニングしてください。
-Gemma-3 12億パラメータ 4bit量子化モデル（gemma-3-4b-it-q4_0.gguf）に対するプロンプトです。
+Gemma-3 120億パラメータ 4bit量子化モデル（gemma-3-4b-it-q4_0.gguf）に対するプロンプトです。
 ```
 # あなたの役割
 あなたは感情推定AIです。
