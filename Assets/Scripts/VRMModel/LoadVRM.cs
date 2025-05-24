@@ -30,7 +30,7 @@ namespace uDesktopMascot
                 return;
             }
 
-            var controller = Resources.Load<RuntimeAnimatorController>("CharacterAnimationController");
+            var controller = Resources.Load<RuntimeAnimatorController>(Path.Combine("Animations", "CharacterAnimationController"));
             if (controller != null)
             {
                 animator.runtimeAnimatorController = controller;

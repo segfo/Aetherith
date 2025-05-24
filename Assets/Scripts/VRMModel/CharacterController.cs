@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UniVRM10;
 using Kirurobo;
+using System.Threading.Tasks;
 
 public class CharacterController : MonoBehaviour
 {
@@ -9,13 +10,16 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private SpringBoneExternalForce springBoneExternalForce;
     [SerializeField] private Vector3 offset = new Vector3(-1.5f, -0.15f, 0f);
     [SerializeField] private ShakeDetector shakeDetector;
+    [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
 
     public Vrm10Instance vrmInstance { get; private set; }
     private BlinkController blinkController;
     private ArmMotionManager armMotionManager;
+    private MainThreadDispatcher mainThreadDispatcher;
 
     private void Start()
     {
+        mainThreadDispatcher = MainThreadDispatcher.Instance;
         offset.x = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX;
         offset.y = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
     }
@@ -44,7 +48,25 @@ public class CharacterController : MonoBehaviour
     // キャラクターが振られたときの処理
     void OnShaken()
     {
+        // 表情を全部戻す
+        ExpressionController.Instance.ResetVrmExpression();
+        // 瞬きを停止して、目を閉じる
+        blinkController?.SetBlinkEnabled(false, 1f);
+
+        float waitTime = shakeDizzyAnimationPlayer.PlayDizzy(vrmInstance.GetComponent<Animator>());
         chatManager.AppendTextLine(AppConfigManager.Instance.Config.shakeMessage);
+        // ゆっくり目を開ける
+        Task.Run(async () =>
+        {
+            await Task.Delay((int)(waitTime * 1000));
+
+            mainThreadDispatcher.Enqueue(() =>
+            {
+                ExpressionController.Instance.StartExpressionFadeout(0.0f,0.15f);
+            });
+            await Task.Delay(1600); // 1.6秒待つ
+            blinkController?.SetBlinkEnabled(true, 0f);
+        });
     }
 
     void SetLayerRecursively(GameObject obj, int layer)
