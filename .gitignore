@@ -87,3 +87,5 @@ crashlytics-build.properties
 # 自動的にダウンロードされるのでこのアセットは取りこまない
 /[Aa]ssets/[Ss]treamingAssets/undreamai-v1.2.5-llamacpp/
 /[Aa]ssets/[Ss]treamingAssets/undreamai-v1.2.5-llamacpp.meta
+Logs/Output.log
+Logs/Output.log.json

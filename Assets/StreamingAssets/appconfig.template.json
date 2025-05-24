@@ -41,5 +41,7 @@
         }
     },
     "welcomeMessage": "何でも聞いてくださいね！",
-    "waitMessage": "\"（考え中です…）\""
+    "waitMessage": "\"（考え中です…）\"",
+    "shakeMessage": "うぅ・・・振らないでください～！",
+    "shakeForceThreshold": 0.15
 }
