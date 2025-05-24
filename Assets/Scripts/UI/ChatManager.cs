@@ -250,14 +250,20 @@ public class ChatManager : MonoBehaviour
 
     public void OnComplete()
     {
-        blinkController.SetBlinkEnabled(true, 0.0f);
         llmCharacter.AddAIMessage(receivedText);
         receivedText = "";
         lipSyncSimulator.LipSyncEnd();
         // 表情を戻す
-        ExpressionController.Instance.StartExpressionFadeout(
-            UnityEngine.Random.Range(1.0f, 2.0f), 
-            UnityEngine.Random.Range(2.5f, 4.0f)
-            );
+        float wait = UnityEngine.Random.Range(1.0f, 2.0f);
+        float fadeoutPlay = UnityEngine.Random.Range(1.5f, 3.0f);
+
+        ExpressionController.Instance.StartExpressionFadeout(wait,fadeoutPlay);
+        Task.Run(async () =>
+        {
+            // 目が開くまで瞬きを待つ
+            await Task.Delay((int)((wait+fadeoutPlay)*1000));
+            blinkController.SetBlinkEnabled(true, 0.0f);
+        });
+        
     }
 }
