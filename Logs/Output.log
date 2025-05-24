@@ -1,4 +1,4 @@
-[2025/05/24 12:51:26.239] INFO | 指定されたモデルパス: VRM\別宮スミレ.vrm
+[2025/05/24 16:46:38.061] INFO | 指定されたモデルパス: VRM\別宮スミレ.vrm
 uDesktopMascot.<LoadModelAsync>d__1:MoveNext() (at Assets\Scripts\VRMModel\LoadVRM.cs:59)
 Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder`1:Start(<LoadModelAsync>d__1&) (at Assets\Plugins\UniTask\Runtime\CompilerServices\AsyncUniTaskMethodBuilder.cs:242)
 uDesktopMascot.LoadVRM:LoadModelAsync(String, CancellationToken)
@@ -6,7 +6,7 @@ uDesktopMascot.LoadVRM:LoadModelAsync(String, CancellationToken)
 System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Start>d__8&)
 VRMLoader:Start()
 
-[2025/05/24 12:51:26.240] INFO | 指定されたモデルファイルをロードします: D:/Users/segfo/Aetherith/Assets/StreamingAssets\VRM\別宮スミレ.vrm
+[2025/05/24 16:46:38.061] INFO | 指定されたモデルファイルをロードします: D:/Users/segfo/Aetherith/Assets/StreamingAssets\VRM\別宮スミレ.vrm
 uDesktopMascot.<LoadModelAsync>d__1:MoveNext() (at Assets\Scripts\VRMModel\LoadVRM.cs:67)
 Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder`1:Start(<LoadModelAsync>d__1&) (at Assets\Plugins\UniTask\Runtime\CompilerServices\AsyncUniTaskMethodBuilder.cs:242)
 uDesktopMascot.LoadVRM:LoadModelAsync(String, CancellationToken)
@@ -14,7 +14,7 @@ uDesktopMascot.LoadVRM:LoadModelAsync(String, CancellationToken)
 System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Start>d__8&)
 VRMLoader:Start()
 
-[2025/05/24 12:52:11.172] INFO | モデルのロードと表示が完了しました: D:/Users/segfo/Aetherith/Assets/StreamingAssets\VRM\別宮スミレ.vrm
+[2025/05/24 16:47:20.303] INFO | モデルのロードと表示が完了しました: D:/Users/segfo/Aetherith/Assets/StreamingAssets\VRM\別宮スミレ.vrm
 uDesktopMascot.<LoadAndDisplayModelFromPath>d__3:MoveNext() (at Assets\Scripts\VRMModel\LoadVRM.cs:146)
 Cysharp.Threading.Tasks.CompilerServices.AsyncUniTask`2:Run() (at Assets\Plugins\UniTask\Runtime\CompilerServices\StateMachineRunner.cs:313)
 System.Threading.Tasks.AwaitTaskContinuation:InvokeAction(Object)
@@ -117,7 +117,7 @@ UniGLTF.<>c__DisplayClass4_0:<NextFrame>b__0() (at Assets\UniGLTF\Runtime\UniGLT
 UniGLTF.TinyManagedTaskScheduler:ManagedUpdate() (at Assets\UniGLTF\Runtime\UniGLTF\IO\AwaitCaller\TinyManagedTaskScheduler.cs:21)
 UniGLTF.UnityLoopTaskScheduler:Update() (at Assets\UniGLTF\Runtime\UniGLTF\IO\AwaitCaller\NextFrameTaskScheduler.cs:50)
 
-[2025/05/24 12:52:11.179] INFO | アニメーションコントローラーを設定しました。
+[2025/05/24 16:47:20.310] INFO | アニメーションコントローラーを設定しました。
 uDesktopMascot.LoadVRM:UpdateAnimationController(Animator) (at Assets\Scripts\VRMModel\LoadVRM.cs:37)
 <Start>d__8:MoveNext() (at Assets\Scripts\VRMModel\VRMLoader.cs:31)
 System.Runtime.CompilerServices.MoveNextRunner:InvokeMoveNext(Object)
