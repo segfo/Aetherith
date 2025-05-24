@@ -10,7 +10,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Vector3 offset = new Vector3(-1.5f, -0.15f, 0f);
 
     public Vrm10Instance vrmInstance { get; private set; }
-    private BlinkControllerVrm10 blinkController;
+    private BlinkController blinkController;
     private ArmMotionManager armMotionManager;
 
     private void Start()
@@ -30,7 +30,7 @@ public class CharacterController : MonoBehaviour
         vrmInstance = model.GetComponent<Vrm10Instance>();
         // モデルが読み込まれたときの処理
         armMotionManager = model.AddComponent<ArmMotionManager>();
-        blinkController = model.AddComponent<BlinkControllerVrm10>();
+        blinkController = model.AddComponent<BlinkController>();
         Debug.Log("ArmMotionManagerをモデルに追加しました。");
         int vrmLayer = LayerMask.NameToLayer("VRM");
         SetLayerRecursively(model, vrmLayer);

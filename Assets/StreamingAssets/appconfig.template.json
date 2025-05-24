@@ -40,6 +40,14 @@
             "MovementThreshold": 0.5
         }
     },
+    "blinkExclusionExpressionTreshold": {
+        "Happy": 0.4,
+        "Sad": 1.0,
+        "Angry": 1.0,
+        "Neutral": 1.0,
+        "Surprise": 1.0,
+        "Relaxed": 1.0
+    },
     "welcomeMessage": "何でも聞いてくださいね！",
     "waitMessage": "\"（考え中です…）\""
 }
