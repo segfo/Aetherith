@@ -1028,6 +1028,8 @@ GameObject:
   - component: {fileID: 824634576}
   - component: {fileID: 824634577}
   - component: {fileID: 824634578}
+  - component: {fileID: 824634579}
+  - component: {fileID: 824634580}
   m_Layer: 0
   m_Name: CharacterController
   m_TagString: Untagged
@@ -1052,6 +1054,7 @@ MonoBehaviour:
   springBoneExternalForce: {fileID: 824634577}
   offset: {x: -1.5, y: -0.15, z: 0}
   shakeDetector: {fileID: 824634578}
+  shakeDizzyAnimationPlayer: {fileID: 824634579}
 --- !u!4 &824634574
 Transform:
   m_ObjectHideFlags: 0
@@ -1124,6 +1127,31 @@ MonoBehaviour:
   angleThreshold: 120
   directionChangeCountThreshold: 3
   timeWindow: 0.5
+--- !u!114 &824634579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824634572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb106a164e545ff459f49f204dfd10f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeDuration: 2
+--- !u!114 &824634580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824634572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c32edc1bcf22634989df689206a1b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
