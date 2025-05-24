@@ -8,6 +8,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private ChatManager chatManager;
     [SerializeField] private SpringBoneExternalForce springBoneExternalForce;
     [SerializeField] private Vector3 offset = new Vector3(-1.5f, -0.15f, 0f);
+    [SerializeField] private ShakeDetector shakeDetector;
 
     public Vrm10Instance vrmInstance { get; private set; }
     private BlinkController blinkController;
@@ -37,6 +38,13 @@ public class CharacterController : MonoBehaviour
         AdjustCameraToVrm(model);
         chatManager.VrmLoadCompleted();
         springBoneExternalForce.Initialize();
+        shakeDetector.OnShaken += OnShaken;
+    }
+
+    // キャラクターが振られたときの処理
+    void OnShaken()
+    {
+        chatManager.AppendTextLine(AppConfigManager.Instance.Config.shakeMessage);
     }
 
     void SetLayerRecursively(GameObject obj, int layer)

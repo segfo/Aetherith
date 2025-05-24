@@ -1027,6 +1027,7 @@ GameObject:
   - component: {fileID: 824634575}
   - component: {fileID: 824634576}
   - component: {fileID: 824634577}
+  - component: {fileID: 824634578}
   m_Layer: 0
   m_Name: CharacterController
   m_TagString: Untagged
@@ -1050,6 +1051,7 @@ MonoBehaviour:
   chatManager: {fileID: 1261813680}
   springBoneExternalForce: {fileID: 824634577}
   offset: {x: -1.5, y: -0.15, z: 0}
+  shakeDetector: {fileID: 824634578}
 --- !u!4 &824634574
 Transform:
   m_ObjectHideFlags: 0
@@ -1105,6 +1107,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterController: {fileID: 824634573}
+  shakeDetector: {fileID: 824634578}
+  shakeForceThreshold: 0.15
+--- !u!114 &824634578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824634572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f13cb4c400aeb794bb5bd91a7e6f5ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angleThreshold: 120
+  directionChangeCountThreshold: 3
+  timeWindow: 0.5
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2442,37 +2461,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
---- !u!1 &1964602097
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1964602098}
-  m_Layer: 0
-  m_Name: UniGLTF UnityThreadScheduler
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1964602098
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1964602097}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2035557271
 GameObject:
   m_ObjectHideFlags: 0
@@ -2956,4 +2944,3 @@ SceneRoots:
   - {fileID: 1694833597}
   - {fileID: 1156286681}
   - {fileID: 975395427}
-  - {fileID: 1964602098}
