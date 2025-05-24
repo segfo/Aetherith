@@ -6,4 +6,6 @@ public class AppConfig
     public VRMConfig vrm = new VRMConfig();
     public string welcomeMessage = "何でも聞いてくださいね！";
     public string waitMessage = "\"（考え中です…）\"";
+    public string shakeMessage = "うぅ・・・振らないでください～！";
+    public float shakeForceThreshold = 0.15f; // シェイクの閾値
 }
