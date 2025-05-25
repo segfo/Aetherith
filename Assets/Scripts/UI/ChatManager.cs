@@ -7,8 +7,7 @@ using UniVRM10;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using System.Collections;
-
+using System.Text.RegularExpressions;
 public class ChatManager : MonoBehaviour
 {
     [SerializeField] private ChatUIController chatUI;
@@ -194,8 +193,12 @@ public class ChatManager : MonoBehaviour
             // 待ちモーションを再生する
 
             chatUI.ClearInputField();
-            expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(await llmCharacterEmotional.Chat(userInput));
-
+            string emotionText = await llmCharacterEmotional.Chat(userInput);
+            string extractString = Regex.Match(emotionText.Replace("\r","").Replace("\n",""), @"```json(.+)```").Groups[1].Value;
+            if (extractString == "") { extractString = emotionText; }
+            Debug.Log("Emotion JSON: " + emotionText.Replace("\r", "").Replace("\n", ""));
+            Debug.Log("Extracted Emotion JSON: "+extractString);
+            expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(extractString);
             // 感情を取得し表情に反映する。
             // VRMの表情を変更する処理を追加する。
             // LLMからは {"Happy": "0.6", "Sad": "0.2", ...} のようなJSONが返ってくる。

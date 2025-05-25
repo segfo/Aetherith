@@ -11,6 +11,7 @@ public class ChatUIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tmpText;
     [SerializeField] private InputField inputField;
     [SerializeField] private GameObject inputWindow;
+    [SerializeField] private ScrollRect responseArea;
     bool isMinimized = false;
     bool ime = false;
     Keyboard _keyboard;
@@ -115,14 +116,20 @@ public class ChatUIController : MonoBehaviour
     public void SetText(string text)
     {
         tmpText.text = text;
+        Canvas.ForceUpdateCanvases(); // レイアウト更新
+        responseArea.verticalNormalizedPosition = 0f; // スクロールを一番下に移動
     }
     public void AppendText(string text)
     {
         tmpText.text += text;
+        Canvas.ForceUpdateCanvases(); // レイアウト更新
+        responseArea.verticalNormalizedPosition = 0f; // スクロールを一番下に移動        
     }
     public void AppendTextLine(string text)
     {
         tmpText.text += text + "\n";
+        Canvas.ForceUpdateCanvases(); // レイアウト更新
+        responseArea.verticalNormalizedPosition = 0f; // スクロールを一番下に移動
     }
     public string GetInputField()
     {
