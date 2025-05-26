@@ -13,12 +13,13 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private ChatUIController chatUI;
     [SerializeField] private string logFilePath = "chat_log.txt";
     [SerializeField] private string waitMessage = "\"（考え中です…）\"";
-    [SerializeField] private LLMCharacter llmCharacter;
-    [SerializeField] private LLMCharacter llmCharacterEmotional;
     [SerializeField] private CharacterController vrmCharacter;
-    [SerializeField] private LLM llm;
-    [SerializeField] private LLM llmEmotional;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
+
+    private LLMCharacter llmCharacter;
+    private LLMCharacter llmCharacterEmotional;
+    private LLM llm;
+    private LLM llmEmotional;
     public bool Initialized { get; private set; } = false;
     private MainThreadDispatcher dispatcher;
     private BlinkController blinkController;
@@ -41,11 +42,32 @@ public class ChatManager : MonoBehaviour
         chatUI.InputFieldSetEnable(false);
         //chatUI.AppendTextLine("SYSTEM: ローカルLLMをセットアップしています...");
         chatUI.StartTypingAppend("SYSTEM: ローカルLLMをセットアップしています...\n");
-        Debug.Log("ChatManager - LLMの初期化を開始します。");
+        // ゲームオブジェクトを無効化して、追加したコンポーネントの初期化を遅らせる。
+        SetupLLM();
         await Task.Run(() => { LoadLLM(); });
     }
-    void LoadLLM()
+    void SetupLLM()
     {
+        GameObject characterLLM = new GameObject("CharacterLLM");
+        GameObject emotionalLLM = new GameObject("EmotionalLLM");
+        characterLLM.SetActive(false);
+        emotionalLLM.SetActive(false);
+
+        // 必要なコンポーネントを追加（すでにあるなら追加しない）
+        if (!characterLLM.TryGetComponent<LLM>(out llm))
+            llm = characterLLM.AddComponent<LLM>();
+
+        if (!characterLLM.TryGetComponent<LLMCharacter>(out llmCharacter))
+            llmCharacter = characterLLM.AddComponent<LLMCharacter>();
+
+        if (!emotionalLLM.TryGetComponent<LLM>(out llmEmotional))
+            llmEmotional = emotionalLLM.AddComponent<LLM>();
+
+        if (!emotionalLLM.TryGetComponent<LLMCharacter>(out llmCharacterEmotional))
+            llmCharacterEmotional = emotionalLLM.AddComponent<LLMCharacter>();
+
+
+
         // ローカルLLMの初期化
         AppConfig config = AppConfigManager.Instance.Config;
         string systemPromptPath = Path.Combine(Application.streamingAssetsPath, config.characterLlm.systemPromptFile);
@@ -53,11 +75,15 @@ public class ChatManager : MonoBehaviour
         string systemPrompt = SafeFileReader.ReadOrCreateTextFile(systemPromptPath, Encoding.UTF8, "あなたは優秀なAIアシスタントです。");
         string emotionalSystemprompt = SafeFileReader.ReadOrCreateTextFile(emotionalSystemPromptPath, Encoding.UTF8, "あなたは優秀な感情判定アシスタントです。あなたはユーザの発言に応じて、AIの感情を推定します。");
         // 実LLMキャラクターのセットアップ
+        string characterGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.characterLlm.modelName);
         SetupLLMCharactor(systemPrompt, config.characterLlm, llmCharacter);
         llm.maxContextLength = config.characterLlm.maxContextLength;
+        llm.numGPULayers = config.characterLlm.numGPULayers;
         // 感情推測LLMのセットアップ
+        string emotionGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.emotionLlm.modelName);
         SetupLLMCharactor(emotionalSystemprompt, config.emotionLlm, llmCharacterEmotional);
         llmEmotional.maxContextLength = config.emotionLlm.maxContextLength;
+        llmEmotional.numGPULayers = config.emotionLlm.numGPULayers;
         // 待機メッセージを設定する
         waitMessage = config.waitMessage;
         // ここからLLMのロード処理
@@ -65,16 +91,14 @@ public class ChatManager : MonoBehaviour
         // LLM.csでメインスレッドで動かさないと例外吐くのでその対策する。
         // UnityEditorで動かさなければLLM.csではメインスレッドで動かすべき関数は呼ばれないので
         // 完全に別スレッドで実行して問題ない。
-#if UNITY_EDITOR
-        dispatcher.Enqueue(() =>
-        {
-#endif
-            llm.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", config.characterLlm.modelName));
-            llmEmotional.SetModel(Path.Combine(Application.streamingAssetsPath, "LLM", config.emotionLlm.modelName));
-#if UNITY_EDITOR
-        });
-#endif
-        _ =llmCharacterEmotional.Warmup(EmotionAiWarmupCompleted);
+        llm.SetModel(characterGgufModelPath);
+        llmEmotional.SetModel(emotionGgufModelPath);
+        emotionalLLM.SetActive(true);
+        characterLLM.SetActive(true);
+    }
+    void LoadLLM()
+    {
+        _ = llmCharacterEmotional.Warmup(EmotionAiWarmupCompleted);
         _ = llmCharacter.Warmup(CharacterAiWarmupCompleted);
     }
 
@@ -211,7 +235,23 @@ public class ChatManager : MonoBehaviour
             if (extractString == "") { extractString = emotionText; }
             Debug.Log("Emotion JSON: " + emotionText.Replace("\r", "").Replace("\n", ""));
             Debug.Log("Extracted Emotion JSON: "+extractString);
-            expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(extractString);
+            try
+            {
+                expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(extractString);
+            }
+            catch (JsonException e)
+            {
+                Debug.LogError("JSON Parse Error: " + e.Message);
+                expressionList = new Dictionary<string, float>
+                {
+                    { "Happy", 0.0f },
+                    { "Sad", 0.0f },
+                    { "Angry", 0.0f },
+                    { "Surprised", 0.0f },
+                    { "Relaxed", 0.0f },
+                    { "Neutral", 0.0f }
+                };
+            }
             // 感情を取得し表情に反映する。
             // VRMの表情を変更する処理を追加する。
             // LLMからは {"Happy": "0.6", "Sad": "0.2", ...} のようなJSONが返ってくる。
