@@ -91,3 +91,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/undreamai-v1.2.5-llamacpp.meta
 Logs/Output.log
 Logs/Output.log.json
+Assets/StreamingAssets/LLMManager.json
+Assets/StreamingAssets/LLMManager.json.meta
+Assets/AddressableAssetsData/link.xml
+Assets/AddressableAssetsData/link.xml.meta

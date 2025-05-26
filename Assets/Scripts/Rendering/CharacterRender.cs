@@ -15,21 +15,24 @@ public class CharacterRender : MonoBehaviour
     private void DirectionalLight()
     {
         // ライトの色
-        directionalLight.color = ParseHexColor(AppConfigManager.Instance.Config.vrm.LightColorRGBA);
+        directionalLight.color = ParseHexColor(
+            AppConfigManager.Instance.Config.vrm.LightColorRGBA,
+            AppConfigManager.FallbackInstance.Config.vrm.LightColorRGBA
+        );
         // ライトの強さ
         directionalLight.intensity = AppConfigManager.Instance.Config.vrm.LightIntensity;
         // 影の強さ
         directionalLight.shadowStrength = AppConfigManager.Instance.Config.vrm.ShadowStrength;
     }
     
-    public static Color ParseHexColor(string hex)
+    public static Color ParseHexColor(string hex,string fallback)
     {
-        if (hex.StartsWith("#"))
-            hex = hex.Substring(1);
+        if (hex.Length != 8){
+            hex = fallback;
+        }
 
-        if (hex.Length != 8)
-        {
-            throw new System.ArgumentException("16進カラー表記は 8 文字で記載してください: RRGGBBAA");
+        if (hex.StartsWith("#")) { 
+            hex = hex.Substring(1);
         }
 
         byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);

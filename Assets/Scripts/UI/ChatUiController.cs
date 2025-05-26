@@ -21,6 +21,16 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 
     private void Awake()
     {
+        //responseArea.GetComponent<Image>().color;
+        // inputFieldの色を表示する
+        responseArea.GetComponent<Image>().color = CharacterRender.ParseHexColor(
+            AppConfigManager.Instance.Config.chatWindowBgRGBA,
+            AppConfigManager.FallbackInstance.Config.chatWindowBgRGBA
+        );
+        inputField.GetComponent<Image>().color = CharacterRender.ParseHexColor(
+            AppConfigManager.Instance.Config.chatInputWindowBgRGBA,
+            AppConfigManager.FallbackInstance.Config.chatInputWindowBgRGBA
+        );
         if (typewriterEffect == null)
         {
             Debug.LogError("TypewriterEffect is not assigned in ChatUIController.");

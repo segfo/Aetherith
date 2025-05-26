@@ -48,6 +48,8 @@
         "Surprise": 1.0,
         "Relaxed": 1.0
     },
+    "chatWindowBgRGBA": "#FFFFFFAA",
+    "chatInputWindowBgRGBA":"#FFFFFFFF",
     "welcomeMessage": "何でも聞いてくださいね！",
     "waitMessage": "\"（考え中です…）\"",
     "shakeMessage": "うぅ～・・・振らないでください～！",

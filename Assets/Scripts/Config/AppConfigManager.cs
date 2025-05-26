@@ -7,6 +7,8 @@ public class AppConfigManager
 {
     private static AppConfigManager _instance;
     public static AppConfigManager Instance => _instance ??= new AppConfigManager();
+    // フォールバック先のデフォルト設定
+    public static AppConfigManager FallbackInstance => new AppConfigManager();
 
     private readonly string configPath;
     public AppConfig Config { get; private set; }
