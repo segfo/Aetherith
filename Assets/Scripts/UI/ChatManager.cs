@@ -20,8 +20,10 @@ public class ChatManager : MonoBehaviour
     private LLMCharacter llmCharacterEmotional;
     private LLM llm;
     private LLM llmEmotional;
+    private GameObject characterLLM = null;
+    private GameObject emotionalLLM = null;
     public bool Initialized { get; private set; } = false;
-    private MainThreadDispatcher dispatcher;
+    private MainThreadDispatcher mainThreadDispatcher;
     private BlinkController blinkController;
     // 残リソース一覧
     private Dictionary<LoadResources, string> loadResources;
@@ -29,7 +31,7 @@ public class ChatManager : MonoBehaviour
     // プロンプトの初期化、ユーザ名・AIキャラクタ名の初期化、使用するモデルの初期化などを行う。
     void Awake()
     {
-        dispatcher = MainThreadDispatcher.Instance;
+        mainThreadDispatcher = MainThreadDispatcher.Instance;
         loadResources = new Dictionary<LoadResources, string>
         {
             { LoadResources.VRM,"VRMモデル"},
@@ -43,16 +45,11 @@ public class ChatManager : MonoBehaviour
         //chatUI.AppendTextLine("SYSTEM: ローカルLLMをセットアップしています...");
         chatUI.StartTypingAppend("SYSTEM: ローカルLLMをセットアップしています...\n");
         // ゲームオブジェクトを無効化して、追加したコンポーネントの初期化を遅らせる。
-        SetupLLM();
-        await Task.Run(() => { LoadLLM(); });
-    }
-    void SetupLLM()
-    {
-        GameObject characterLLM = new GameObject("CharacterLLM");
-        GameObject emotionalLLM = new GameObject("EmotionalLLM");
+
+        characterLLM = new GameObject("CharacterLLM");
+        emotionalLLM = new GameObject("EmotionalLLM");
         characterLLM.SetActive(false);
         emotionalLLM.SetActive(false);
-
         // 必要なコンポーネントを追加（すでにあるなら追加しない）
         if (!characterLLM.TryGetComponent<LLM>(out llm))
             llm = characterLLM.AddComponent<LLM>();
@@ -65,9 +62,20 @@ public class ChatManager : MonoBehaviour
 
         if (!emotionalLLM.TryGetComponent<LLMCharacter>(out llmCharacterEmotional))
             llmCharacterEmotional = emotionalLLM.AddComponent<LLMCharacter>();
-
-
-
+        await Task.Run(() => {
+            SetupLLM();
+        });
+    }
+    private async Task activateGameObject()
+    {
+        emotionalLLM.SetActive(true);
+        characterLLM.SetActive(true);
+        await Task.Run(() => {
+            LoadLLM();
+        });
+    }
+    void SetupLLM()
+    {
         // ローカルLLMの初期化
         AppConfig config = AppConfigManager.Instance.Config;
         string systemPromptPath = Path.Combine(Application.streamingAssetsPath, config.characterLlm.systemPromptFile);
@@ -91,10 +99,18 @@ public class ChatManager : MonoBehaviour
         // LLM.csでメインスレッドで動かさないと例外吐くのでその対策する。
         // UnityEditorで動かさなければLLM.csではメインスレッドで動かすべき関数は呼ばれないので
         // 完全に別スレッドで実行して問題ない。
-        llm.SetModel(characterGgufModelPath);
-        llmEmotional.SetModel(emotionGgufModelPath);
-        emotionalLLM.SetActive(true);
-        characterLLM.SetActive(true);
+#if UNITY_EDITOR
+        mainThreadDispatcher.Enqueue(() => {
+#endif
+            llm.SetModel(characterGgufModelPath);
+            llmEmotional.SetModel(emotionGgufModelPath);
+#if UNITY_EDITOR
+        });
+#endif
+        mainThreadDispatcher.Enqueue(async () =>
+        {
+            await activateGameObject();
+        });
     }
     void LoadLLM()
     {
@@ -159,14 +175,14 @@ public class ChatManager : MonoBehaviour
     }
     private void CharacterAiWarmupCompleted()
     {
-        dispatcher.Enqueue(() =>
+        mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.MainCharacterLLM);
         });
     }
     private void EmotionAiWarmupCompleted()
     {
-        dispatcher.Enqueue(() =>
+        mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.EmotionCharacterLLM);
         });
@@ -175,7 +191,7 @@ public class ChatManager : MonoBehaviour
     {
         // VRMモデルのロードが完了しので、BlinkControllerを取得しておく。
         blinkController = vrmCharacter.vrmInstance.GetComponent<BlinkController>();
-        dispatcher.Enqueue(() =>
+        mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.VRM);
         });
