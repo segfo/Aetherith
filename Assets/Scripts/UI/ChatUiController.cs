@@ -1,10 +1,11 @@
-﻿using TMPro;
+﻿using System.Threading.Tasks;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class ChatUIController : MonoBehaviour
+public class ChatUIController : MonoBehaviour,ITextWriterTarget
 {
     [SerializeField] private CharacterController characterController;
     [SerializeField] private GameObject chatWindow;
@@ -12,12 +13,22 @@ public class ChatUIController : MonoBehaviour
     [SerializeField] private InputField inputField;
     [SerializeField] private GameObject inputWindow;
     [SerializeField] private ScrollRect responseArea;
+    [SerializeField] private TypewriterEffect typewriterEffect;
+
     bool isMinimized = false;
     bool ime = false;
     Keyboard _keyboard;
 
     private void Awake()
     {
+        if (typewriterEffect == null)
+        {
+            Debug.LogError("TypewriterEffect is not assigned in ChatUIController.");
+        }
+        else
+        {
+            typewriterEffect.Init(this);
+        }
         Input.imeCompositionMode = IMECompositionMode.On;
         _keyboard = Keyboard.current;
         _keyboard.SetIMEEnabled(true);
@@ -113,6 +124,7 @@ public class ChatUIController : MonoBehaviour
     {
         chatWindow.SetActive(en);
     }
+
     public void SetText(string text)
     {
         tmpText.text = text;
@@ -148,5 +160,19 @@ public class ChatUIController : MonoBehaviour
     {
         onInputTextSubmit = onSubmit;
 
+    }
+    public void StartTyping(string text)
+    {
+        typewriterEffect?.StartTyping(text);
+    }
+
+    public void StartTypingAppend(string text)
+    {
+        typewriterEffect?.StartTypingAppend(text);
+    }
+
+    public void StopTyping()
+    {
+        typewriterEffect?.StopTyping();
     }
 }

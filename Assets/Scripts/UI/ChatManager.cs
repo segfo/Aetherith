@@ -19,6 +19,7 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private LLM llm;
     [SerializeField] private LLM llmEmotional;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
+    public bool Initialized { get; private set; } = false;
     private MainThreadDispatcher dispatcher;
     private BlinkController blinkController;
     // 残リソース一覧
@@ -38,8 +39,8 @@ public class ChatManager : MonoBehaviour
     async void Start()
     {
         chatUI.InputFieldSetEnable(false);
-        await Task.Delay(2000);
-        chatUI.AppendTextLine("SYSTEM - LLM Loader: ローカルLLMをセットアップしています...");
+        //chatUI.AppendTextLine("SYSTEM: ローカルLLMをセットアップしています...");
+        chatUI.StartTypingAppend("SYSTEM: ローカルLLMをセットアップしています...\n");
         Debug.Log("ChatManager - LLMの初期化を開始します。");
         await Task.Run(() => { LoadLLM(); });
     }
@@ -87,7 +88,6 @@ public class ChatManager : MonoBehaviour
         charactor.topP = config.topP;
     }
 
-
     enum LoadResources{
         VRM,MainCharacterLLM, EmotionCharacterLLM
     }
@@ -96,27 +96,32 @@ public class ChatManager : MonoBehaviour
         try {
             if (loadResources.ContainsKey(loadResource))
             {
-                chatUI.AppendTextLine($"SYSTEM：{loadResources[loadResource]}を読み込みました。");
+                //chatUI.AppendTextLine($"SYSTEM：{loadResources[loadResource]}を読み込みました。");
+                chatUI.StartTypingAppend($"SYSTEM：{loadResources[loadResource]}を読み込みました。\n");
                 loadResources.Remove(loadResource);
                 // 全てのリソースが読み込まれたのでチャットUIを有効にする
                 if (loadResources.Count == 0)
                 {
                     AppConfig config = AppConfigManager.Instance.Config;
-                    chatUI.SetText(config.welcomeMessage);
+                    chatUI.StartTyping(config.welcomeMessage);
                     chatUI.InputFieldSetEnable(true);
                     chatUI.AddInputFieldEventHandler(OnSubmit);
                     chatUI.ActivateInputField();
+                    Initialized = true;
                     return;
                 }
                 // 残りのリソースを表示する
-                chatUI.AppendTextLine("SYSTEM：しばらくお待ちください。");
-                chatUI.AppendTextLine("SYSTEM：読み込み中のリソース");
+                //chatUI.AppendTextLine("SYSTEM：しばらくお待ちください。");
+                //chatUI.AppendTextLine("SYSTEM：読み込み中のリソース");
+                chatUI.StartTypingAppend("SYSTEM：しばらくお待ちください。\n");
+                chatUI.StartTypingAppend("SYSTEM：読み込み中のリソース\n");
                 string reamining_resource = "";
                 foreach (var resource in loadResources)
                 {
                     reamining_resource += " - "+resource.Value+"\n";
                 }
-                chatUI.AppendTextLine(reamining_resource);
+                //chatUI.AppendTextLine(reamining_resource);
+                 chatUI.StartTypingAppend(reamining_resource);
             }
             else
             {
@@ -155,6 +160,14 @@ public class ChatManager : MonoBehaviour
     {
         chatUI.AppendTextLine(msg);
     }
+    public void TypingAppendText(string msg)
+    {
+        chatUI.StartTypingAppend(msg);
+    }
+    public void TypingText(string msg)
+    {
+        chatUI.StartTyping(msg);
+    }
 
     private void SetVrmExpression(Dictionary<string, float> expressionList)
     {
@@ -189,7 +202,7 @@ public class ChatManager : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(userInput))
         {
             // ローカルLLMを呼び出しているのでリモートLLMも呼び出せるようにロジックを変更する
-            chatUI.SetText(waitMessage);
+            chatUI.StartTyping(waitMessage);
             // 待ちモーションを再生する
 
             chatUI.ClearInputField();

@@ -2,6 +2,7 @@
 using UniVRM10;
 using Kirurobo;
 using System.Threading.Tasks;
+using UnityEngine.Localization.Settings;
 
 public class CharacterController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Vector3 offset = new Vector3(-1.5f, -0.15f, 0f);
     [SerializeField] private ShakeDetector shakeDetector;
     [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
+    [SerializeField] private LipSyncSimulator lipSyncSimulator;
 
     public Vrm10Instance vrmInstance { get; private set; }
     private BlinkController blinkController;
@@ -26,7 +28,7 @@ public class CharacterController : MonoBehaviour
     private void Awake()
     {
         vrmLoader.OnVrmLoaded += OnVrmLoaded;
-        chatManager.AppendTextLine("SYSTEM - VRM Loader: VRMモデルを読み込んでいます...");
+        chatManager.TypingAppendText("SYSTEM: VRMモデルを読み込んでいます...\n");
     }
 
     private void OnVrmLoaded(GameObject model)
@@ -54,7 +56,19 @@ public class CharacterController : MonoBehaviour
         blinkController?.SetBlinkEnabled(false, 1f);
 
         float waitTime = shakeDizzyAnimationPlayer.PlayDizzy(vrmInstance.GetComponent<Animator>());
-        chatManager.AppendTextLine(AppConfigManager.Instance.Config.shakeMessage);
+        // 初期化が済んでいなければ追記モードで書く
+        if (chatManager.Initialized)
+        {
+            chatManager.TypingText(AppConfigManager.Instance.Config.shakeMessage + "\n");
+        } else { 
+            chatManager.TypingAppendText(AppConfigManager.Instance.Config.shakeMessage + "\n"); 
+        }
+        mainThreadDispatcher.Enqueue(() =>
+        {
+            lipSyncSimulator.LipSyncStart();
+            lipSyncSimulator.SpeakText(AppConfigManager.Instance.Config.shakeMessage);
+            lipSyncSimulator.LipSyncEnd();
+        });
         // ゆっくり目を開ける
         Task.Run(async () =>
         {
