@@ -22,6 +22,7 @@ systemprompt.txt
 appconfig.json.meta
 emotion_systemprompt.txt.meta
 systemprompt.txt.meta
+!/Assets/StreamingAssets/VRM/Default.vrm
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
