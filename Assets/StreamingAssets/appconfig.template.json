@@ -27,7 +27,7 @@
     },
     "vrm": {
         "ToneMappingMode": 0,
-        "LightIntensity": 1,
+        "LightIntensity": 1.0,
         "LightColorRGBA": "#FFF0E0FF",
         "ShadowStrength": 0.3,
         "Scale": 1.0,
@@ -38,15 +38,16 @@
         "springBone": {
             "ExternalForceMultiplier": 0.01,
             "MovementThreshold": 0.5
-        }
-    },
-    "blinkExclusionExpressionTreshold": {
-        "Happy": 0.4,
-        "Sad": 1.0,
-        "Angry": 1.0,
-        "Neutral": 1.0,
-        "Surprise": 1.0,
-        "Relaxed": 1.0
+        },
+        "blinkExclusionExpressionTreshold": {
+            "Happy": 1.0,
+            "Sad": 1.0,
+            "Angry": 1.0,
+            "Neutral": 1.0,
+            "Surprise": 1.0,
+            "Relaxed": 1.0
+        },
+        "blinkDisable": false
     },
     "chatWindowBgRGBA": "#FFFFFFAA",
     "chatInputWindowBgRGBA":"#FFFFFFFF",

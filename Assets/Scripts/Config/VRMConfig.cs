@@ -11,13 +11,16 @@ public class VRMConfig
     public bool BackgroundWindowTransparent = true; // 背景ウィンドウを透明にする
     public string FileName = "Default.vrm"; // VRMファイル名
     public SpringBone springBone = new SpringBone(); // SpringBone = 揺れ物の設定
-    public BlinkExclusionExpressionTreshold blinkExclusionExpressionTreshold = new BlinkExclusionExpressionTreshold(); // 瞬きを除外する表情のしきい値
+    // 瞬きを除外する表情のしきい値・blinkDisable = trueの時は許可する表情とする。
+    public BlinkExclusionExpressionTreshold blinkExclusionExpressionTreshold = new BlinkExclusionExpressionTreshold();
+    public bool blinkDisable = false; // 瞬きを無効にする（糸目キャラ用）
 }
 public class SpringBone
 {
-    // 外力の適用度合い
+    // 外力の適用度合い（大きければ大きいほどすぐ動く）
     public float ExternalForceMultiplier = 0.01f;
-    public float MovementThreshold = 0.5f;
+    // 揺れ物に対する動きの適用最大値（揺れ物が動く最大値）
+    public float MaximumMovementForce = 0.5f; 
 }
 // 瞬きを除外する表情のしきい値
 // 1.0f = 100%の表情が出ていても瞬きはする

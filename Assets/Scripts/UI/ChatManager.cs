@@ -231,15 +231,18 @@ public class ChatManager : MonoBehaviour
     private void HandleReply(string reply)
     {
         BlinkExclusionExpressionTreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionTreshold;
-        // 表情の閾値が超えていたら瞬きを止める
+        // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
         if (expressionList["Happy"] > filter.Happy||expressionList["Sad"] > filter.Sad||
             expressionList["Angry"] > filter.Angry||expressionList["Surprised"] > filter.Surprise||
             expressionList["Relaxed"] > filter.Relaxed||expressionList["Neutral"] > filter.Neutral)
         {
             // 瞬きを無効化する。目は開いたままにする
             // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
-            blinkController.SetBlinkEnabled(false,0.0f);
+            //blinkController.SetBlinkEnabled(false,0.0f);
+            // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
+            blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
         }
+        
 
         SetVrmExpression(expressionList);
         chatUI.SetText(reply);
@@ -278,7 +281,8 @@ public class ChatManager : MonoBehaviour
         {
             // 目が開くまで瞬きを待つ
             await Task.Delay((int)((wait+fadeoutPlay)*1000));
-            blinkController.SetBlinkEnabled(true, 0.0f);
+            // blinkController.SetBlinkEnabled(true, 0.0f);
+            blinkController.SetBlinkEnabled(!AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
         });
         
     }
