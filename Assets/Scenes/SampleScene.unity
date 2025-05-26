@@ -725,6 +725,7 @@ GameObject:
   - component: {fileID: 501108175}
   - component: {fileID: 501108177}
   - component: {fileID: 501108176}
+  - component: {fileID: 501108178}
   m_Layer: 0
   m_Name: VerticalLayout
   m_TagString: Untagged
@@ -772,6 +773,7 @@ MonoBehaviour:
   inputField: {fileID: 1714704429}
   inputWindow: {fileID: 2140179226}
   responseArea: {fileID: 977963350}
+  typewriterEffect: {fileID: 501108178}
 --- !u!114 &501108177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -798,6 +800,19 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &501108178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501108174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5a41f82744455418253b0b1ea2d75c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterInterval: 0.025
 --- !u!1 &536389158
 GameObject:
   m_ObjectHideFlags: 0
@@ -1031,6 +1046,7 @@ GameObject:
   - component: {fileID: 824634578}
   - component: {fileID: 824634579}
   - component: {fileID: 824634580}
+  - component: {fileID: 824634581}
   m_Layer: 0
   m_Name: CharacterController
   m_TagString: Untagged
@@ -1056,6 +1072,7 @@ MonoBehaviour:
   offset: {x: -1.5, y: -0.15, z: 0}
   shakeDetector: {fileID: 824634578}
   shakeDizzyAnimationPlayer: {fileID: 824634579}
+  lipSyncSimulator: {fileID: 824634581}
 --- !u!4 &824634574
 Transform:
   m_ObjectHideFlags: 0
@@ -1153,6 +1170,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c32edc1bcf22634989df689206a1b4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &824634581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824634572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f127b309d2880e14fab9ac16f7b12153, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 824634573}
+  durationPerSyllable: 0.12
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
