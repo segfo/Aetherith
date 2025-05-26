@@ -97,6 +97,17 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
             bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
             if (shift)
             {
+                // 先頭一致
+                if (inputField.text.StartsWith("/exit")) {
+                #if UNITY_EDITOR
+                    UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+#else
+                // 実行環境での終了処理
+                    Debug.Log("Exiting application via /exit command.");
+                    Application.Quit();//ゲームプレイ終了
+#endif
+                    return;
+                }
                 // Shift+Enter → 送信
                 onInputTextSubmit(inputField.text);
                 // 再フォーカス
