@@ -77,6 +77,7 @@ LLM `Assets/StreamingAssets/LLM/`
 | `temperature`      | AIの自由さ・創造性のレベル     |
 | `topP`             | トップPフィルタリング / 応答の多様性制御（確率フィルター）  |
 | `topK`             | トップKフィルタリング / 応答候補の数の制限          |
+| `numGPULayers`     | GPUにオフロードするレイヤー数 |
 
 ### **キャラクターの見た目設定（`vrm`）**
 
