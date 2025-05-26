@@ -10,7 +10,8 @@
         "maxContextLength": 8192,
         "temperature": 0.7,
         "topP": 0.95,
-        "topK": 40
+        "topK": 40,
+        "numGPULayers": 10
     },
     "emotionLlm": {
         "useDify": false,
@@ -23,7 +24,8 @@
         "maxContextLength": 8192,
         "temperature": 0.0,
         "topP": 0.95,
-        "topK": 40
+        "topK": 40,
+        "numGPULayers": 10
     },
     "vrm": {
         "ToneMappingMode": 0,
