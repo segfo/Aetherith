@@ -11,6 +11,9 @@ public class BlinkController : MonoBehaviour
 
     void Start()
     {
+        // 瞬きの無効化をする設定を利用して初期化する。
+        // 瞬きが無効 = falseは瞬きが有効であるため、論理反転した値を設定しておく。
+        isBlinkEnabled = !AppConfigManager.Instance.Config.vrm.blinkDisable;
         vrmInstance = GetComponent<Vrm10Instance>();
         if (vrmInstance != null)
         {

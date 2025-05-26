@@ -3,6 +3,9 @@ Avatar Engine THE Responsive Interface Tunable Helperの略。
 好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。  
 たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）  
 
+## 使っているところ
+![Animation](README_resources/Play.gif)
+
 # ビルド方法（Unityでの開き方）
 1. UnityHubをインストールします
 2. UnityHubで`Unity Editor 6000.0.47f1`をインストールします
@@ -35,36 +38,70 @@ LLM `Assets/StreamingAssets/LLM/`
   
 # 設定ファイル(appconfig.json)
 ## LLMの設定
-- useDify: DifyのAPIを使うときの設定です。まだ実装できてませんが実装する予定です。ていうか一番欲しい機能なので。
-- difyApiKey: DifyのAPIキーです。上記同様まだ実装していません。
-- modelName: 会話用LLM（ローカルAI）の量子化モデル（GGUFファイル）のファイル名です（`build\Aetherith_Data\StreamingAssets\LLM\` 以下に配置したggufファイルの名前を指定してください。デフォルトは`Gemma3.gguf`です）
-- llmEmotionModelName: 表情推定用LLM（ローカルAI）の量子化モデルのファイル名です。ディレクトリはmodelNameと同じ場所から読み込まれます。
-- agentSystemPromptFile: 会話用LLM（ローカルAI）のシステムプロンプトです。
-- emotionSystemPromptFile: 表情推定用LLM（ローカルAI）のシステムプロンプトです。好きに書いていいわけではなく縛りがあります。（後述）
-- userName: ユーザ名です。（多分ここで指定するよりもシステムプロンプトで指定した方がいいかも）
-- assistantName: AIアシスタント名です。（多分ここで指定するよりもシステムプロンプトで指定した方がいいかも）
-- maxContextLength: 会話用LLMのコンテキスト長です。モデルに合わせて増減させてください。
-- llmEmotionMaxContextLength: 表情推定用LLMのコンテキスト長です。モデルに合わせて増減させてください。
-- welcomeMessage: 起動時、チャットを何もしていないときに表示されるメッセージです。
-- waitMessage: LLMが応答を返すまでの時間に表示するメッセージです。
-- temperature: 会話用LLMがどの程度システムプロンプトに従うかの重みです。（`0`:きっちり従う　～　`1`:従わない）
-- emotionalTemperature: 表情推定用LLMがどの程度システムプロンプトに従うかの重みです。（きっちり従ってほしいので、`0.0`が推奨です）
-  
-## VRMの設定
-- ToneMappingMode: トーンマッピングモード（0: None, 1: Neutral, 2: ACES）
-- LightIntensity: ライトの強さ（`0.0`～`1.0`）
-- LightColorRGBA: ライトの色(#RRGGBBAA の書式で記載します。例：`#FFF0E0FF`)
-- ShadowStrength: モデルに対する影の入りの強さ（`0.0`～`1.0`）
-- Scale: VRMの大きさ倍率（身長160cmのモデルでおおよそ`0.5`～`1.8`くらいまで。170cmだと1.7倍までかも。）
-- VrmDisplayOffsetX: VRMの表示位置のオフセット（デフォルト値: `-1.5`　変えない方がよいと思います。VRMが見切れるかも）
-- VrmDisplayOffsetX: VRMの表示位置のオフセット（デフォルト値: `-0.15`　変えない方がよいと思います。VRMが見切れるかも）
-- BackgroundWindowTransparent: 今は使っていません。将来的に使うと思います。（主にVrmDisplayOffset等をいじるときに必要なので）
-- FileName: VRMのファイル名です。（`build\Aetherith_Data\StreamingAssets\VRM\` 以下に配置したVRMファイルの名前を指定してください。デフォルトは`Default.vrm`です）
-  
-### SpringBoneの設定
-- springBone > ExternalForceMultiplier: 揺れの倍率。`0.01`が推奨値です。`0.1`だとめっちゃ揺れるのでお勧めしません。
-- springBone > MovementThreshold: 揺れの最大値(`0`～`1`)。上限を1とかにすると早く動かしたときめっちゃ揺れます。
-  
+以下は、提示されたクラス構成とコメントから**推定できる機能の一覧**と、それぞれを**一般向けのわかりやすい言葉に置き換えたもの**です。
+
+---
+
+### **アプリ全体の設定**
+
+| フィールド名            | 説明           |
+| -----------------------| ----------------- |
+| `characterLlm`         | キャラクターの会話AI設定     |
+| `emotionLlm`           | 感情分析用AI設定         |
+| `vrm`                  | キャラクターの見た目・動き設定   |
+| `chatWindowBgRGBA`     | チャットの背景色          |
+| `chatInputWindowBgRGBA`| 入力ボックスの背景色        |
+| `welcomeMessage`       | 起動時のメッセージ         |
+| `waitMessage`          | 考え中のメッセージ         |
+| `shakeMessage`         | マスコットを振ったときの反応    |
+| `shakeForceThreshold`  | 振られたと判定する強さ       |
+| `chatTypingInterval`   | 文字の表示スピード（タイピング風） |
+
+### **AI関連設定（`characterLlm`と`emotionLlm`）**
+
+| フィールド名             | 説明            |
+| ------------------ |  ------------------ |
+| `useDify`          | Difyを使うかどうか   |
+| `difyApiUrl`       | AIサービスの接続先         |
+| `modelName`        | ローカルで使うAIモデルのファイル名（gguf） |
+| `difyApiKey`       | Difyの認証キー        |
+| `systemPromptFile` | システムプロンプトのファイル名 |
+| `userName`         | ユーザーの名前  |
+| `assistantName`    | アシスタントの名前     |
+| `maxContextLength` | 最大コンテキスト長     |
+| `temperature`      | AIの自由さ・創造性のレベル     |
+| `topP`             | トップPフィルタリング / 応答の多様性制御（確率フィルター）  |
+| `topK`             | トップKフィルタリング / 応答候補の数の制限          |
+
+### **キャラクターの見た目設定（`vrm`）**
+
+| フィールド名                   | 説明  |
+| ----------------------------- | ------------ |
+| `ToneMappingMode`             | トーンマッピングモード    |
+| `LightIntensity`              | ライトの強さ   |
+| `LightColorRGBA`              | ライトの色 （肌色調整など）   |
+| `ShadowStrength`              | キャラクターの影の濃さ     |
+| `Scale`                       | VRMの表示スケール      |
+| `VrmDisplayOffsetX/Y`         | 画面内でのキャラの位置調整   |
+| `BackgroundWindowTransparent` | ウィンドウの背景を透明にするか |
+| `FileName`                    | 使用するVRMファイル名  |
+| `springBone` | スプリングボーンの設定 | 物理動作に関する設定 |
+| `blinkExclusionExpressionTreshold`  | 瞬きを抑制（瞬き禁止の場合は許可）する表情と、瞬きを抑制する表情の重み閾値を設定します（`{"Surprised":0.4,...}`であれば、「驚き」の表情の重みが0.4よりも大きい時、瞬きが抑制されます。`1.0`にすると常に瞬きします） |
+| `blinkDisable` | デフォルトの瞬きを禁止するかどうか。糸目キャラに有効です。blinkExclusionExpressionTresholdの意味が反転します(`{"Surprised":0.4,...}`であれば、「驚き」の表情の重みが0.4よりも大きい時、瞬きします。`1.0`にすると一切瞬きしません) |
+
+### **物理動作 (`SpringBone`)**
+
+| フィールド名                | 説明          |
+| -------------------------  | ---------------- |
+| `ExternalForceMultiplier`  | 揺れる部分（髪や服）の反応の速さ |
+| `MaximumMovementForce`     | 揺れる大きさの上限        |
+
+### **表情設定 (`BlinkExclusionExpressionTreshold`)**
+
+| フィールド名            | 説明               |
+| ---------------------- | --------------------- |
+| `Happy, Sad, Angry...` | 目が細まるような表情（笑顔・悲しみ）などのときに、瞬きを抑えるかの設定。</br>`blinkDisable`をtrueにしたうえで、目を見開く驚きなどの表情に重み(0.9以下)を設定すると瞬きするようになります。（細目キャラの過剰な瞬きを抑制するための機能です） |
+
 # 表情推定用LLM用のシステムプロンプト例
 表情推定用のLLMはJSON形式で返却してもらう必要があるので、LLMに対して正確なJSONを返却してもらう必要があります。
 以下のような制約を付けたプロンプトを書く形です。

@@ -38,6 +38,7 @@ public class CharacterController : MonoBehaviour
         // モデルが読み込まれたときの処理
         armMotionManager = model.AddComponent<ArmMotionManager>();
         blinkController = model.AddComponent<BlinkController>();
+        // 瞬きの設定を読み込む（BlinkDisabledがfalseの時は瞬きをするので論理反転しておく）
         Debug.Log("ArmMotionManagerをモデルに追加しました。");
         int vrmLayer = LayerMask.NameToLayer("VRM");
         SetLayerRecursively(model, vrmLayer);
