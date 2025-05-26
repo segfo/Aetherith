@@ -7,7 +7,7 @@ public class SpringBoneExternalForce : MonoBehaviour
     private IVrm10SpringBoneRuntime springBoneRuntime;
     private Vector3 previousWindowPosition;
     private float forceMultiplier = 0.01f; // 外力の強さを調整するための係数
-    private float movementThreshold = 0.5f; // 過剰な移動を無視するための閾値
+    private float maximumMovementForce = 0.5f; // 過剰な移動を無視するための閾値
     private float maxExpectedSpeed = 10000f;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private ShakeDetector shakeDetector;
@@ -18,7 +18,7 @@ public class SpringBoneExternalForce : MonoBehaviour
     {
         shakeForceThreshold = AppConfigManager.Instance.Config.shakeForceThreshold;
         forceMultiplier = AppConfigManager.Instance.Config.vrm.springBone.ExternalForceMultiplier;
-        movementThreshold = AppConfigManager.Instance.Config.vrm.springBone.MovementThreshold;
+        maximumMovementForce = AppConfigManager.Instance.Config.vrm.springBone.MaximumMovementForce;
     }
     public void Initialize()
     {
@@ -42,7 +42,7 @@ public class SpringBoneExternalForce : MonoBehaviour
         float speed = velocity.magnitude;
         speed = Mathf.Clamp(speed, 0f, maxExpectedSpeed);
         // ウィンドウの移動速度が遅いときは閾値を小さくすることで自然な動作にすることを目論んでいる
-        float dynamicClamp = Mathf.Lerp(0.001f, movementThreshold, speed / maxExpectedSpeed);
+        float dynamicClamp = Mathf.Lerp(0.001f, maximumMovementForce, speed / maxExpectedSpeed);
         externalForce = Vector3.ClampMagnitude(externalForce, dynamicClamp);
         // ウィンドウの移動量が閾値を超えた場合のみ振られた可能性があるので振られ判定に速度を渡す
         if (externalForce.magnitude > shakeForceThreshold)

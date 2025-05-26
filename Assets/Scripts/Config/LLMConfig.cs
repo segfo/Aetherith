@@ -11,12 +11,12 @@ public class LLMConfig
     // ローカルLLM（実応答）システムプロンプトの記述されたファイル名
     public string systemPromptFile = "systemprompt.txt";
     // ローカルLLM（感情判定）システムプロンプトの記述されたファイル名
-    public string userName = "User";
-    public string assistantName = "Assistant";
-    public int maxContextLength = 8192;
-    public float temperature = 0.7f;
-    public float topP = 0.95f;
-    public int topK = 40;
+    public string userName = "User";  // ユーザー名
+    public string assistantName = "Assistant"; // アシスタント名
+    public int maxContextLength = 8192; // 最大コンテキスト長（トークン数）
+    public float temperature = 0.7f; // 温度パラメータ（0.0-1.0）
+    public float topP = 0.95f; // トップPサンプリングの確率
+    public int topK = 40; // トップKサンプリングのK値
     public LLMConfig() { }
     public LLMConfig(string promptFileName,float temperature)
     {
