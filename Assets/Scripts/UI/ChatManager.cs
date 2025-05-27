@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+
 public class ChatManager : MonoBehaviour
 {
     [SerializeField] private ChatUIController chatUI;
@@ -41,6 +42,7 @@ public class ChatManager : MonoBehaviour
     }
     async void Start()
     {
+        AppConfig config = AppConfigManager.Instance.Config;
         chatUI.InputFieldSetEnable(false);
         //chatUI.AppendTextLine("SYSTEM: ローカルLLMをセットアップしています...");
         chatUI.StartTypingAppend("SYSTEM: ローカルLLMをセットアップしています...\n");
@@ -50,18 +52,29 @@ public class ChatManager : MonoBehaviour
         emotionalLLM = new GameObject("EmotionalLLM");
         characterLLM.SetActive(false);
         emotionalLLM.SetActive(false);
-        // 必要なコンポーネントを追加（すでにあるなら追加しない）
-        if (!characterLLM.TryGetComponent<LLM>(out llm))
+
+        // 必要なコンポーネントを追加（すでにあるなら追加しない）        
+        if (!characterLLM.TryGetComponent<LLM>(out llm)) {
             llm = characterLLM.AddComponent<LLM>();
-
-        if (!characterLLM.TryGetComponent<LLMCharacter>(out llmCharacter))
+        }
+        if (!characterLLM.TryGetComponent<LLMCharacter>(out llmCharacter)) {
             llmCharacter = characterLLM.AddComponent<LLMCharacter>();
-
-        if (!emotionalLLM.TryGetComponent<LLM>(out llmEmotional))
-            llmEmotional = emotionalLLM.AddComponent<LLM>();
-
-        if (!emotionalLLM.TryGetComponent<LLMCharacter>(out llmCharacterEmotional))
-            llmCharacterEmotional = emotionalLLM.AddComponent<LLMCharacter>();
+        }
+        // モデル名が違ったら別のモデルをロードするが、同じなら同一のLLMコンポーネントを使う。
+        if (config.characterLlm.modelName != config.emotionLlm.modelName)
+        {
+            if (!emotionalLLM.TryGetComponent<LLM>(out llmEmotional)) {
+                llmEmotional = emotionalLLM.AddComponent<LLM>();
+            }
+            if (!emotionalLLM.TryGetComponent<LLMCharacter>(out llmCharacterEmotional)){
+                llmCharacterEmotional = emotionalLLM.AddComponent<LLMCharacter>();
+            }
+        }
+        else
+        {
+            llmEmotional = llm;
+            llmCharacterEmotional = characterLLM.AddComponent<LLMCharacter>();
+        }
         await Task.Run(() => {
             SetupLLM();
         });
@@ -74,24 +87,25 @@ public class ChatManager : MonoBehaviour
             LoadLLM();
         });
     }
+    // 個々のLLMのセットアップを行う。
+    void SetupLLMCharacter(LLMConfig config,LLMCharacter llmCharacter,LLM llm,string defaultPrompt)
+    {
+        string systemPromptPath = Path.Combine(Application.streamingAssetsPath, config.systemPromptFile);
+        string systemPrompt = SafeFileReader.ReadOrCreateTextFile(systemPromptPath, Encoding.UTF8, defaultPrompt);
+        SetupLLMCharactor(systemPrompt, config, llmCharacter);
+        llm.maxContextLength = config.maxContextLength;
+        llm.numGPULayers = config.numGPULayers;
+    }
+
+    // LLMのモデルをセットアップし、プロンプトを設定する。
     void SetupLLM()
     {
         // ローカルLLMの初期化
         AppConfig config = AppConfigManager.Instance.Config;
-        string systemPromptPath = Path.Combine(Application.streamingAssetsPath, config.characterLlm.systemPromptFile);
-        string emotionalSystemPromptPath = Path.Combine(Application.streamingAssetsPath, config.emotionLlm.systemPromptFile);
-        string systemPrompt = SafeFileReader.ReadOrCreateTextFile(systemPromptPath, Encoding.UTF8, "あなたは優秀なAIアシスタントです。");
-        string emotionalSystemprompt = SafeFileReader.ReadOrCreateTextFile(emotionalSystemPromptPath, Encoding.UTF8, "あなたは優秀な感情判定アシスタントです。あなたはユーザの発言に応じて、AIの感情を推定します。");
-        // 実LLMキャラクターのセットアップ
-        string characterGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.characterLlm.modelName);
-        SetupLLMCharactor(systemPrompt, config.characterLlm, llmCharacter);
-        llm.maxContextLength = config.characterLlm.maxContextLength;
-        llm.numGPULayers = config.characterLlm.numGPULayers;
         // 感情推測LLMのセットアップ
-        string emotionGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.emotionLlm.modelName);
-        SetupLLMCharactor(emotionalSystemprompt, config.emotionLlm, llmCharacterEmotional);
-        llmEmotional.maxContextLength = config.emotionLlm.maxContextLength;
-        llmEmotional.numGPULayers = config.emotionLlm.numGPULayers;
+        SetupLLMCharacter(config.emotionLlm, llmCharacterEmotional, llmEmotional, "あなたは優秀な感情判定アシスタントです。あなたはユーザの発言に応じて、AIの感情を推定します。");
+        // 実LLMキャラクターのセットアップ
+        SetupLLMCharacter(config.characterLlm,llmCharacter,llm, "あなたは優秀なAIアシスタントです。");
         // 待機メッセージを設定する
         waitMessage = config.waitMessage;
         // ここからLLMのロード処理
@@ -102,8 +116,13 @@ public class ChatManager : MonoBehaviour
 #if UNITY_EDITOR
         mainThreadDispatcher.Enqueue(() => {
 #endif
+            string characterGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.characterLlm.modelName);
             llm.SetModel(characterGgufModelPath);
-            llmEmotional.SetModel(emotionGgufModelPath);
+
+            if (llmEmotional != llm){
+                string emotionGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.emotionLlm.modelName);
+                llmEmotional.SetModel(emotionGgufModelPath);
+            }
 #if UNITY_EDITOR
         });
 #endif
@@ -288,17 +307,23 @@ public class ChatManager : MonoBehaviour
     {
         BlinkExclusionExpressionTreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionTreshold;
         // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
-        if (expressionList["Happy"] > filter.Happy||expressionList["Sad"] > filter.Sad||
-            expressionList["Angry"] > filter.Angry||expressionList["Surprised"] > filter.Surprise||
-            expressionList["Relaxed"] > filter.Relaxed||expressionList["Neutral"] > filter.Neutral)
+        try
         {
-            // 瞬きを無効化する。目は開いたままにする
-            // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
-            //blinkController.SetBlinkEnabled(false,0.0f);
-            // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
-            blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
+            if (expressionList["Happy"] > filter.Happy || expressionList["Sad"] > filter.Sad ||
+                expressionList["Angry"] > filter.Angry || expressionList["Surprised"] > filter.Surprise ||
+                expressionList["Relaxed"] > filter.Relaxed || expressionList["Neutral"] > filter.Neutral)
+            {
+                // 瞬きを無効化する。目は開いたままにする
+                // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
+                //blinkController.SetBlinkEnabled(false,0.0f);
+                // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
+                blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
+            }
         }
-        
+        catch (KeyNotFoundException e)
+        {
+            Debug.LogError("表情に対応するキーがありません: " + e.Message);
+        }
 
         SetVrmExpression(expressionList);
         chatUI.SetText(reply);
