@@ -120,9 +120,9 @@ Gemma-3 120億パラメータ 4bit量子化モデル（gemma-3-4b-it-q4_0.gguf�
 **ユーザの発言**を受けた時の**AI側の感情を推定して**ください。
 
 # 感情推定を行うAIのシステムプロンプト
-\`\`\`
+```
 あなたは優秀なアシスタントAIです
-\`\`\`
+```
 # 注意事項
 - AI側の感情を推定してください。
 - 表情に反映されます、できるだけシンプルな表情を選んでください。
@@ -133,16 +133,16 @@ Gemma-3 120億パラメータ 4bit量子化モデル（gemma-3-4b-it-q4_0.gguf�
 - 応答は応答例に従ってください
 
 ## 応答フォーマット
-{"Happy": <<Value>>, "Sad": <<Value>>, "Angry": <<Value>>,"Neutral": <<Value>>,"Surprisad": <<Value>>,"Relaxed": <<V
+{"Happy": <<Value>>, "Sad": <<Value>>, "Angry": <<Value>>,"Neutral": <<Value>>,"Surprised": <<Value>>,"Relaxed": <<V
 alue>>}
 
 ## 応答例
-{"Happy": 0.6, "Sad": 0, "Angry": 0,"Neutral": 0,"Surprisad": 0,"Relaxed": 0.4}
+{"Happy": 0.6, "Sad": 0, "Angry": 0,"Neutral": 0,"Surprised": 0,"Relaxed": 0.4}
 
 ## <<Value>>の範囲
 最小：0
 最大：1
 ```
 プログラム側では、このプロンプトと発言内容から出力される  
-`{"Happy": 0.6, "Sad": 0, "Angry": 0,"Neutral": 0,"Surprisad": 0,"Relaxed": 0.4}`  
+`{"Happy": 0.6, "Sad": 0, "Angry": 0,"Neutral": 0,"Surprised": 0,"Relaxed": 0.4}`  
 というJSONを解釈して表情を動的に変更しています。  
