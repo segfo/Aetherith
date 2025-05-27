@@ -3,7 +3,8 @@ Avatar Engine THE Responsive Interface Tunable Helperの略。
 好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。  
 たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）  
 
-## 使っているところ
+## 使っているところ(gifアニメ)
+止まってたらスーパーリロードしてみてください
 ![Animation](README_resources/Play.gif)
 
 # ビルド方法（Unityでの開き方）
