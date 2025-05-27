@@ -17,7 +17,7 @@ public class LLMConfig
     public float temperature = 0.7f; // 温度パラメータ（0.0-1.0）
     public float topP = 0.95f; // トップPサンプリングの確率
     public int topK = 40; // トップKサンプリングのK値
-    public int numGPULayers = 10; // GPUで処理するレイヤー数
+    public int numGPULayers = 0; // GPUで処理するレイヤー数(0はCPUのみ)
     public LLMConfig() { }
     public LLMConfig(string promptFileName,float temperature)
     {

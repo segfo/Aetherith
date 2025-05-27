@@ -11,7 +11,7 @@
         "temperature": 0.7,
         "topP": 0.95,
         "topK": 40,
-        "numGPULayers": 10
+        "numGPULayers": 0
     },
     "emotionLlm": {
         "useDify": false,
@@ -25,7 +25,7 @@
         "temperature": 0.0,
         "topP": 0.95,
         "topK": 40,
-        "numGPULayers": 10
+        "numGPULayers": 0
     },
     "vrm": {
         "ToneMappingMode": 0,
