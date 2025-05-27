@@ -34,7 +34,7 @@
         "ShadowStrength": 0.3,
         "Scale": 1.0,
         "VrmDisplayOffsetX": -1.5,
-        "VrmDisplayOffsetY": 0.15,
+        "VrmDisplayOffsetY": 0,
         "BackgroundWindowTransparent": true,
         "FileName": "Default.vrm",
         "springBone": {

@@ -122,7 +122,7 @@ public class CharacterController : MonoBehaviour
         // cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y + offset.y, faceDir.z * 2);
         float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale;
         /// VRMの頭の先端を画面の上部に調整する
-        cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f* scaleFactor, faceDir.z * 2);
+        cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f * scaleFactor + offset.y, faceDir.z * 2);
     }
 
     // 深い階層から名前でTransformを探す

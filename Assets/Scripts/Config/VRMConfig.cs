@@ -7,7 +7,7 @@ public class VRMConfig
     public float ShadowStrength = 0.3000000f; // 影の強さ: 0.0f ～ 1.0f
     public float Scale = 1.0f;  // VRMのスケール
     public float VrmDisplayOffsetX = -1.5f; // VRMの表示位置調整 X軸
-    public float VrmDisplayOffsetY = 0.15f; // VRMの表示位置調整 Y軸
+    public float VrmDisplayOffsetY = 0f; // VRMの表示位置調整 Y軸
     public bool BackgroundWindowTransparent = true; // 背景ウィンドウを透明にする
     public string FileName = "Default.vrm"; // VRMファイル名
     public SpringBone springBone = new SpringBone(); // SpringBone = 揺れ物の設定

@@ -89,7 +89,7 @@ LLM `Assets/StreamingAssets/LLM/`
 | `LightColorRGBA`              | ライトの色 （肌色調整など）   |
 | `ShadowStrength`              | キャラクターの影の濃さ     |
 | `Scale`                       | VRMの表示スケール      |
-| `VrmDisplayOffsetX/Y`         | 画面内でのキャラの位置調整   |
+| `VrmDisplayOffsetX/Y`         | 画面内でのキャラの位置調整<br>X軸: +値=右方向移動、-値=左方向移動<br>Y軸: +値=上方向移動、-値下方向移動   |
 | `BackgroundWindowTransparent` | ウィンドウの背景を透明にするか |
 | `FileName`                    | 使用するVRMファイル名  |
 | `springBone` | スプリングボーンの設定 | 物理動作に関する設定 |
