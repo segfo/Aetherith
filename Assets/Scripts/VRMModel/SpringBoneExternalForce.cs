@@ -16,9 +16,14 @@ public class SpringBoneExternalForce : MonoBehaviour
 
     public void Start()
     {
-        shakeForceThreshold = AppConfigManager.Instance.Config.shakeForceThreshold;
-        forceMultiplier = AppConfigManager.Instance.Config.vrm.springBone.ExternalForceMultiplier;
-        maximumMovementForce = AppConfigManager.Instance.Config.vrm.springBone.MaximumMovementForce;
+        ConfigApply(AppConfigManager.Instance.Config);
+        AppConfigManager.Instance.OnConfigUpdated += ConfigApply;
+    }
+    void ConfigApply(AppConfig config)
+    {
+        shakeForceThreshold = config.shakeForceThreshold;
+        forceMultiplier = config.vrm.springBone.ExternalForceMultiplier;
+        maximumMovementForce = config.vrm.springBone.MaximumMovementForce;
     }
     public void Initialize()
     {

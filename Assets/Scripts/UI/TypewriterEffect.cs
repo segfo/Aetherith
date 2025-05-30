@@ -22,9 +22,20 @@ public class TypewriterEffect : MonoBehaviour
 
     public void Init(ITextWriterTarget writer)
     {
+        if (writerTarget != null)
+        {
+            return;
+        }
         characterInterval = AppConfigManager.Instance.Config.chatTypingInterval;
         writerTarget = writer;
+        // 設定ファイルが更新されたときの動作
+        // 設定項目が増えたら関数化する
+        AppConfigManager.Instance.OnConfigUpdated += (config) =>
+        {
+            characterInterval = config.chatTypingInterval;
+        };
     }
+
 
     /// <summary>
     /// キューに追加して順番にタイプライティングを行う（テキストクリアあり）

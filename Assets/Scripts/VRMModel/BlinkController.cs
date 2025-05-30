@@ -23,6 +23,9 @@ public class BlinkController : MonoBehaviour
         {
             Debug.LogWarning("Vrm10Instance が見つかりません。");
         }
+        AppConfigManager.Instance.OnConfigUpdated += (AppConfig config) => {
+            isBlinkEnabled = !config.vrm.blinkDisable;
+        };
     }
 
     // <summary>

@@ -4,6 +4,7 @@ public class AppConfig
     public LLMConfig characterLlm = new LLMConfig();
     public LLMConfig emotionLlm = new LLMConfig("emotion_systemprompt.txt",0.0f);
     public VRMConfig vrm = new VRMConfig();
+    public bool BackgroundWindowTransparent = true; // 背景ウィンドウを透明にする
     public string chatWindowBgRGBA = "#FFFFFF88";   // チャットウィンドウの背景色
     public string chatInputWindowBgRGBA = "#FFFFFFFF";  // チャット入力ウィンドウの背景色
     public string welcomeMessage = "何でも聞いてくださいね！"; // 起動完了時のメッセージ

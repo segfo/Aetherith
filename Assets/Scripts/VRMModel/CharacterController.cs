@@ -3,13 +3,13 @@ using UniVRM10;
 using Kirurobo;
 using System.Threading.Tasks;
 using UnityEngine.Localization.Settings;
+using System;
 
 public class CharacterController : MonoBehaviour
 {
     [SerializeField] private VRMLoader vrmLoader;
     [SerializeField] private ChatManager chatManager;
     [SerializeField] private SpringBoneExternalForce springBoneExternalForce;
-    [SerializeField] private Vector3 offset = new Vector3(-1.5f, -0.15f, 0f);
     [SerializeField] private ShakeDetector shakeDetector;
     [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
@@ -18,17 +18,49 @@ public class CharacterController : MonoBehaviour
     private BlinkController blinkController;
     private ArmMotionManager armMotionManager;
     private MainThreadDispatcher mainThreadDispatcher;
-
+    private GameObject model;
     private void Start()
     {
         mainThreadDispatcher = MainThreadDispatcher.Instance;
-        offset.x = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX;
-        offset.y = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
     }
+
     private void Awake()
     {
         vrmLoader.OnVrmLoaded += OnVrmLoaded;
         chatManager.TypingAppendText("SYSTEM: VRMモデルを読み込んでいます...\n");
+        AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
+    }
+
+    private void OnConfigUpdated(AppConfig config)
+    {
+        if (model == null) { return; }
+        // スケールの調整
+        float scale = config.vrm.Scale;
+        model.transform.localScale = new Vector3(scale, scale, scale);
+        // カメラの調整
+        AdjustCameraFromConfig(config);
+    }
+
+    private void AdjustCameraFromConfig(AppConfig config)
+    {
+        var animator = model.GetComponent<Animator>();
+        if (animator == null) return;
+        Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
+        Transform hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+        if (head == null || hips == null) return;
+        var cam = Camera.main;
+        float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale;
+        float modelScale = model.transform.lossyScale.y;
+        float modelHeight = Mathf.Abs(head.position.y - hips.position.y) / modelScale;
+        Vector3 faceDir = head.forward.normalized;
+        // 実際のカメラ調整処理
+        cam.transform.position = new Vector3(camTransformPos.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
+            camTransformPos.y + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY, camTransformPos.z);
+
+        //cam.transform.position = new Vector3(cam.transform.position.x,
+        //cam.transform.position.y - cam.orthographicSize + modelHeight + 0.5f * scaleFactor,
+        //faceDir.z * 2);
+        //camTransformPos = cam.transform.position;
     }
 
     private void OnVrmLoaded(GameObject model)
@@ -42,7 +74,7 @@ public class CharacterController : MonoBehaviour
         Debug.Log("ArmMotionManagerをモデルに追加しました。");
         int vrmLayer = LayerMask.NameToLayer("VRM");
         SetLayerRecursively(model, vrmLayer);
-        AdjustCameraToVrm(model);
+        AdjustCameraToVrmInit(model);
         chatManager.VrmLoadCompleted();
         springBoneExternalForce.Initialize();
         shakeDetector.OnShaken += OnShaken;
@@ -92,9 +124,10 @@ public class CharacterController : MonoBehaviour
             SetLayerRecursively(child.gameObject, layer);
         }
     }
- 
-    void AdjustCameraToVrm(GameObject model)
+    Vector3 camTransformPos = Vector3.zero;
+    void AdjustCameraToVrmInit(GameObject model)
     {
+        this.model = model;
         var animator = model.GetComponent<Animator>();
         if (animator == null) return;
         Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
@@ -121,8 +154,16 @@ public class CharacterController : MonoBehaviour
         /// VRMの腰ボーンを画面の中央に調整する場合は以下をコメントアウトする
         // cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y + offset.y, faceDir.z * 2);
         float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale;
+
         /// VRMの頭の先端を画面の上部に調整する
-        cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f * scaleFactor + offset.y, faceDir.z * 2);
+        //cam.transform.position = new Vector3(cam.transform.position.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
+        //    cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f * scaleFactor + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY,
+        //    faceDir.z * 2);
+        camTransformPos = new Vector3(cam.transform.position.x,
+            cam.transform.position.y - cam.orthographicSize + modelHeight + 0.5f * scaleFactor,
+            faceDir.z * 2);
+        cam.transform.position = new Vector3(camTransformPos.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
+            camTransformPos.y + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY,camTransformPos.z);
     }
 
     // 深い階層から名前でTransformを探す

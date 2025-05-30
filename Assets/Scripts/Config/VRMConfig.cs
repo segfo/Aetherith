@@ -8,11 +8,12 @@ public class VRMConfig
     public float Scale = 1.0f;  // VRMのスケール
     public float VrmDisplayOffsetX = -1.5f; // VRMの表示位置調整 X軸
     public float VrmDisplayOffsetY = 0f; // VRMの表示位置調整 Y軸
-    public bool BackgroundWindowTransparent = true; // 背景ウィンドウを透明にする
+    public float ChatInputOffsetX = 0f; // チャット入力の表示位置調整 X軸
+    public float ChatInputOffsetY = 0f; // チャット入力の表示位置調整 Y軸
     public string FileName = "Default.vrm"; // VRMファイル名
     public SpringBone springBone = new SpringBone(); // SpringBone = 揺れ物の設定
     // 瞬きを除外する表情のしきい値・blinkDisable = trueの時は許可する表情とする。
-    public BlinkExclusionExpressionTreshold blinkExclusionExpressionTreshold = new BlinkExclusionExpressionTreshold();
+    public BlinkExclusionExpressionThreshold blinkExclusionExpressionTreshold = new BlinkExclusionExpressionThreshold();
     public bool blinkDisable = false; // 瞬きを無効にする（糸目キャラ用）
 }
 public class SpringBone
@@ -25,7 +26,7 @@ public class SpringBone
 // 瞬きを除外する表情のしきい値
 // 1.0f = 100%の表情が出ていても瞬きはする
 // 0.0f = 表情が出ている場合は瞬きを除外する
-public class BlinkExclusionExpressionTreshold
+public class BlinkExclusionExpressionThreshold
 {
     public float Happy = 1.0f; // 笑顔のしきい値
     public float Sad = 1.0f; // 悲しいのしきい値

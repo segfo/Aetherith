@@ -1,4 +1,5 @@
-﻿using UniHumanoid;
+﻿using System;
+using UniHumanoid;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -9,20 +10,27 @@ public class CharacterRender : MonoBehaviour
     [SerializeField] private Light directionalLight;
     private void Start()
     {
-        DirectionalLight();
-        ToneMapping();
+        OnConfigUpdated(AppConfigManager.Instance.Config);
+        AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
     }
-    private void DirectionalLight()
+
+    private void OnConfigUpdated(AppConfig config)
+    {
+        DirectionalLight(config);
+        ToneMapping(config);
+    }
+
+    private void DirectionalLight(AppConfig config)
     {
         // ライトの色
         directionalLight.color = ParseHexColor(
-            AppConfigManager.Instance.Config.vrm.LightColorRGBA,
-            AppConfigManager.FallbackInstance.Config.vrm.LightColorRGBA
+            config.vrm.LightColorRGBA,
+            config.vrm.LightColorRGBA
         );
         // ライトの強さ
-        directionalLight.intensity = AppConfigManager.Instance.Config.vrm.LightIntensity;
+        directionalLight.intensity = config.vrm.LightIntensity;
         // 影の強さ
-        directionalLight.shadowStrength = AppConfigManager.Instance.Config.vrm.ShadowStrength;
+        directionalLight.shadowStrength = config.vrm.ShadowStrength;
     }
     
     public static Color ParseHexColor(string hex,string fallback)
@@ -42,7 +50,7 @@ public class CharacterRender : MonoBehaviour
 
         return new Color32(r, g, b, a);
     }
-    private void ToneMapping()
+    private void ToneMapping(AppConfig config)
     {
         Tonemapping tonemapping;
         if (volume != null && volume.profile.TryGet(out tonemapping))
@@ -50,7 +58,7 @@ public class CharacterRender : MonoBehaviour
             // Tonemappingの設定を行う
             if (tonemapping != null)
             {
-                int tmmode = AppConfigManager.Instance.Config.vrm.ToneMappingMode;
+                int tmmode = config.vrm.ToneMappingMode;
                 switch(tmmode){
                     case 0:
                         tonemapping.mode.value = TonemappingMode.None;

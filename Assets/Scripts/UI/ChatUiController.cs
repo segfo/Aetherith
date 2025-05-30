@@ -18,19 +18,11 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
     bool isMinimized = false;
     bool ime = false;
     Keyboard _keyboard;
+    Vector2 localPos;
 
     private void Awake()
     {
-        //responseArea.GetComponent<Image>().color;
-        // inputFieldの色を表示する
-        responseArea.GetComponent<Image>().color = CharacterRender.ParseHexColor(
-            AppConfigManager.Instance.Config.chatWindowBgRGBA,
-            AppConfigManager.FallbackInstance.Config.chatWindowBgRGBA
-        );
-        inputField.GetComponent<Image>().color = CharacterRender.ParseHexColor(
-            AppConfigManager.Instance.Config.chatInputWindowBgRGBA,
-            AppConfigManager.FallbackInstance.Config.chatInputWindowBgRGBA
-        );
+        ApplyConfig(AppConfigManager.Instance.Config);
         if (typewriterEffect == null)
         {
             Debug.LogError("TypewriterEffect is not assigned in ChatUIController.");
@@ -42,7 +34,23 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         Input.imeCompositionMode = IMECompositionMode.On;
         _keyboard = Keyboard.current;
         _keyboard.SetIMEEnabled(true);
+        AppConfigManager.Instance.OnConfigUpdated += (config) => {
+            ApplyConfig(config);
+        };
     }
+    void ApplyConfig(AppConfig config)
+    {
+        // inputFieldの色を表示する
+        responseArea.GetComponent<Image>().color = CharacterRender.ParseHexColor(
+             config.chatWindowBgRGBA,
+             AppConfigManager.FallbackInstance.Config.chatWindowBgRGBA
+         );
+        inputField.GetComponent<Image>().color = CharacterRender.ParseHexColor(
+            config.chatInputWindowBgRGBA,
+            AppConfigManager.FallbackInstance.Config.chatInputWindowBgRGBA
+        );
+    }
+
     void Update()
     {
         if (characterController == null || characterController.vrmInstance == null) return;
@@ -76,9 +84,9 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         screenPos.y += screenYOffset;
 
         // スクリーン → RectTransformローカル座標へ変換
-        Vector2 localPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out localPos);
-
+        localPos.x += AppConfigManager.Instance.Config.vrm.ChatInputOffsetX; // X軸のオフセット
+        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY; // Y軸のオフセット
         // ローカル座標を反映
         rectTransform.localPosition = localPos;
 

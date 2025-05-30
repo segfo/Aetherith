@@ -78,6 +78,10 @@ public class ChatManager : MonoBehaviour
         await Task.Run(() => {
             SetupLLM();
         });
+        AppConfigManager.Instance.OnConfigUpdated += (config) =>
+        {
+            waitMessage = config.waitMessage;
+        };
     }
     private async Task activateGameObject()
     {
@@ -146,7 +150,7 @@ public class ChatManager : MonoBehaviour
         charactor.topK = config.topK;
         charactor.topP = config.topP;
     }
-
+    
     enum LoadResources{
         VRM,MainCharacterLLM, EmotionCharacterLLM
     }
@@ -305,7 +309,7 @@ public class ChatManager : MonoBehaviour
     string receivedText = "";
     private void HandleReply(string reply)
     {
-        BlinkExclusionExpressionTreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionTreshold;
+        BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionTreshold;
         // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
         try
         {

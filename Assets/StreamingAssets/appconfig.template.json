@@ -34,14 +34,15 @@
         "ShadowStrength": 0.3,
         "Scale": 1.0,
         "VrmDisplayOffsetX": -1.5,
-        "VrmDisplayOffsetY": 0,
-        "BackgroundWindowTransparent": true,
+        "VrmDisplayOffsetY": 0.0,
+        "ChatInputOffsetX": 0.0,
+        "ChatInputOffsetY": 0.0,
         "FileName": "Default.vrm",
         "springBone": {
             "ExternalForceMultiplier": 0.01,
-            "MovementThreshold": 0.5
+            "MaximumMovementForce": 0.5
         },
-        "blinkExclusionExpressionTreshold": {
+        "blinkExclusionExpressionThreshold": {
             "Happy": 1.0,
             "Sad": 1.0,
             "Angry": 1.0,
@@ -51,6 +52,7 @@
         },
         "blinkDisable": false
     },
+    "BackgroundWindowTransparent": true,
     "chatWindowBgRGBA": "#FFFFFFAA",
     "chatInputWindowBgRGBA":"#FFFFFFFF",
     "welcomeMessage": "何でも聞いてくださいね！",
