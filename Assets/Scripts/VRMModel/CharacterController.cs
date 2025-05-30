@@ -49,18 +49,17 @@ public class CharacterController : MonoBehaviour
         Transform hips = animator.GetBoneTransform(HumanBodyBones.Hips);
         if (head == null || hips == null) return;
         var cam = Camera.main;
+        // カメラの設定を初期化する
+        cam.transform.position = camTransformPos;
+        // カメラの中央を補正する
+        Vector3 centerPos = new Vector3(camTransformPos.x, hips.position.y, camTransformPos.z);
+        hips.position -= hips.position - centerPos;
         float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale;
         float modelScale = model.transform.lossyScale.y;
         float modelHeight = Mathf.Abs(head.position.y - hips.position.y) / modelScale;
         Vector3 faceDir = head.forward.normalized;
         // 実際のカメラ調整処理
-        cam.transform.position = new Vector3(camTransformPos.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
-            camTransformPos.y + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY, camTransformPos.z);
-
-        //cam.transform.position = new Vector3(cam.transform.position.x,
-        //cam.transform.position.y - cam.orthographicSize + modelHeight + 0.5f * scaleFactor,
-        //faceDir.z * 2);
-        //camTransformPos = cam.transform.position;
+        CameraConfigApply(cam, modelHeight, scaleFactor, faceDir);
     }
 
     private void OnVrmLoaded(GameObject model)
@@ -136,6 +135,7 @@ public class CharacterController : MonoBehaviour
         var cam = Camera.main;
         cam.orthographic = true;
         cam.orthographicSize = 1.5f;
+        camTransformPos = cam.transform.position;
         Vector3 centerPos = new Vector3(cam.transform.position.x, cam.transform.position.y, hips.position.z);
         hips.position -= hips.position - centerPos;
         // VRMの向いている方向を取得
@@ -146,7 +146,7 @@ public class CharacterController : MonoBehaviour
         angles.x = 0f;
         angles.z = 0f;
         cam.transform.rotation = Quaternion.Euler(angles);
-        ///
+        // ここからVRMの頭の先端を画面の上部に調整するための計算
         float modelScale = model.transform.lossyScale.y;
         float modelHeight = Mathf.Abs(head.position.y - hips.position.y) / modelScale;
         ///
@@ -159,11 +159,14 @@ public class CharacterController : MonoBehaviour
         //cam.transform.position = new Vector3(cam.transform.position.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
         //    cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f * scaleFactor + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY,
         //    faceDir.z * 2);
-        camTransformPos = new Vector3(cam.transform.position.x,
-            cam.transform.position.y - cam.orthographicSize + modelHeight + 0.5f * scaleFactor,
+        CameraConfigApply(cam,modelHeight,scaleFactor,faceDir);
+    }
+
+    void CameraConfigApply(Camera cam,float modelHeight,float scaleFactor,Vector3 faceDir)
+    {
+        cam.transform.position = new Vector3(cam.transform.position.x + -1.5f + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
+            cam.transform.position.y - cam.orthographicSize + 0.25f * scaleFactor + modelHeight  * scaleFactor + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY,
             faceDir.z * 2);
-        cam.transform.position = new Vector3(camTransformPos.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
-            camTransformPos.y + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY,camTransformPos.z);
     }
 
     // 深い階層から名前でTransformを探す

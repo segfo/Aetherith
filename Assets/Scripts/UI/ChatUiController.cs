@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using TMPro;
-using Unity.VisualScripting;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -50,15 +48,15 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
             AppConfigManager.FallbackInstance.Config.chatInputWindowBgRGBA
         );
     }
-
+#if UNITY_EDITOR
+    int cnt = 0;
+#endif
     void Update()
     {
         if (characterController == null || characterController.vrmInstance == null) return;
-
         var animator = characterController.vrmInstance.GetComponent<Animator>();
         var headTransform = animator.GetBoneTransform(HumanBodyBones.Head);
         if (headTransform == null) return;
-
         RectTransform rectTransform = GetComponent<RectTransform>();
         Canvas canvas = GetComponentInParent<Canvas>();
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
@@ -68,25 +66,36 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         float windowHeight = rectTransform.rect.height;
         float windowWidth = rectTransform.rect.width;
 
-        // UIの上辺を頭の上辺に合わせるため、スクリーンY座標で高さの半分だけずらす
-        float screenYOffset = windowHeight * 0.5f;
-
         // ワールド空間での横方向のずれ（スケールに依存しない距離）
-        float horizontalOffset = 0.2f*scaleFactor; // 10cm右へ
+        float horizontalOffset = 0.25f * scaleFactor; // 右へ
+        // ワールド空間での高さ方向のずれ（スケールに依存しない距離）
+        float heightOffset = GetVrmVisualHeight(characterController.vrmInstance.gameObject) - headTransform.position.y; ;
 
+#if UNITY_EDITOR
+        if (cnt == 0 || cnt >= 30 * 10)
+        {
+            if(characterController.vrmInstance != null)
+            {
+                var height = GetVrmVisualHeight(characterController.vrmInstance.gameObject);
+                Debug.Log($"バウンティボックスの高さ: {height}");
+                Debug.Log($"頭の位置: {headTransform.position.y}");
+                Debug.Log($"UIの高さ: {windowHeight}");
+                cnt = 0;
+            }
+        }
+        cnt++;
+#endif
         // 頭の位置からX方向に一定距離ずらす（カメラの右方向基準で）
-        Vector3 worldPos = headTransform.position + Camera.main.transform.right * horizontalOffset;
+        Vector3 worldPos = headTransform.position + Camera.main.transform.right * horizontalOffset
+                +Camera.main.transform.up * heightOffset;
 
         // ワールド → スクリーン空間へ
         Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
 
-        // スクリーンYをウィンドウ高さ分だけ上にオフセット（上辺合わせ）
-        screenPos.y += screenYOffset;
-
         // スクリーン → RectTransformローカル座標へ変換
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out localPos);
-        localPos.x += AppConfigManager.Instance.Config.vrm.ChatInputOffsetX; // X軸のオフセット
-        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY; // Y軸のオフセット
+        localPos.x += AppConfigManager.Instance.Config.vrm.ChatInputOffsetX * scaleFactor; // X軸のオフセット
+        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY * scaleFactor; // Y軸のオフセット
         // ローカル座標を反映
         rectTransform.localPosition = localPos;
 
@@ -122,6 +131,26 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
                 inputField.ActivateInputField();
             }
         }
+    }
+
+    // VRMモデルのバウンディングボックスからY座標を取得する
+    float GetVrmVisualHeight(GameObject root)
+    {
+        // SkinnedMeshRendererをすべて取得
+        var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        if (renderers.Length == 0)
+            return 0f;
+
+        // 全Rendererのバウンディングボックスを統合
+        var bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        // 高さ（Y座標）を返す
+        return bounds.max.y;
     }
     public void OnDestroy()
     {

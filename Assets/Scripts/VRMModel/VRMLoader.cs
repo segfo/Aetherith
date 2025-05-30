@@ -3,6 +3,8 @@ using System;
 using uDesktopMascot;
 using UnityEngine;
 using System.IO;
+using static uDesktopMascot.LoadVRM;
+using Cysharp.Threading.Tasks;
 
 public class VRMLoader : MonoBehaviour
 {
@@ -17,11 +19,7 @@ public class VRMLoader : MonoBehaviour
     private async void Start()
     {
         // 設定ファイルからVRMファイル名を取得する。
-        vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
-        Debug.Log("VRMLoader - VRMモデルの読み込みを開始します。");
-        var cancellationToken = new CancellationTokenSource().Token;
-        var loadedModelInfo = await LoadVRM.LoadModelAsync(Path.Combine("VRM", vrmFileName), cancellationToken);
-
+        LoadedVRMInfo loadedModelInfo = await LoadVrmModel();
         if (loadedModelInfo != null)
         {
             float scale = AppConfigManager.Instance.Config.vrm.Scale; 
@@ -40,5 +38,16 @@ public class VRMLoader : MonoBehaviour
         {
             Debug.LogError("モデルの読み込みに失敗しました。");
         }
+        //AppConfigManager.Instance.OnConfigUpdated += (config) =>
+        //{
+        //    LoadVrmModel();
+        //};
+    }
+    UniTask<LoadedVRMInfo> LoadVrmModel()
+    {
+        vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
+        Debug.Log("VRMLoader - VRMモデルの読み込みを開始します。");
+        var cancellationToken = new CancellationTokenSource().Token;
+        return LoadVRM.LoadModelAsync(Path.Combine("VRM", vrmFileName), cancellationToken);
     }
 }
