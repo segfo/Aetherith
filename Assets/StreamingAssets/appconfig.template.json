@@ -33,7 +33,7 @@
         "LightColorRGBA": "#FFF0E0FF",
         "ShadowStrength": 0.3,
         "Scale": 1.0,
-        "VrmDisplayOffsetX": -1.5,
+        "VrmDisplayOffsetX": 0.0,
         "VrmDisplayOffsetY": 0.0,
         "ChatInputOffsetX": 0.0,
         "ChatInputOffsetY": 0.0,
