@@ -53,6 +53,7 @@
         "blinkDisable": false
     },
     "BackgroundWindowTransparent": true,
+    "WindowStackOrder":1,
     "chatWindowBgRGBA": "#FFFFFFAA",
     "chatInputWindowBgRGBA":"#FFFFFFFF",
     "welcomeMessage": "何でも聞いてくださいね！",

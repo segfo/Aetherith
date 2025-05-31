@@ -55,6 +55,8 @@ LLM `Assets/StreamingAssets/LLM/`
 | `emotionLlm`           | 感情分析用AI設定         |
 | `vrm`                  | キャラクターの見た目・動き設定   |
 | `BackgroundWindowTransparent` | ウィンドウの背景を透明にするかどうかを設定します。（trueで透明、falseで不透明）チャットUIやキャラクターの配置調整に使用します |
+| `WindowStackOrder` | ウィンドウの挙動（通常：0,最前面：1,最背面：2）を定義します |
+| `ClickThrough` | クリックスルー機能を有効化するかどうか（true：有効、false：無効） |
 | `chatWindowBgRGBA`     | チャットの背景色          |
 | `chatInputWindowBgRGBA`| 入力ボックスの背景色        |
 | `welcomeMessage`       | 起動時のメッセージ         |

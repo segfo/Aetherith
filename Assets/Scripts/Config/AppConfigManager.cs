@@ -31,6 +31,21 @@ public class AppConfigManager
         if (uniWindowController != null)
         {
             uniWindowController.isTransparent = config.BackgroundWindowTransparent;
+            switch (config.WindowStackOrder)
+            {
+                case AppConfig.WindowStackOrders.Normal:
+                    uniWindowController.isTopmost = false;
+                    uniWindowController.isBottommost = false;
+                    break;
+                case AppConfig.WindowStackOrders.Topmost:
+                    uniWindowController.isTopmost = true;
+                    uniWindowController.isBottommost = false;
+                    break;
+                case AppConfig.WindowStackOrders.Bottommost:
+                    uniWindowController.isTopmost = false;
+                    uniWindowController.isBottommost = true;
+                    break;
+            }
         }
     }
 
