@@ -2,8 +2,10 @@
     "characterLlm": {
         "useDify": false,
         "difyApiUrl": "",
-        "modelName": "gemma3.gguf",
         "difyApiKey": "",
+        "difyTextParameterName": "",
+        "difyFileParameterName": "",
+        "modelName": "gemma3.gguf",
         "systemPromptFile": "systemprompt.txt",
         "userName": "User",
         "assistantName": "Assistant",
@@ -16,8 +18,10 @@
     "emotionLlm": {
         "useDify": false,
         "difyApiUrl": "",
-        "modelName": "gemma3.gguf",
         "difyApiKey": "",
+        "difyTextParameterName": "",
+        "difyFileParameterName": "",
+        "modelName": "gemma3.gguf",
         "systemPromptFile": "emotion_systemprompt.txt",
         "userName": "User",
         "assistantName": "Assistant",
