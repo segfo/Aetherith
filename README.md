@@ -29,8 +29,10 @@ LLM `Assets/StreamingAssets/LLM/`
 - 会話用LLM及び表情推定用LLMの差し替え
 - 会話用LLM及び表情推定用LLMのシステムプロンプトの差し替え
 - VRM差し替え機能
-- VRM拡大縮小（推奨は0.8～1.8倍くらい）
+- VRM拡大縮小
 - マスコットを動かしたとき、ゆれ物が動く機能
+- 設定ファイルの動的適用
+- 背景透過・不透過設定（UI調整用機能）
   
 # お前を消す方法
 - 方法1：マスコットをクリックしてから`ALT+F4`
@@ -44,9 +46,6 @@ LLM `Assets/StreamingAssets/LLM/`
   
 # 設定ファイル(appconfig.json)
 ## LLMの設定
-以下は、提示されたクラス構成とコメントから**推定できる機能の一覧**と、それぞれを**一般向けのわかりやすい言葉に置き換えたもの**です。
-
----
 
 ### **アプリ全体の設定**
 
@@ -55,6 +54,7 @@ LLM `Assets/StreamingAssets/LLM/`
 | `characterLlm`         | キャラクターの会話AI設定     |
 | `emotionLlm`           | 感情分析用AI設定         |
 | `vrm`                  | キャラクターの見た目・動き設定   |
+| `BackgroundWindowTransparent` | ウィンドウの背景を透明にするかどうかを設定します。（trueで透明、falseで不透明）チャットUIやキャラクターの配置調整に使用します |
 | `chatWindowBgRGBA`     | チャットの背景色          |
 | `chatInputWindowBgRGBA`| 入力ボックスの背景色        |
 | `welcomeMessage`       | 起動時のメッセージ         |
@@ -64,7 +64,7 @@ LLM `Assets/StreamingAssets/LLM/`
 | `chatTypingInterval`   | 文字の表示スピード（タイピング風） |
 
 ### **AI関連設定（`characterLlm`と`emotionLlm`）**
-
+設定ファイル動的ロード機能の対象外です（適用にはアプリの再起動が必要です）
 | フィールド名             | 説明            |
 | ------------------ |  ------------------ |
 | `useDify`          | Difyを使うかどうか   |
@@ -90,8 +90,8 @@ LLM `Assets/StreamingAssets/LLM/`
 | `ShadowStrength`              | キャラクターの影の濃さ     |
 | `Scale`                       | VRMの表示スケール      |
 | `VrmDisplayOffsetX/Y`         | 画面内でのキャラの位置調整<br>X軸: +値=右方向移動、-値=左方向移動<br>Y軸: +値=上方向移動、-値下方向移動   |
-| `BackgroundWindowTransparent` | ウィンドウの背景を透明にするか |
-| `FileName`                    | 使用するVRMファイル名  |
+| `ChatInputOffsetX/Y` | 画面内でのチャットUIの位置調整<br>X軸: +値=右方向移動、-値=左方向移動<br>Y軸: +値=上方向移動、-値下方向移動|
+| `FileName`                    | 使用するVRMファイル名 （設定ファイル動的ロード機能の対象外です。適用にはアプリの再起動が必要です）  |
 | `springBone` | スプリングボーンの設定 | 物理動作に関する設定 |
 | `blinkExclusionExpressionTreshold`  | 瞬きを抑制（瞬き禁止の場合は許可）する表情と、瞬きを抑制する表情の重み閾値を設定します（`{"Surprised":0.4,...}`であれば、「驚き」の表情の重みが0.4よりも大きい時、瞬きが抑制されます。`1.0`にすると常に瞬きします） |
 | `blinkDisable` | デフォルトの瞬きを禁止するかどうか。糸目キャラに有効です。blinkExclusionExpressionTresholdの意味が反転します(`{"Surprised":0.4,...}`であれば、「驚き」の表情の重みが0.4よりも大きい時、瞬きします。`1.0`にすると一切瞬きしません) |
