@@ -60,7 +60,7 @@ public class ChatManager : MonoBehaviour
             llmCharacter = characterLLM.AddComponent<LLMCharacter>();
         }
         // モデル名が違ったら別のモデルをロードするが、同じなら同一のLLMコンポーネントを使う。
-        if (config.characterLlm.modelName != config.emotionLlm.modelName || AppConfigManager.Instance.Config.ForceAllLLM)
+        if (config.characterLlm.modelName != config.emotionLlm.modelName)
         {
             if (!emotionalLLM.TryGetComponent<LLM>(out llmEmotional)) {
                 llmEmotional = emotionalLLM.AddComponent<LLM>();
@@ -304,7 +304,7 @@ public class ChatManager : MonoBehaviour
     string receivedText = "";
     private void HandleReply(string reply)
     {
-        BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionTreshold;
+        BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionThreshold;
         // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
         try
         {

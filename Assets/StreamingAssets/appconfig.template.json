@@ -57,12 +57,12 @@
         "blinkDisable": false
     },
     "BackgroundWindowTransparent": true,
-    "WindowStackOrder":1,
-    "chatWindowBgRGBA": "#FFFFFFAA",
-    "chatInputWindowBgRGBA":"#FFFFFFFF",
+    "WindowStackOrder": 1,
+    "chatWindowBgRGBA": "#FFFFFF88",
+    "chatInputWindowBgRGBA": "#FFFFFFFF",
     "welcomeMessage": "何でも聞いてくださいね！",
     "waitMessage": "\"（考え中です…）\"",
-    "shakeMessage": "うぅ～・・・振らないでください～！",
+    "shakeMessage": "うぅ・・・振らないでください～！",
     "shakeForceThreshold": 0.15,
     "chatTypingInterval": 0.025
 }

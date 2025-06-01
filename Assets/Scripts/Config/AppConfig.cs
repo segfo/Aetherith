@@ -13,7 +13,6 @@ public class AppConfig
     public string shakeMessage = "うぅ・・・振らないでください～！"; // シェイク時のメッセージ
     public float shakeForceThreshold = 0.15f; // シェイクの閾値
     public float chatTypingInterval = 0.025f; // チャットに出力される文字の時間間隔（TypewriterEffect利用時）
-    public bool ForceAllLLM = false; // 全てのLLM設定を強制的に使用する（Temperature・Top-K・Top-Pなどの設定を個別で利用したい場合にはLLMを別インスタンスでロードする）
     public enum WindowStackOrders
     {
         Normal = 0, Topmost = 1, Bottommost = 2,

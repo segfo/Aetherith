@@ -13,7 +13,7 @@ public class VRMConfig
     public string FileName = "Default.vrm"; // VRMファイル名
     public SpringBone springBone = new SpringBone(); // SpringBone = 揺れ物の設定
     // 瞬きを除外する表情のしきい値・blinkDisable = trueの時は許可する表情とする。
-    public BlinkExclusionExpressionThreshold blinkExclusionExpressionTreshold = new BlinkExclusionExpressionThreshold();
+    public BlinkExclusionExpressionThreshold blinkExclusionExpressionThreshold = new BlinkExclusionExpressionThreshold();
     public bool blinkDisable = false; // 瞬きを無効にする（糸目キャラ用）
 }
 public class SpringBone
