@@ -156,9 +156,6 @@ public class CharacterController : MonoBehaviour
         float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale;
 
         /// VRMの頭の先端を画面の上部に調整する
-        //cam.transform.position = new Vector3(cam.transform.position.x + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetX,
-        //    cam.transform.position.y - cam.orthographicSize + modelHeight+0.5f * scaleFactor + AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY,
-        //    faceDir.z * 2);
         CameraConfigApply(cam,modelHeight,scaleFactor,faceDir);
     }
 

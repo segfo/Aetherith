@@ -44,7 +44,6 @@ public class ChatManager : MonoBehaviour
     {
         AppConfig config = AppConfigManager.Instance.Config;
         chatUI.InputFieldSetEnable(false);
-        //chatUI.AppendTextLine("SYSTEM: ローカルLLMをセットアップしています...");
         chatUI.StartTypingAppend("SYSTEM: ローカルLLMをセットアップしています...\n");
         // ゲームオブジェクトを無効化して、追加したコンポーネントの初期化を遅らせる。
 
@@ -61,7 +60,7 @@ public class ChatManager : MonoBehaviour
             llmCharacter = characterLLM.AddComponent<LLMCharacter>();
         }
         // モデル名が違ったら別のモデルをロードするが、同じなら同一のLLMコンポーネントを使う。
-        if (config.characterLlm.modelName != config.emotionLlm.modelName)
+        if (config.characterLlm.modelName != config.emotionLlm.modelName || AppConfigManager.Instance.Config.ForceAllLLM)
         {
             if (!emotionalLLM.TryGetComponent<LLM>(out llmEmotional)) {
                 llmEmotional = emotionalLLM.AddComponent<LLM>();
@@ -174,8 +173,6 @@ public class ChatManager : MonoBehaviour
                     return;
                 }
                 // 残りのリソースを表示する
-                //chatUI.AppendTextLine("SYSTEM：しばらくお待ちください。");
-                //chatUI.AppendTextLine("SYSTEM：読み込み中のリソース");
                 chatUI.StartTypingAppend("SYSTEM：しばらくお待ちください。\n");
                 chatUI.StartTypingAppend("SYSTEM：読み込み中のリソース\n");
                 string reamining_resource = "";
@@ -257,13 +254,11 @@ public class ChatManager : MonoBehaviour
     async public void OnSubmit(string _input)
     {
         ExpressionController.Instance.ResetVrmExpression();
-        //UniVRM10.ExpressionKey.Neutral;
         string userInput = chatUI.GetInputField();
         Debug.Log("OnSubmit called");
-        Debug.Log("Input: " + userInput);
-            // enter 単体 → 送信処理
         if (!string.IsNullOrWhiteSpace(userInput))
         {
+            Debug.Log("Input: " + userInput);
             // ローカルLLMを呼び出しているのでリモートLLMも呼び出せるようにロジックを変更する
             chatUI.StartTyping(waitMessage);
             // 待ちモーションを再生する
