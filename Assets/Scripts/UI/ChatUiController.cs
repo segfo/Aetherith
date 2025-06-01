@@ -51,7 +51,8 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 #if UNITY_EDITOR
     int cnt = 0;
 #endif
-    void Update()
+
+    void AdjustChatUi()
     {
         if (characterController == null || characterController.vrmInstance == null) return;
         var animator = characterController.vrmInstance.GetComponent<Animator>();
@@ -66,13 +67,15 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         float windowHeight = rectTransform.rect.height;
         float windowWidth = rectTransform.rect.width;
 
-        // ワールド空間での横方向のずれ（スケールに依存しない距離）
-        float horizontalOffset = 0.25f * scaleFactor; // 右へ
+        // ワールド空間での水平軸のオフセット
+        float horizontalOffset = 0.25f * scaleFactor;
+        // ワールド空間での垂直軸のオフセット
+        float verticalOffsetWorld = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
 
 #if UNITY_EDITOR
         if (cnt == 0 || cnt >= 30 * 10)
         {
-            if(characterController.vrmInstance != null)
+            if (characterController.vrmInstance != null)
             {
                 var height = GetVrmVisualHeight(characterController.vrmInstance.gameObject);
                 Debug.Log($"バウンティボックスの高さ: {height}");
@@ -83,22 +86,35 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         }
         cnt++;
 #endif
-        // 頭の位置からX方向に一定距離ずらす（カメラの右方向基準で）
-        Vector3 worldPos = headTransform.position + Camera.main.transform.right * horizontalOffset
-                +Camera.main.transform.up * 0;
 
-        // ワールド → スクリーン空間へ
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+        // 頭の位置からX方向に一定距離ずらす（カメラの右方向基準で）
+        Vector3 baseWorldPos = headTransform.position + Camera.main.transform.right * horizontalOffset;
+
+        // Yオフセットありの worldPos
+        Vector3 worldPosWithYOffset = baseWorldPos + Camera.main.transform.up * verticalOffsetWorld;
+
+        // それぞれスクリーン座標に変換
+        Vector3 baseScreenPos = Camera.main.WorldToScreenPoint(baseWorldPos);
+        Vector3 adjustedScreenPos = Camera.main.WorldToScreenPoint(worldPosWithYOffset);
+
+        // Y軸の差分だけ補正して、常に「上辺にUIの上端がつく」構成に
+        float deltaY = adjustedScreenPos.y - baseScreenPos.y;
+        Vector3 finalScreenPos = baseScreenPos;
+        finalScreenPos.y = Screen.height - deltaY;  // ← 最上部からの相対補正
 
         // スクリーン → RectTransformローカル座標へ変換
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out localPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, finalScreenPos, Camera.main, out localPos);
         localPos.x += AppConfigManager.Instance.Config.vrm.ChatInputOffsetX * scaleFactor; // X軸のオフセット
-        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY * scaleFactor + 75.0f * scaleFactor; // Y軸のオフセット
+        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY * scaleFactor; // Y軸のオフセット
         // ローカル座標を反映
         rectTransform.localPosition = localPos;
 
         // カメラの向きに合わせてUIを回転
         transform.rotation = Camera.main.transform.rotation;
+    }
+    void Update()
+    {
+        AdjustChatUi();
         // InputTextFieldの処理
         // フォーカスがない or IME変換中 は無視
         if (!inputField.isFocused || !string.IsNullOrEmpty(Input.compositionString))
