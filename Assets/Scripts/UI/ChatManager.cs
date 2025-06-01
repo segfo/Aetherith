@@ -71,6 +71,7 @@ public class ChatManager : MonoBehaviour
         }
         else
         {
+            // 共通のLLMを使う。
             llmEmotional = llm;
             llmCharacterEmotional = characterLLM.AddComponent<LLMCharacter>();
         }
