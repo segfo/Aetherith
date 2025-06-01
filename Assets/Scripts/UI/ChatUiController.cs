@@ -68,8 +68,6 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 
         // ワールド空間での横方向のずれ（スケールに依存しない距離）
         float horizontalOffset = 0.25f * scaleFactor; // 右へ
-        // ワールド空間での高さ方向のずれ（スケールに依存しない距離）
-        float heightOffset = GetVrmVisualHeight(characterController.vrmInstance.gameObject) - headTransform.position.y; ;
 
 #if UNITY_EDITOR
         if (cnt == 0 || cnt >= 30 * 10)
@@ -87,7 +85,7 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 #endif
         // 頭の位置からX方向に一定距離ずらす（カメラの右方向基準で）
         Vector3 worldPos = headTransform.position + Camera.main.transform.right * horizontalOffset
-                +Camera.main.transform.up * heightOffset;
+                +Camera.main.transform.up * 0;
 
         // ワールド → スクリーン空間へ
         Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
@@ -95,7 +93,7 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         // スクリーン → RectTransformローカル座標へ変換
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, Camera.main, out localPos);
         localPos.x += AppConfigManager.Instance.Config.vrm.ChatInputOffsetX * scaleFactor; // X軸のオフセット
-        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY * scaleFactor; // Y軸のオフセット
+        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY * scaleFactor + 75.0f * scaleFactor; // Y軸のオフセット
         // ローカル座標を反映
         rectTransform.localPosition = localPos;
 

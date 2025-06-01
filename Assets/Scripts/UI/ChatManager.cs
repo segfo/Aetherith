@@ -36,7 +36,7 @@ public class ChatManager : MonoBehaviour
         loadResources = new Dictionary<LoadResources, string>
         {
             { LoadResources.VRM,"VRMモデル"},
-            { LoadResources.MainCharacterLLM, "メインキャラクターAI(Local)" },
+            { LoadResources.MainCharacterLLM, "キャラクターAI(Local)" },
             { LoadResources.EmotionCharacterLLM, "感情・表情推定AI(Local)"},
         };
     }
@@ -94,7 +94,7 @@ public class ChatManager : MonoBehaviour
     // 個々のLLMのセットアップを行う。
     void SetupLLMCharacter(LLMConfig config,LLMCharacter llmCharacter,LLM llm,string defaultPrompt)
     {
-        string systemPromptPath = Path.Combine(Application.streamingAssetsPath, config.systemPromptFile);
+        string systemPromptPath = SafeFileReader.PathVerifier(Application.streamingAssetsPath, Path.Combine(Application.streamingAssetsPath, config.systemPromptFile));
         string systemPrompt = SafeFileReader.ReadOrCreateTextFile(systemPromptPath, Encoding.UTF8, defaultPrompt);
         SetupLLMCharactor(systemPrompt, config, llmCharacter);
         llm.maxContextLength = config.maxContextLength;
@@ -120,11 +120,12 @@ public class ChatManager : MonoBehaviour
 #if UNITY_EDITOR
         mainThreadDispatcher.Enqueue(() => {
 #endif
-            string characterGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.characterLlm.modelName);
+            string llmBasePath = Path.Combine(Application.streamingAssetsPath, "LLM");
+            string characterGgufModelPath = SafeFileReader.PathVerifier(llmBasePath, Path.Combine(llmBasePath, config.characterLlm.modelName));
             llm.SetModel(characterGgufModelPath);
 
             if (llmEmotional != llm){
-                string emotionGgufModelPath = Path.Combine(Application.streamingAssetsPath, "LLM", config.emotionLlm.modelName);
+                string emotionGgufModelPath = SafeFileReader.PathVerifier(llmBasePath, Path.Combine(llmBasePath, config.emotionLlm.modelName));
                 llmEmotional.SetModel(emotionGgufModelPath);
             }
 #if UNITY_EDITOR
@@ -159,7 +160,6 @@ public class ChatManager : MonoBehaviour
         try {
             if (loadResources.ContainsKey(loadResource))
             {
-                //chatUI.AppendTextLine($"SYSTEM：{loadResources[loadResource]}を読み込みました。");
                 chatUI.StartTypingAppend($"SYSTEM：{loadResources[loadResource]}を読み込みました。\n");
                 loadResources.Remove(loadResource);
                 // 全てのリソースが読み込まれたのでチャットUIを有効にする
@@ -181,7 +181,6 @@ public class ChatManager : MonoBehaviour
                 {
                     reamining_resource += " - "+resource.Value+"\n";
                 }
-                //chatUI.AppendTextLine(reamining_resource);
                  chatUI.StartTypingAppend(reamining_resource);
             }
             else

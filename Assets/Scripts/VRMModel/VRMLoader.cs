@@ -48,6 +48,8 @@ public class VRMLoader : MonoBehaviour
         vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
         Debug.Log("VRMLoader - VRMモデルの読み込みを開始します。");
         var cancellationToken = new CancellationTokenSource().Token;
-        return LoadVRM.LoadModelAsync(Path.Combine("VRM", vrmFileName), cancellationToken);
+        string basePath = Path.Combine("VRM", vrmFileName);
+        string path = SafeFileReader.PathVerifier(basePath, Path.Combine("VRM", vrmFileName));
+        return LoadVRM.LoadModelAsync(path, cancellationToken);
     }
 }

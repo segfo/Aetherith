@@ -42,4 +42,30 @@ public static class SafeFileReader
             return null;
         }
     }
+    /// <summary>
+    /// string path = PathVerifier("C:\BasePath\","C:\BasePath\calc.exe");
+    /// if (path == "C:\BasePath\calc.exe") { /*OK*/ }
+    /// PathVerifier("C:\BasePath\","../../Windows/System32/calc.exe");
+    /// /// if (path == "C:\BasePath\calc.exe") { /*OK*/ }
+    /// </summary>
+
+    public static string PathVerifier(string basePath, string targetPath) {
+        // パスを結合し正規化する
+        string fullPath = Path.GetFullPath(Path.Combine(targetPath));
+
+        if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(targetPath))
+        {
+            Debug.LogError("ベースパスまたはターゲットパスが空です。");
+            return fullPath;
+        }
+        
+        // ベースパスよりもさかのぼっている場合はベースパス+ファイル名を返す
+        if (!fullPath.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
+        {
+            Debug.LogWarning($"ターゲットパス {targetPath} はベースパス {basePath} の外にあります。");
+            return Path.Combine(basePath, Path.GetFileName(targetPath));
+        }
+        // ディレクトリを遡っていないので問題なし
+        return targetPath;
+    }
 }
