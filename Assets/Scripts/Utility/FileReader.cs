@@ -52,6 +52,10 @@ public static class SafeFileReader
     public static string PathVerifier(string basePath, string targetPath) {
         // パスを結合し正規化する
         string fullPath = Path.GetFullPath(Path.Combine(targetPath));
+        // ベースパスとターゲットパスも正規化する
+        // これにより、相対パスやシンボリックリンクの影響を受けない。また区切り文字の違いも吸収される
+        basePath = Path.GetFullPath(basePath);
+        targetPath = Path.GetFullPath(targetPath);
 
         if (string.IsNullOrEmpty(basePath) || string.IsNullOrEmpty(targetPath))
         {
@@ -62,7 +66,7 @@ public static class SafeFileReader
         // ベースパスよりもさかのぼっている場合はベースパス+ファイル名を返す
         if (!fullPath.StartsWith(basePath, StringComparison.OrdinalIgnoreCase))
         {
-            Debug.LogWarning($"ターゲットパス {targetPath} はベースパス {basePath} の外にあります。");
+            Debug.LogWarning($"正規化されたパスは `{fullPath}` です。ターゲットパス {targetPath} はベースパス {basePath} の外にあります。");
             return Path.Combine(basePath, Path.GetFileName(targetPath));
         }
         // ディレクトリを遡っていないので問題なし
