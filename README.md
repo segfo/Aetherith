@@ -3,9 +3,14 @@ Avatar Engine THE Responsive Interface Tunable Helperの略。
 好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。  
 たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）  
 
+# 使い方
+1. [Releaseページ](https://github.com/segfo/Aetherith/releases)から最新のアプリをダウンロードしてください。
+2. zipを展開して、好きなLLM(gguf形式)をストリーミングアセットのLLMフォルダに投入してください（HuggingFace等から取得できます）
+3. LLMを投入したらそのLLMが読み込まれるように[設定ファイル](#初回起動時に作成されるファイル)を修正してください
+4. フォルダの直下にある`Aetherith.exe`を実行してください
+
 ## 使っているところ(gifアニメ)
-止まってたらスーパーリロードしてみてください
-![Animation](README_resources/Play.gif)
+🚧調整中🚧
 
 # ビルド方法（Unityでの開き方）
 1. UnityHubをインストールします
@@ -25,14 +30,19 @@ LLM `Assets/StreamingAssets/LLM/`
 
 # 実装済みの機能
 - VRM 1.0のみに対応しています。0.x系は使えません。挙動を安定させるために切り捨ててます。
-- ローカルLLMを用いた表情モーフィング及び会話
+- LLMを用いた自動表情モーフィング及び会話
 - 会話用LLM及び表情推定用LLMの差し替え
 - 会話用LLM及び表情推定用LLMのシステムプロンプトの差し替え
 - VRM差し替え機能
-- VRM拡大縮小
+- VRM拡大縮小（スケールの設定）
 - マスコットを動かしたとき、ゆれ物が動く機能
 - 設定ファイルの動的適用
 - 背景透過・不透過設定（UI調整用機能）
+- まばたきの制限
+    - 細目のキャラが「目を見開いたときの表情」で瞬きをONにするなどが可能です
+    - 例えば「驚き」、「怒り」等に限定して柔軟に設定可能です
+- 一部のセリフの設定（初期表示・キャラを振った時のセリフ）
+- UIの色や明るさの調整、VRMの色や明るさ（ライト）の調整
 
 # お前を消す方法
 - 方法1：マスコットをクリックしてから`ALT+F4`
@@ -43,7 +53,20 @@ LLM `Assets/StreamingAssets/LLM/`
 - appconfig.json
 - systemprompt.txt: 会話用LLMのシステムプロンプトです。好きにしてください。
 - emotional_systemprompt.txt: 表情推定用LLM用のシステムプロンプトです。これにはちょっと縛りがあるので例（後述）を参考にしてうまいことやってください。
-  
+
+## ファイルパス
+`Aetherith.exe`のあるフォルダから見た相対パスを以下に示します。
+
+|名称| パス | 説明|
+|---|---|---|
+|ストリーミングアセット|`./Aetherith_Data/StreamingAssets`|設定ファイル・VRM・LLMが配置されるベースパス。</br>特に設定ファイルが本ディレクトリの直下に配置されます。|
+|[設定ファイル](#設定ファイルappconfigjson)|`./Aetherith_Data/StreamingAssets/`<br>`appconfig.json`|アプリが読み込んで利用する設定ファイルです。LLMやVRMのモデル以外の項目は動的にロードされるため起動中に編集して動作確認が可能です|
+|設定ファイルのテンプレート|`./Aetherith_Data/StreamingAssets/`<br>`appconfig.template.json`|設定ファイルのテンプレートです。初期値なんだったっけ、みたいなときに見てください。|
+|システムプロンプト（キャラクタ用）|`./Aetherith_Data/StreamingAssets/`<br>`systemprompt.json`|キャラクタの性格を定義するシステムプロンプトです。好きな名前や性格にしましょう。|
+|[システムプロンプト（表情推定用）](#表情推定用llm用のシステムプロンプト例)|`./Aetherith_Data/StreamingAssets/`<br>`emotion_systemprompt.json`|VRMの表情を推定するためのLLMが利用するシステムプロンプトです。[結果はJSONで返す](#表情推定用llm用のシステムプロンプト例)必要があります。|
+|VRMディレクトリ|`./Aetherith_Data/StreamingAssets/`<br>`VRM`|好きなVRMをこの中に配置してください。</br>既定では`Default.vrm`が使用されます|
+|LLMディレクトリ|`./Aetherith_Data/StreamingAssets/`<br>`LLM`|好きなLLM（gguf形式）を子の中に配置してください。</br>既定では`gemma-3.gguf`が使用されます|
+
 # 設定ファイル(appconfig.json)
 ## LLMの設定
 
@@ -115,7 +138,7 @@ LLM `Assets/StreamingAssets/LLM/`
 表情推定用のLLMはJSON形式で返却してもらう必要があるので、LLMに対して正確なJSONを返却してもらう必要があります。
 以下のような制約を付けたプロンプトを書く形です。
 ただし、LLMのモデルによっては正確なJSONを返さないこともあるので以下の例を参考にチューニングしてください。
-Gemma-3 120億パラメータ 4bit量子化モデル（gemma-3-4b-it-q4_0.gguf）に対するプロンプトです。
+Gemma-3 40億パラメータ 4bit量子化モデル（gemma-3-4b-it-q4_0.gguf）に対するプロンプトです。
 ~~~
 # あなたの役割
 あなたは感情推定AIです。
