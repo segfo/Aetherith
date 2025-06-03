@@ -72,7 +72,7 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         // ワールド空間での垂直軸のオフセット
         float verticalOffsetWorld = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR 
         if (cnt == 0 || cnt >= 30 * 10)
         {
             if (characterController.vrmInstance != null)
