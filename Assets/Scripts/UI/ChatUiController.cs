@@ -48,9 +48,6 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
             AppConfigManager.FallbackInstance.Config.chatInputWindowBgRGBA
         );
     }
-#if UNITY_EDITOR
-    int cnt = 0;
-#endif
 
     void AdjustChatUi()
     {
@@ -71,21 +68,6 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         float horizontalOffset = 0.25f * scaleFactor;
         // ワールド空間での垂直軸のオフセット
         float verticalOffsetWorld = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
-
-#if UNITY_EDITOR 
-        if (cnt == 0 || cnt >= 30 * 10)
-        {
-            if (characterController.vrmInstance != null)
-            {
-                var height = GetVrmVisualHeight(characterController.vrmInstance.gameObject);
-                Debug.Log($"バウンティボックスの高さ: {height}");
-                Debug.Log($"頭の位置: {headTransform.position.y}");
-                Debug.Log($"UIの高さ: {windowHeight}");
-                cnt = 0;
-            }
-        }
-        cnt++;
-#endif
 
         // 頭の位置からX方向に一定距離ずらす（カメラの右方向基準で）
         Vector3 baseWorldPos = headTransform.position + Camera.main.transform.right * horizontalOffset;

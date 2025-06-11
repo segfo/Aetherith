@@ -1400,6 +1400,7 @@ GameObject:
   - component: {fileID: 1261813679}
   - component: {fileID: 1261813680}
   - component: {fileID: 1261813683}
+  - component: {fileID: 1261813684}
   m_Layer: 0
   m_Name: ChatManager
   m_TagString: Untagged
@@ -1439,6 +1440,7 @@ MonoBehaviour:
   waitMessage: "\"\uFF08\u8003\u3048\u4E2D\u3067\u3059\u2026\uFF09\"\n"
   vrmCharacter: {fileID: 824634573}
   lipSyncSimulator: {fileID: 1261813683}
+  thinkingAnimation: {fileID: 1261813684}
 --- !u!114 &1261813683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1453,6 +1455,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character: {fileID: 824634573}
   durationPerSyllable: 0.12
+--- !u!114 &1261813684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1261813677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 664babc74d18c0d4eb37a5c05f2fc2ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1284486582
 GameObject:
   m_ObjectHideFlags: 0
