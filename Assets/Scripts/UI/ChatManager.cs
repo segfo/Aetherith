@@ -16,6 +16,7 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private string waitMessage = "\"（考え中です…）\"";
     [SerializeField] private CharacterController vrmCharacter;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
+    [SerializeField] private ThinkingMotionManager thinkingAnimation;
 
     private ILLMChat llmCharacter = null;
     private ILLMChat llmCharacterEmotional = null;
@@ -28,6 +29,7 @@ public class ChatManager : MonoBehaviour
     private BlinkController blinkController;
     // 残リソース一覧
     private Dictionary<LoadResources, string> loadResources;
+
     // 設定ファイルを読み込んで、LLMCharacterを初期化する。
     // プロンプトの初期化、ユーザ名・AIキャラクタ名の初期化、使用するモデルの初期化などを行う。
     void Awake()
@@ -237,6 +239,7 @@ public class ChatManager : MonoBehaviour
     {
         // VRMモデルのロードが完了しので、BlinkControllerを取得しておく。
         blinkController = vrmCharacter.vrmInstance.GetComponent<BlinkController>();
+        thinkingAnimation.SetAnimator(vrmCharacter.vrmInstance.GetComponent<Animator>());
         mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.VRM);
@@ -277,17 +280,22 @@ public class ChatManager : MonoBehaviour
     }
 
     Dictionary<string, float> expressionList;
+    bool firstReply = true;
+
     async public void OnSubmit(string _input)
     {
+        firstReply = true;
         ExpressionController.Instance.ResetVrmExpression();
         string userInput = chatUI.GetInputField();
         Debug.Log("OnSubmit called");
         if (!string.IsNullOrWhiteSpace(userInput))
         {
             Debug.Log("Input: " + userInput);
+
+            // 待ちモーションを再生する
+            thinkingAnimation.DoThinking();
             // 考え中メッセージを出す
             chatUI.StartTyping(waitMessage);
-            // 待ちモーションを再生する
 
             chatUI.ClearInputField();
             // 感情推定AIを呼び出す　
@@ -316,68 +324,61 @@ public class ChatManager : MonoBehaviour
             // 感情を取得し表情に反映する。
             // VRMの表情を変更する処理を追加する。
             // LLMからは {"Happy": "0.6", "Sad": "0.2", ...} のようなJSONが返ってくる。
-            _ = llmCharacter.Chat(userInput, HandleReply, OnComplete);
+            _ = llmCharacter.Chat(userInput, ClearChatText , HandleReply, OnComplete);
             // 待機メッセージを表示し、入力フォームをクリアする
             // ここはローカルLLM/リモートLLMのどちらでも処理する
             //llmCharacter.AddPlayerMessage(userInput);
         }
         lipSyncSimulator.LipSyncStart();
     }
+    void ClearChatText()
+    {
+        chatUI.StartTyping("");
+    }
 
     private void AppendToLog(string message)
     {
         System.IO.File.AppendAllText(logFilePath, message + "\n");
     }
-    string receivedText = "";
-    private void HandleReply(string reply)
+
+    void VRMExpressionChange()
     {
         BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionThreshold;
         // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
         try
         {
-            if (expressionList["Happy"] > filter.Happy || expressionList["Sad"] > filter.Sad ||
-                expressionList["Angry"] > filter.Angry || expressionList["Surprised"] > filter.Surprise ||
-                expressionList["Relaxed"] > filter.Relaxed || expressionList["Neutral"] > filter.Neutral)
+            if (firstReply)
             {
-                // 瞬きを無効化する。目は開いたままにする
-                // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
-                //blinkController.SetBlinkEnabled(false,0.0f);
-                // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
-                blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
+                // 考え中アニメーションから元に戻す
+                thinkingAnimation.DoneThinking();
+                if (expressionList["Happy"] > filter.Happy || expressionList["Sad"] > filter.Sad ||
+                    expressionList["Angry"] > filter.Angry || expressionList["Surprised"] > filter.Surprise ||
+                    expressionList["Relaxed"] > filter.Relaxed || expressionList["Neutral"] > filter.Neutral)
+                {
+                    // 瞬きを無効化する。目は開いたままにする
+                    // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
+                    //blinkController.SetBlinkEnabled(false,0.0f);
+                    // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
+                    blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
+                }
+                firstReply = false;
             }
         }
         catch (KeyNotFoundException e)
         {
             Debug.LogError("表情に対応するキーがありません: " + e.Message);
         }
-
         SetVrmExpression(expressionList);
-        chatUI.SetText(reply);
-        lipSyncSimulator.SpeakText(GetDiff(reply,receivedText));
-        receivedText = reply;
     }
-    public string GetDiff(string current,string previous)
+
+    private void HandleReply(string reply)
     {
-        int commonLength = 0;
-        int minLength = Math.Min(previous.Length, current.Length);
-
-        // 先頭から一致している文字数をカウント
-        for (int i = 0; i < minLength; i++)
-        {
-            if (previous[i] != current[i])
-                break;
-            commonLength++;
-        }
-
-        string diff = current.Substring(commonLength);
-        previous = current;
-        return diff;
+        VRMExpressionChange();
+        chatUI.StartTypingAppend(reply);
+        lipSyncSimulator.SpeakText(reply);
     }
-
     public void OnComplete()
     {
-        //llmCharacter.AddAIMessage(receivedText);
-        receivedText = "";
         lipSyncSimulator.LipSyncEnd();
         // 表情を戻す
         float wait = UnityEngine.Random.Range(1.0f, 2.0f);
@@ -391,6 +392,5 @@ public class ChatManager : MonoBehaviour
             // blinkController.SetBlinkEnabled(true, 0.0f);
             blinkController.SetBlinkEnabled(!AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
         });
-        
     }
 }
