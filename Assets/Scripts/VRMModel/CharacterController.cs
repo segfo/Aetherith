@@ -27,7 +27,7 @@ public class CharacterController : MonoBehaviour
     private void Awake()
     {
         vrmLoader.OnVrmLoaded += OnVrmLoaded;
-        chatManager.TypingAppendText("SYSTEM: VRMモデルを読み込んでいます...\n");
+        chatManager.TypingAppendTextSystem("SYSTEM: VRMモデルを読み込んでいます...\n");
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
     }
 

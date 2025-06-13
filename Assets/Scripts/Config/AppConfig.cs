@@ -12,7 +12,8 @@ public class AppConfig
     public string waitMessage = "\"（考え中です…）\""; // LLMからの応答待ちメッセージ
     public string shakeMessage = "うぅ・・・振らないでください～！"; // シェイク時のメッセージ
     public float shakeForceThreshold = 0.15f; // シェイクの閾値
-    public float chatTypingInterval = 0.025f; // チャットに出力される文字の時間間隔（TypewriterEffect利用時）
+    public float botChatTypingInterval = 0.025f; // チャットに出力される文字の時間間隔(Bot)
+    public float systemChatTypingInterval = 0.025f; // チャットに出力される文字の時間間隔（システム）
     public enum WindowStackOrders
     {
         Normal = 0, Topmost = 1, Bottommost = 2,

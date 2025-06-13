@@ -201,7 +201,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 438814072}
   m_HandleRect: {fileID: 438814071}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -245,6 +245,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 48742396}
   m_CullTransparentMesh: 1
+--- !u!1 &94865543
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 94865545}
+  - component: {fileID: 94865544}
+  m_Layer: 0
+  m_Name: TypewriterEffectSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &94865544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94865543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5a41f82744455418253b0b1ea2d75c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typingInterval: 0.025
+  lipSync: {fileID: 0}
+--- !u!4 &94865545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94865543}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.25391036, y: 0.11525399, z: 2.0005121}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,6 +549,52 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &420341530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 420341532}
+  - component: {fileID: 420341531}
+  m_Layer: 0
+  m_Name: TypewriterEffectBot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &420341531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420341530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae5a41f82744455418253b0b1ea2d75c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typingInterval: 0.025
+  lipSync: {fileID: 1261813683}
+--- !u!4 &420341532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420341530}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.25391036, y: 0.11525399, z: 2.0005121}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &438814070
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,9 +817,8 @@ GameObject:
   - component: {fileID: 501108175}
   - component: {fileID: 501108177}
   - component: {fileID: 501108176}
-  - component: {fileID: 501108178}
   m_Layer: 0
-  m_Name: VerticalLayout
+  m_Name: ChatWidow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -773,7 +864,8 @@ MonoBehaviour:
   inputField: {fileID: 1714704429}
   inputWindow: {fileID: 2140179226}
   responseArea: {fileID: 977963350}
-  typewriterEffect: {fileID: 501108178}
+  typewriterSystem: {fileID: 94865544}
+  typewriterBot: {fileID: 420341531}
 --- !u!114 &501108177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,19 +892,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &501108178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501108174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae5a41f82744455418253b0b1ea2d75c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterInterval: 0.025
 --- !u!1 &536389158
 GameObject:
   m_ObjectHideFlags: 0
@@ -2763,3 +2842,5 @@ SceneRoots:
   - {fileID: 1161837980}
   - {fileID: 1261813679}
   - {fileID: 1694833597}
+  - {fileID: 94865545}
+  - {fileID: 420341532}

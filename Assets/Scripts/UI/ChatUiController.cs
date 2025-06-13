@@ -11,7 +11,8 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
     [SerializeField] private InputField inputField;
     [SerializeField] private GameObject inputWindow;
     [SerializeField] private ScrollRect responseArea;
-    [SerializeField] private TypewriterEffect typewriterEffect;
+    [SerializeField] private TypewriterEffect typewriterSystem;
+    [SerializeField] private TypewriterEffect typewriterBot;
 
     bool isMinimized = false;
     bool ime = false;
@@ -20,15 +21,16 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 
     private void Awake()
     {
-        ApplyConfig(AppConfigManager.Instance.Config);
-        if (typewriterEffect == null)
+        if (typewriterSystem == null||typewriterBot == null)
         {
             Debug.LogError("TypewriterEffect is not assigned in ChatUIController.");
         }
         else
         {
-            typewriterEffect.Init(this);
+            typewriterSystem.Init(this);
+            typewriterBot.Init(this);
         }
+        ApplyConfig(AppConfigManager.Instance.Config);
         Input.imeCompositionMode = IMECompositionMode.On;
         _keyboard = Keyboard.current;
         _keyboard.SetIMEEnabled(true);
@@ -38,6 +40,8 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
     }
     void ApplyConfig(AppConfig config)
     {
+        typewriterBot.SetTypingInterval(AppConfigManager.Instance.Config.botChatTypingInterval);
+        typewriterSystem.SetTypingInterval(AppConfigManager.Instance.Config.systemChatTypingInterval);
         // inputFieldの色を表示する
         responseArea.GetComponent<Image>().color = CharacterRender.ParseHexColor(
              config.chatWindowBgRGBA,
@@ -215,18 +219,33 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         onInputTextSubmit = onSubmit;
 
     }
+    public void StartTypingSystem(string text)
+    {
+        typewriterSystem?.StartTyping(text);
+    }
+
+    public void StartTypingAppendSystem(string text)
+    {
+        typewriterSystem?.StartTypingAppend(text);
+    }
+
+    public void StopTypingSystem()
+    {
+        typewriterSystem?.StopTyping();
+    }
+
     public void StartTyping(string text)
     {
-        typewriterEffect?.StartTyping(text);
+        typewriterBot?.StartTyping(text);
     }
 
     public void StartTypingAppend(string text)
     {
-        typewriterEffect?.StartTypingAppend(text);
+        typewriterBot?.StartTypingAppend(text);
     }
 
     public void StopTyping()
     {
-        typewriterEffect?.StopTyping();
+        typewriterBot?.StopTyping();
     }
 }
