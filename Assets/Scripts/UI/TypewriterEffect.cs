@@ -12,13 +12,15 @@ public interface ITextWriterTarget
 
 public class TypewriterEffect : MonoBehaviour
 {
-    public float characterInterval = 0.025f;
+    public float typingInterval = 0.025f;
 
-    public ITextWriterTarget writerTarget;
+    private ITextWriterTarget writerTarget;
 
     private readonly Queue<(string text, bool clearBeforeTyping)> typingQueue = new();
     private CancellationTokenSource cancellationTokenSource;
     private bool isTyping = false;
+    [SerializeField] private LipSyncSimulator lipSync;
+    private TaskCompletionSource<bool> lipSyncCompletion = new TaskCompletionSource<bool>();
 
     public void Init(ITextWriterTarget writer)
     {
@@ -26,14 +28,12 @@ public class TypewriterEffect : MonoBehaviour
         {
             return;
         }
-        characterInterval = AppConfigManager.Instance.Config.chatTypingInterval;
         writerTarget = writer;
-        // 設定ファイルが更新されたときの動作
-        // 設定項目が増えたら関数化する
-        AppConfigManager.Instance.OnConfigUpdated += (config) =>
-        {
-            characterInterval = config.chatTypingInterval;
-        };
+    }
+
+    public void SetTypingInterval(float interval)
+    {
+        typingInterval = interval;
     }
 
 
@@ -46,7 +46,10 @@ public class TypewriterEffect : MonoBehaviour
         {
             typingQueue.Enqueue((text, true));
         }
-        TryStartNextTyping();
+        if (isTyping == false)
+        {
+            TryStartNextTyping();
+        }
     }
 
     /// <summary>
@@ -58,7 +61,10 @@ public class TypewriterEffect : MonoBehaviour
         {
             typingQueue.Enqueue((text, false));
         }
-        TryStartNextTyping();
+        if (isTyping == false)
+        {
+            TryStartNextTyping();
+        }
     }
 
     /// <summary>
@@ -66,19 +72,14 @@ public class TypewriterEffect : MonoBehaviour
     /// </summary>
     private void TryStartNextTyping()
     {
-        if (isTyping){
-            return;
-        }
         (string text, bool clearBeforeTyping) nextTask;
         lock (typingQueue)
         {
             if (typingQueue.Count == 0){
                 return;
             }
-
             nextTask = typingQueue.Dequeue();
         }
-
         _ = StartTypingInternalAsync(nextTask.text, nextTask.clearBeforeTyping);
     }
 
@@ -88,12 +89,10 @@ public class TypewriterEffect : MonoBehaviour
     private async Task StartTypingInternalAsync(string text, bool clearBeforeTyping)
     {
         isTyping = true;
-
         if (writerTarget == null)
         {
             Debug.LogWarning("WriterTarget is null.");
             isTyping = false;
-            TryStartNextTyping();
             return;
         }
 
@@ -106,17 +105,21 @@ public class TypewriterEffect : MonoBehaviour
             {
                 writerTarget.SetText(string.Empty);
             }
-
             foreach (char c in text)
             {
                 token.ThrowIfCancellationRequested();
                 writerTarget.AppendText(c.ToString());
-                await Task.Delay(TimeSpan.FromSeconds(characterInterval), token);
+                // リップシンク無効もしくはSystemの場合は文章と口の動きを同期しない
+                lipSync?.SpeakText(c.ToString());
+                await Task.Delay(TimeSpan.FromSeconds(typingInterval), token);
             }
         }
         catch (OperationCanceledException)
         {
             Debug.Log("TypewriterEffectAsync: タイピングがキャンセルされました。");
+        }
+        catch (Exception e) {
+            Debug.LogError($"{e}");
         }
         finally
         {

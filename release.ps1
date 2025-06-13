@@ -2,24 +2,29 @@ $source = Resolve-Path "build"
 $destination = Resolve-Path "release"
 $excludePath = "Aetherith_Data\StreamingAssets"
 
+# 例外的にコピーしたいファイルの相対パスを配列で指定（必要に応じて追加）
+$includeExceptions = @(
+    "Aetherith_Data\StreamingAssets\bin\DifyConnector.exe"
+)
+
 # 再帰的にファイルを取得
 Get-ChildItem -Path $source -Recurse -File | ForEach-Object {
-    # コピー元ファイルの相対パス
     $fullSourcePath = $_.FullName
     $relativePath = $fullSourcePath.Substring($source.Path.Length + 1)
-    # コピー先パス
     $destPath = Join-Path $destination $relativePath
-    # コピー先の親フォルダーを作成
     $destDir = Split-Path $destPath
-    
-    # コピー先パスに「Aetherith_Data\StreamingAssets」が含まれていたらスキップ
-    if ($destPath -like "*$excludePath*" -or $destPath -like "*DoNotShip*") {
-        Write-Host "スキップ: $destPath"
+
+    # 例外ファイルかどうかを判定（大文字小文字無視）
+    $isException = $includeExceptions | Where-Object { $_ -ieq $relativePath }
+
+    # 除外対象であり、例外ファイルでもない → スキップ
+    if (($relativePath -like "$excludePath*") -and -not $isException -or ($relativePath -like "*DoNotShip*")) {
+        Write-Host "スキップ: $relativePath"
     } else {
         if (!(Test-Path $destDir)) {
             New-Item -ItemType Directory -Path $destDir -Force | Out-Null
         }
         Copy-Item -Path $_.FullName -Destination $destPath -Force
-        Write-Host "コピー: $destPath"
+        Write-Host "コピー: $relativePath"
     }
 }

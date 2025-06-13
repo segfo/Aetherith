@@ -14,44 +14,52 @@ interface ILLMChat
     Task<string> Chat(string msg);
     Task<string> Chat(string msg, EmptyCallback PrepareReplyOnceCall = null, Callback<string> HandleReplyCallback = null, EmptyCallback OnCompletionCallback = null, bool addToHistory = true);
     Task Warmup(EmptyCallback completionCallback = null);
+    int TotalSyllableCount { get; }
 }
 
 public class LocalLlmCharacterChat : ILLMChat
 {
     private readonly LLMCharacter character;
     private string receivedText = string.Empty;
-    private EmptyCallback OnCompletionCallback = () => { Debug.Log("完了コールバックは呼ばれていませんが正しく終了しました。"); };
+    private EmptyCallback OnCompletionCallback = null;
     private Callback<string> HandleReplyCallback = (_) => { Debug.Log("HandleReplyCallbackは呼ばれていませんが正しく終了しました。"); };
     private EmptyCallback PrepareReplyOnceCall = () => { Debug.Log("PrepareReplyOnceCallは呼ばれていませんが正しく終了しました。"); };
     private bool isFirstReply = true;
+    public int TotalSyllableCount { get; private set; }
+
     public LocalLlmCharacterChat(LLMCharacter character)
     {
         this.character = character;
     }
 
-    public Task<string> Chat(string msg)
+    public async Task<string> Chat(string msg)
     {
         receivedText = msg;
-        return character.Chat(StringDiff.GetDiff(msg, receivedText));
+        string llmMsg = await character.Chat(StringDiff.GetDiff(msg, receivedText));
+        TotalSyllableCount = llmMsg.Length;
+        return llmMsg;
     }
 
     public Task<string> Chat(string msg,EmptyCallback PrepareReplyOnceCall = null, Callback<string> HandleReplyCallback = null, EmptyCallback OnCompletionCallback = null, bool addToHistory = true)
     {
+        isFirstReply = true;
+        TotalSyllableCount = 0;
         this.PrepareReplyOnceCall = PrepareReplyOnceCall;
         this.HandleReplyCallback = HandleReplyCallback;
         this.OnCompletionCallback = OnCompletionCallback;
-
         return character.Chat(msg, HandleReply, Complete, addToHistory);
     }
     private void HandleReply(string msg)
     {
-        if (isFirstReply) { 
+        if (isFirstReply)
+        {
             PrepareReplyOnceCall.Invoke();
             isFirstReply = false;
         }
         string recvDiff = StringDiff.GetDiff(msg, receivedText);
+        TotalSyllableCount += recvDiff.Length;
         receivedText = msg;
-        this.OnCompletionCallback = OnCompletionCallback ?? this.OnCompletionCallback;
+        this.OnCompletionCallback = OnCompletionCallback ?? (() => { Debug.Log("完了コールバックは呼ばれていませんが正しく終了しました。"); });
         HandleReplyCallback(recvDiff);
     }
     private void Complete()
@@ -126,7 +134,7 @@ internal static class DifyClient
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                     {
-                        Debug.LogError("[Python stderr] " + e.Data);
+                        Debug.LogError("[stderr] " + e.Data);
                     }
                 };
 
@@ -139,7 +147,7 @@ internal static class DifyClient
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("Failed to run Python script: " + ex.Message);
+            Debug.LogError("Failed to run DifyConnector: " + ex.Message);
             return "エラーが発生しました＞＜";
         }
         finally
@@ -154,7 +162,8 @@ public class RemoteDifyCharacterChat : ILLMChat
 {
     private readonly string url;
     private readonly string api_key;
-    
+    public int TotalSyllableCount { get; private set; }
+
     public RemoteDifyCharacterChat(string url, string api_key)
     {
         this.url = url;
@@ -163,7 +172,9 @@ public class RemoteDifyCharacterChat : ILLMChat
 
     public async Task<string> Chat(string msg)
     {
-        return await Chat(msg, () => { }, (s) => { }, () => { });
+        string llmMsg = await Chat(msg, () => { }, (s) => { }, () => { });
+        TotalSyllableCount = llmMsg.Length;
+        return llmMsg;
     }
 
     public async Task<string> Chat(
@@ -174,10 +185,10 @@ public class RemoteDifyCharacterChat : ILLMChat
         bool addToHistory = true)
     {
         var conf = AppConfigManager.Instance.Config.characterLlm;
-        string msgLlm = await DifyClient.ConnectServer(conf, msg, PrepareReplyOnceCall, HandleReplyCallback);
+        string llmMsg = await DifyClient.ConnectServer(conf, msg, PrepareReplyOnceCall, HandleReplyCallback);
+        TotalSyllableCount = llmMsg.Length;
         OnCompletionCallback?.Invoke();
-
-        return msgLlm;
+        return llmMsg;
     }
 
     public async Task Warmup(EmptyCallback completionCallback = null)
@@ -192,20 +203,25 @@ public class RemoteDifyCharacterChat : ILLMChat
 public class LocalLlmEmotionChat : ILLMChat
 {
     private readonly LLMCharacter character;
+    public int TotalSyllableCount { get; private set; }
 
     public LocalLlmEmotionChat(LLMCharacter character)
     {
         this.character = character;
     }
 
-    public Task<string> Chat(string msg)
+    public async Task<string> Chat(string msg)
     {
-        return character.Chat(msg);
+        string s = await character.Chat(msg);
+        TotalSyllableCount = s.Length;
+        return s;
     }
 
-    public Task<string> Chat(string msg, EmptyCallback PrepareReplyOnceCall = null, Callback<string> HandleReplyCallback = null, EmptyCallback OnCompletionCallback = null, bool addToHistory = true)
+    public async Task<string> Chat(string msg, EmptyCallback PrepareReplyOnceCall = null, Callback<string> HandleReplyCallback = null, EmptyCallback OnCompletionCallback = null, bool addToHistory = true)
     {
-        return character.Chat(msg, HandleReplyCallback, OnCompletionCallback, addToHistory);
+        string llmMsg = await character.Chat(msg, HandleReplyCallback, OnCompletionCallback, addToHistory);
+        TotalSyllableCount = llmMsg.Length;
+        return llmMsg;
     }
 
     public async Task Warmup(EmptyCallback completionCallback = null)
@@ -218,6 +234,8 @@ public class RemoteDifyLlmEmotionChat : ILLMChat
 {
     private readonly string url;
     private readonly string api_key;
+    public int TotalSyllableCount { get; private set; }
+
     public RemoteDifyLlmEmotionChat(string url,string api_key)
     {
         this.url = url;
@@ -226,13 +244,16 @@ public class RemoteDifyLlmEmotionChat : ILLMChat
 
     public async Task<string> Chat(string msg)
     {
-        return await Chat(msg, () => { }, (s) => { }, () => { });
+        string llmMsg = await Chat(msg, () => { }, (s) => { }, () => { });
+        TotalSyllableCount = llmMsg.Length;
+        return llmMsg;
     }
 
     public async Task<string> Chat(string msg, EmptyCallback PrepareReplyOnceCall = null, Callback<string> HandleReplyCallback = null, EmptyCallback OnCompletionCallback = null, bool addToHistory = true)
     {
         var conf = AppConfigManager.Instance.Config.emotionLlm;
         string emoteExpression = await DifyClient.ConnectServer(conf, msg, PrepareReplyOnceCall, HandleReplyCallback);
+        TotalSyllableCount = emoteExpression.Length;
         OnCompletionCallback?.Invoke();
 
         return emoteExpression;

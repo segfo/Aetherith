@@ -1,13 +1,20 @@
-﻿using System.IO;
-using LLMUnity;
-using UnityEngine;
-using System;
-using System.Text;
-using UniVRM10;
-using System.Collections.Generic;
+﻿using LLMUnity;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
+using UnityEngine;
+using UniVRM10;
+
+enum LipSyncState
+{
+    Continue,OnComplete,Finalized
+}
+
 
 public class ChatManager : MonoBehaviour
 {
@@ -27,6 +34,8 @@ public class ChatManager : MonoBehaviour
     public bool Initialized { get; private set; } = false;
     private MainThreadDispatcher mainThreadDispatcher;
     private BlinkController blinkController;
+    private LipSyncState onComplete = LipSyncState.Continue;
+
     // 残リソース一覧
     private Dictionary<LoadResources, string> loadResources;
 
@@ -38,9 +47,10 @@ public class ChatManager : MonoBehaviour
         loadResources = new Dictionary<LoadResources, string>
         {
             { LoadResources.VRM,"VRMモデル"},
-            { LoadResources.MainCharacterLLM, "キャラクターAI(Local)" },
-            { LoadResources.EmotionCharacterLLM, "感情・表情推定AI(Local)"},
+            { LoadResources.MainCharacterLLM, $"キャラクターAI ({UseLLMName(AppConfigManager.Instance.Config.characterLlm)})" },
+            { LoadResources.EmotionCharacterLLM, $"感情・表情推定AI ({UseLLMName(AppConfigManager.Instance.Config.emotionLlm)})"},
         };
+        lipSyncSimulator.OnLipSyncEnd += DoFinalizeAfterLipSync;
     }
 
     bool externalApiUse(LLMConfig llm)
@@ -51,7 +61,7 @@ public class ChatManager : MonoBehaviour
     async void Start()
     {
         chatUI.InputFieldSetEnable(false);
-        chatUI.StartTypingAppend("SYSTEM: LLMをセットアップしています...\n");
+        chatUI.StartTypingAppendSystem("SYSTEM: LLMをセットアップしています...\n");
 
         AppConfig config = AppConfigManager.Instance.Config;
 
@@ -188,13 +198,13 @@ public class ChatManager : MonoBehaviour
         try {
             if (loadResources.ContainsKey(loadResource))
             {
-                chatUI.StartTypingAppend($"SYSTEM：{loadResources[loadResource]}を読み込みました。\n");
+                chatUI.StartTypingAppendSystem($"SYSTEM：{loadResources[loadResource]}のセットアップが完了しました。\n");
                 loadResources.Remove(loadResource);
                 // 全てのリソースが読み込まれたのでチャットUIを有効にする
                 if (loadResources.Count == 0)
                 {
                     AppConfig config = AppConfigManager.Instance.Config;
-                    chatUI.StartTyping(config.welcomeMessage);
+                    chatUI.StartTypingSystem(config.welcomeMessage);
                     chatUI.InputFieldSetEnable(true);
                     chatUI.AddInputFieldEventHandler(OnSubmit);
                     chatUI.ActivateInputField();
@@ -202,25 +212,35 @@ public class ChatManager : MonoBehaviour
                     return;
                 }
                 // 残りのリソースを表示する
-                chatUI.StartTypingAppend("SYSTEM：しばらくお待ちください。\n");
-                chatUI.StartTypingAppend("SYSTEM：読み込み中のリソース\n");
+                chatUI.StartTypingAppendSystem("SYSTEM：しばらくお待ちください。\n");
+                chatUI.StartTypingAppendSystem("SYSTEM：セットアップ中のリソース\n");
                 string reamining_resource = "";
                 foreach (var resource in loadResources)
                 {
-                    reamining_resource += " - "+resource.Value+"\n";
+                    reamining_resource += $" - {resource.Value}\n";
                 }
-                 chatUI.StartTypingAppend(reamining_resource);
+                 chatUI.StartTypingAppendSystem(reamining_resource);
             }
             else
             {
-                Debug.LogError("ChatManager: loadedResource - " + loadResource.ToString() + " is not found.");
+                Debug.LogError($"ChatManager: loadedResource - {loadResource.ToString()} is not found.");
             }
         }
         catch (Exception e)
         {
-            Debug.LogError("ChatManager-Exception: " + e.Message);
+            Debug.LogError($"ChatManager-Exception: {e.Message}");
         }
     }
+    private string UseLLMName(LLMConfig conf) {
+        if (conf.useDify) {
+            return "Remote(Dify)";
+        }
+        else
+        {
+            return "Local";
+        }
+    }
+
     private void CharacterAiWarmupCompleted()
     {
         mainThreadDispatcher.Enqueue(() =>
@@ -245,6 +265,15 @@ public class ChatManager : MonoBehaviour
             LoadedResource(LoadResources.VRM);
         });
     }
+    public void TypingAppendTextSystem(string msg)
+    {
+        chatUI.StartTypingAppendSystem(msg);
+    }
+    public void TypingTextSystem(string msg)
+    {
+        chatUI.StartTypingSystem(msg);
+    }
+
     public void AppendTextLine(string msg)
     {
         chatUI.AppendTextLine(msg);
@@ -294,9 +323,8 @@ public class ChatManager : MonoBehaviour
 
             // 待ちモーションを再生する
             thinkingAnimation.DoThinking();
-            // 考え中メッセージを出す
-            chatUI.StartTyping(waitMessage);
-
+            // 考え中メッセージを出して、入力欄を消す
+            chatUI.StartTypingSystem(waitMessage);
             chatUI.ClearInputField();
             // 感情推定AIを呼び出す　
             string emotionText = await llmCharacterEmotional.Chat(userInput);
@@ -329,8 +357,10 @@ public class ChatManager : MonoBehaviour
             // ここはローカルLLM/リモートLLMのどちらでも処理する
             //llmCharacter.AddPlayerMessage(userInput);
         }
+        onComplete = LipSyncState.Continue;
         lipSyncSimulator.LipSyncStart();
     }
+
     void ClearChatText()
     {
         chatUI.StartTyping("");
@@ -375,21 +405,35 @@ public class ChatManager : MonoBehaviour
     {
         VRMExpressionChange();
         chatUI.StartTypingAppend(reply);
-        lipSyncSimulator.SpeakText(reply);
+        // ここではLip Syncしない。
+        // TypewriterEffectが実行する。
     }
+    
     public void OnComplete()
     {
+        Debug.Log("OnCompleted");
+        if (onComplete == LipSyncState.Continue) {
+            onComplete = LipSyncState.OnComplete;
+            DoFinalizeAfterLipSync(lipSyncSimulator.TotalSyllableCount);
+        }
+    }
+    public void DoFinalizeAfterLipSync(int totalSyllableCount)
+    {
+        //Debug.Log($"{totalSyllableCount} < {llmCharacter.TotalSyllableCount}");
+        if (llmCharacter.TotalSyllableCount==0 || totalSyllableCount < llmCharacter.TotalSyllableCount|| onComplete!=LipSyncState.OnComplete) { return; }
+        onComplete = LipSyncState.Finalized;
+        Debug.Log("LipSyncEnd");
+        // まだLipSync中だったらOnCompleteの処理を遅らせる
         lipSyncSimulator.LipSyncEnd();
         // 表情を戻す
         float wait = UnityEngine.Random.Range(1.0f, 2.0f);
         float fadeoutPlay = UnityEngine.Random.Range(1.5f, 3.0f);
 
-        ExpressionController.Instance.StartExpressionFadeout(wait,fadeoutPlay);
+        ExpressionController.Instance.StartExpressionFadeout(wait, fadeoutPlay);
         Task.Run(async () =>
         {
             // 目が開くまで瞬きを待つ
-            await Task.Delay((int)((wait+fadeoutPlay)*1000));
-            // blinkController.SetBlinkEnabled(true, 0.0f);
+            await Task.Delay((int)((wait + fadeoutPlay) * 1000));
             blinkController.SetBlinkEnabled(!AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
         });
     }

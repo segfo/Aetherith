@@ -2,19 +2,52 @@
 using UnityEngine;
 using UniVRM10;
 using System.Collections.Generic;
+using System;
+using System.Threading.Tasks;
 
 public class LipSyncSimulator : MonoBehaviour
 {
     [SerializeField] private CharacterController character;
-    [SerializeField] private float durationPerSyllable = 0.12f;
+    [SerializeField] private float durationPerSyllable = 0.05f;
+    // リップシンクを実行するための文字列キュー
+    private Queue<string> lipSyncQueue = new Queue<string>();
+    // 終了イベント
+    public event Action<int> OnLipSyncEnd;
+    public bool isPlaying { get; private set; } = false;
+    public int TotalSyllableCount { get; private set; }
 
     public void SpeakText(string text)
     {
-        StartCoroutine(SimulateLipSync(text));
+        lock (lipSyncQueue)
+        {
+            lipSyncQueue.Enqueue(text);
+        }
+        if (!isPlaying)
+        {
+            StartCoroutine(ProcessQueue());
+        }
+        isPlaying = true;
     }
+    private IEnumerator ProcessQueue()
+    {
+        isPlaying = true;
+        while (lipSyncQueue.Count > 0)
+        {
+            string text = string.Empty;
+            lock (lipSyncQueue)
+            {
+                 text = lipSyncQueue.Dequeue();
+            }
+            yield return StartCoroutine(SimulateLipSync(text));
+        }
+        isPlaying = false;
+    }
+
     private Dictionary<ExpressionKey, float>  originalWeights;
     public void LipSyncStart()
     {
+        // 初期化する。
+        TotalSyllableCount = 0;
         var vrm = character?.vrmInstance;
         if (vrm == null)
         {
@@ -23,7 +56,6 @@ public class LipSyncSimulator : MonoBehaviour
         }
         originalWeights = BackupCurrentMouthExpressions(vrm);
     }
-
     private IEnumerator SimulateLipSync(string text)
     {
         var vrm = character?.vrmInstance;
@@ -34,6 +66,7 @@ public class LipSyncSimulator : MonoBehaviour
         }
         foreach (char c in text)
         {
+            TotalSyllableCount++;
             string syllable = c.ToString();
 
             // 「ん」は特別に閉じるだけ
@@ -47,15 +80,18 @@ public class LipSyncSimulator : MonoBehaviour
             ExpressionKey expression = GetExpressionKeyForSyllable(c);
 
             // ランダムな開き具合（自然な揺らぎ）
-            float openWeight = Random.Range(0.6f, 1.0f);
+            float openWeight = UnityEngine.Random.Range(0.1f, 0.6f);
 
             // 開く
-            yield return AnimateMouthWeight(vrm, expression, 0f, openWeight, durationPerSyllable * 0.7f);
-
+            yield return AnimateMouthWeight(vrm, expression, 0f, openWeight, durationPerSyllable * 0.6f);
             // 閉じる
-            yield return AnimateMouthWeight(vrm, expression, openWeight, 0f, durationPerSyllable * 0.5f);
+            yield return AnimateMouthWeight(vrm, expression, openWeight, 0f, durationPerSyllable * 0.4f);
         }
+        isPlaying = false;
+        // ここで何文字出力したかを送る
+        OnLipSyncEnd?.Invoke(TotalSyllableCount); // イベント発火
     }
+
     public void LipSyncEnd()
     {
         var vrm = character?.vrmInstance;

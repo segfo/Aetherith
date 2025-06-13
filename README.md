@@ -31,8 +31,10 @@ LLM `Assets/StreamingAssets/LLM/`
 # 実装済みの機能
 - VRM 1.0のみに対応しています。0.x系は使えません。挙動を安定させるために切り捨ててます。
 - LLMを用いた自動表情モーフィング及び会話
+- LocalLLM・Dify API間でのLLM切り替え
 - 会話用LLM及び表情推定用LLMの差し替え
 - 会話用LLM及び表情推定用LLMのシステムプロンプトの差し替え
+- リップシンクと速度調整
 - VRM差し替え機能
 - VRM拡大縮小（スケールの設定）
 - マスコットを動かしたとき、ゆれ物が動く機能
@@ -86,16 +88,17 @@ LLM `Assets/StreamingAssets/LLM/`
 | `waitMessage`          | 考え中のメッセージ         |
 | `shakeMessage`         | マスコットを振ったときの反応    |
 | `shakeForceThreshold`  | 振られたと判定する強さ       |
-| `chatTypingInterval`   | 文字の表示スピード（タイピング風） |
+| `botChatTypingInterval`   | 文字の表示スピード（Botのセリフ・リップシンク速度調整用） |
+| `systemChatTypingInterval`   | 文字の表示スピード（システムメッセージの速度調整用） |
 
 ### **AI関連設定（`characterLlm`と`emotionLlm`）**
 設定ファイル動的ロード機能の対象外です（適用にはアプリの再起動が必要です）
 | フィールド名             | 説明            |
 | ------------------ |  ------------------ |
 | `useDify`          | Difyを使うかどうか   |
-| `difyApiUrl`       | AIサービスの接続先         |
-| `modelName`        | ローカルで使うAIモデルのファイル名（gguf） |
+| `difyApiUrl`       | 接続先のエンドポイント    |
 | `difyApiKey`       | Difyの認証キー        |
+| `modelName`        | ローカルで使うAIモデルのファイル名（gguf） |
 | `systemPromptFile` | システムプロンプトのファイル名 |
 | `userName`         | ユーザーの名前  |
 | `assistantName`    | アシスタントの名前     |

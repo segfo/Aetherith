@@ -64,5 +64,6 @@
     "waitMessage": "\"（考え中です…）\"",
     "shakeMessage": "うぅ・・・振らないでください～！",
     "shakeForceThreshold": 0.15,
-    "chatTypingInterval": 0.025
+    "botChatTypingInterval": 0.025,
+    "systemChatTypingInterval": 0.025
 }

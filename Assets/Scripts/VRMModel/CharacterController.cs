@@ -12,7 +12,6 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private SpringBoneExternalForce springBoneExternalForce;
     [SerializeField] private ShakeDetector shakeDetector;
     [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
-    [SerializeField] private LipSyncSimulator lipSyncSimulator;
 
     public Vrm10Instance vrmInstance { get; private set; }
     private BlinkController blinkController;
@@ -27,7 +26,7 @@ public class CharacterController : MonoBehaviour
     private void Awake()
     {
         vrmLoader.OnVrmLoaded += OnVrmLoaded;
-        chatManager.TypingAppendText("SYSTEM: VRMモデルを読み込んでいます...\n");
+        chatManager.TypingAppendTextSystem("SYSTEM: VRMモデルを読み込んでいます...\n");
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
     }
 
@@ -88,19 +87,13 @@ public class CharacterController : MonoBehaviour
         blinkController?.SetBlinkEnabled(false, 1f);
 
         float waitTime = shakeDizzyAnimationPlayer.PlayDizzy(vrmInstance.GetComponent<Animator>());
-        // 初期化が済んでいなければ追記モードで書く
+        // 初期化が済んでいなければ追記モード+リップシンクなしで動作させる
         if (chatManager.Initialized)
         {
             chatManager.TypingText(AppConfigManager.Instance.Config.shakeMessage + "\n");
         } else { 
-            chatManager.TypingAppendText(AppConfigManager.Instance.Config.shakeMessage + "\n"); 
+            chatManager.TypingAppendTextSystem(AppConfigManager.Instance.Config.shakeMessage + "\n"); 
         }
-        mainThreadDispatcher.Enqueue(() =>
-        {
-            lipSyncSimulator.LipSyncStart();
-            lipSyncSimulator.SpeakText(AppConfigManager.Instance.Config.shakeMessage);
-            lipSyncSimulator.LipSyncEnd();
-        });
         // ゆっくり目を開ける
         Task.Run(async () =>
         {

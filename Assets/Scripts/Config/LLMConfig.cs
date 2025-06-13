@@ -6,10 +6,6 @@ public class LLMConfig
     public string difyApiUrl = "";
     // DifyのAPIを使う場合はAPIキーを指定する
     public string difyApiKey = "";
-    // DifyのAPIを使う場合はテキスト入力のパラメータ名を指定する
-    public string difyTextParameterName = "";
-    // DifyのAPIを使う場合はファイルアップロードのパラメータ名を指定する
-    public string difyFileParameterName = "";
     // ローカルのLLMを使う場合はモデル名を指定する(ggufファイル)
     public string modelName = "gemma3.gguf";
     // ローカルLLM（実応答）システムプロンプトの記述されたファイル名
