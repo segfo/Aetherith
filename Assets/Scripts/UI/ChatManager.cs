@@ -371,7 +371,7 @@ public class ChatManager : MonoBehaviour
         System.IO.File.AppendAllText(logFilePath, message + "\n");
     }
 
-    void VRMExpressionChange()
+    async void VRMExpressionChange()
     {
         BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionThreshold;
         // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
@@ -380,7 +380,7 @@ public class ChatManager : MonoBehaviour
             if (firstReply)
             {
                 // 考え中アニメーションから元に戻す
-                thinkingAnimation.DoneThinking();
+                await thinkingAnimation.DoneThinking();
                 if (expressionList["Happy"] > filter.Happy || expressionList["Sad"] > filter.Sad ||
                     expressionList["Angry"] > filter.Angry || expressionList["Surprised"] > filter.Surprise ||
                     expressionList["Relaxed"] > filter.Relaxed || expressionList["Neutral"] > filter.Neutral)
