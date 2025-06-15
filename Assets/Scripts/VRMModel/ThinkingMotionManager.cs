@@ -16,10 +16,12 @@ public class ThinkingMotionManager : MonoBehaviour
 
     public void DoThinking()
     {
+        animator.SetLayerWeight(ANIMATION_LAYER, 1f);
         animator.Play(startMotion, ANIMATION_LAYER);
     }
     public void DoneThinking()
     {
         animator.Play(endMotion, ANIMATION_LAYER);
+        animator.SetLayerWeight(ANIMATION_LAYER, 0f);
     }
 }
