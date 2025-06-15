@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 public class LipSyncSimulator : MonoBehaviour
 {
     [SerializeField] private CharacterController character;
-    [SerializeField] private float durationPerSyllable = 0.05f;
+    [SerializeField] private float durationPerSyllable = 0.25f;
     // リップシンクを実行するための文字列キュー
     private Queue<string> lipSyncQueue = new Queue<string>();
     // 終了イベント
@@ -80,7 +80,7 @@ public class LipSyncSimulator : MonoBehaviour
             ExpressionKey expression = GetExpressionKeyForSyllable(c);
 
             // ランダムな開き具合（自然な揺らぎ）
-            float openWeight = UnityEngine.Random.Range(0.1f, 0.6f);
+            float openWeight = UnityEngine.Random.Range(0.3f, 0.7f);
 
             // 開く
             yield return AnimateMouthWeight(vrm, expression, 0f, openWeight, durationPerSyllable * 0.6f);

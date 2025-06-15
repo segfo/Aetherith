@@ -1,11 +1,6 @@
 ﻿using System.Threading.Tasks;
 using LLMUnity;
-using Newtonsoft.Json;
 using UnityEngine;
-using ProcessStartInfo = System.Diagnostics.ProcessStartInfo;
-using Process = System.Diagnostics.Process;
-using System.IO;
-using System.Collections.Generic;
 using System;
 using Newtonsoft.Json.Linq;
 
@@ -80,80 +75,36 @@ internal static class DifyClient
         Callback<string> HandleReplyCallback = null)
     {
         MainThreadDispatcher mainThreadDispatcher = MainThreadDispatcher.Instance;
-        bool isFirstReply = true;
-        string tempFile = Path.GetTempFileName();
-        File.WriteAllText(tempFile, msg);
+        var sseClient = new SseClient();
         string fullMessage = string.Empty;
-        try
-        {
-            await Task.Run(async () =>
+        bool isFirstReply = true;
+        await Task.Run(async () =>
+            await sseClient.StartSseAsync(msg, conf.difyApiUrl, conf.difyApiKey, message =>
             {
-                var psi = new ProcessStartInfo
+                try
                 {
-                    FileName = Path.Combine(Application.streamingAssetsPath, "bin", "DifyConnector.exe"),
-                    Arguments = $"\"{conf.difyApiKey}\" \"{conf.difyApiUrl}\" \"{tempFile}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                var process = new Process();
-                process.StartInfo = psi;
-
-                process.OutputDataReceived += (sender, e) =>
-                {
-                    if (!string.IsNullOrEmpty(e.Data))
+                    var decode = JObject.Parse(message);
+                    if (decode["event"] != null && decode["event"].ToString() == "message")
                     {
-                        try
+                        mainThreadDispatcher.Enqueue(() =>
                         {
-                            var decode = JObject.Parse(e.Data);
-                            Debug.Log(decode);
-                            if (decode["event"] != null && decode["event"].ToString() == "message")
+                            if (isFirstReply)
                             {
-                                mainThreadDispatcher.Enqueue(() =>
-                                {
-                                    if (isFirstReply)
-                                    {
-                                        isFirstReply = false;
-                                        PrepareReplyOnceCall?.Invoke();
-                                    }
-                                    HandleReplyCallback?.Invoke(decode["answer"].ToString());
-                                    fullMessage += decode["answer"].ToString();
-                                });
+                                isFirstReply = false;
+                                PrepareReplyOnceCall?.Invoke();
                             }
-                        }
-                        catch (Exception jsonEx)
-                        {
-                            Debug.LogError("JSONデコードエラー: " + jsonEx.Message);
-                        }
+                            var msg = decode["answer"].ToString();
+                            HandleReplyCallback?.Invoke(msg);
+                            fullMessage += msg;
+                        });
                     }
-                };
-
-                process.ErrorDataReceived += (sender, e) =>
+                }
+                catch (Exception e)
                 {
-                    if (!string.IsNullOrEmpty(e.Data))
-                    {
-                        Debug.LogError("[stderr] " + e.Data);
-                    }
-                };
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                await Task.Run(() => process.WaitForExit());
-            });
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError("Failed to run DifyConnector: " + ex.Message);
-            return "エラーが発生しました＞＜";
-        }
-        finally
-        {
-            File.Delete(tempFile);
-        }
+                    Debug.Log(e);
+                }
+            })
+        );
         return fullMessage;
     }
 }
