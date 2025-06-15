@@ -1150,7 +1150,6 @@ MonoBehaviour:
   springBoneExternalForce: {fileID: 824634577}
   shakeDetector: {fileID: 824634578}
   shakeDizzyAnimationPlayer: {fileID: 824634579}
-  lipSyncSimulator: {fileID: 824634581}
 --- !u!4 &824634574
 Transform:
   m_ObjectHideFlags: 0
@@ -2842,5 +2841,5 @@ SceneRoots:
   - {fileID: 1161837980}
   - {fileID: 1261813679}
   - {fileID: 1694833597}
-  - {fileID: 94865545}
   - {fileID: 420341532}
+  - {fileID: 94865545}
