@@ -28,24 +28,16 @@ public class ShakeDizzyAnimationPlayer : MonoBehaviour
             Debug.LogWarning("DizzyLayer が Animator に存在しません");
             yield break;
         }
-        // 1. 再生開始（LayerWeight = 1）
+        // 1. フェードイン処理（LayerWeightを0から1へ）
+        yield return AnimationUtil.AnimationFade(animator,layerIndex,fadeDuration, 0f, 1f);
         animator.SetLayerWeight(layerIndex, 1f);
         animator.Play("Dizzy", layerIndex);
-        //Debug.Log("Dizzyアニメーションを再生中...");
         // 2. アニメーションの再生を待つ
         yield return new WaitForSeconds(waitTime);
-        //Debug.Log($"再生終了しました。 {waitTime} s");
-        // 3. フェードアウト処理
-        float timer = 0f;
-        while (timer < fadeDuration)
-        {
-            timer += Time.deltaTime;
-            float t = timer / fadeDuration;
-            float weight = Mathf.Lerp(1f, 0f, t);
-            animator.SetLayerWeight(layerIndex, weight);
-            yield return null;
-        }
+        // 3. フェードアウト処理（LayerWeightを0から1へ）
+        yield return AnimationUtil.AnimationFade(animator, layerIndex, fadeDuration, 1f, 0f);
         // 4. 最終的にWeightを0に
         animator.SetLayerWeight(layerIndex, 0f);
     }
 }
+

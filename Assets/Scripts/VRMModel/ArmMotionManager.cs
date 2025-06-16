@@ -22,7 +22,6 @@ public class ArmMotionManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(120f, 500f));
-
             if (!isRunningSequence)
             {
                 StartCoroutine(PlayArmSequence());
