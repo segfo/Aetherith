@@ -9,15 +9,15 @@ public class SseClient
 {
     private static readonly HttpClient httpClient = new HttpClient();
 
-    public async Task StartSseAsync(string message,string endpoint,string apiKey, Action<string> onMessage)
+    public async Task StartSseAsync(string message,string endpoint,string apiKey,string conversationId, Action<string> onMessage)
     {
         var payload = new
         {
             inputs = new { },
             query = message,
             response_mode = "streaming",
-            conversation_id = "",
-            user = "AetherithDifyConnector"
+            conversation_id = conversationId,
+            user = "Aetherith"
         };
         string jsonString = JsonConvert.SerializeObject(payload);
 
@@ -25,7 +25,6 @@ public class SseClient
         request.Headers.Add("Authorization", $"Bearer {apiKey}");
         request.Headers.Add("Accept", "text/event-stream");
         request.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-        UnityEngine.Debug.Log("StartSSEAsyncが呼ばれた。");
         try
         {
             var response = await httpClient.SendAsync(
@@ -62,6 +61,5 @@ public class SseClient
         {
             UnityEngine.Debug.LogError($"SSE Exception: {ex.Message}\n{ex.StackTrace}");
         }
-        UnityEngine.Debug.Log("Connect Server が終了した。");
     }
 }

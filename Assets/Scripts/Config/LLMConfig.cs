@@ -3,11 +3,9 @@ public class LLMConfig
 {
     // DifyのAPIを使う
     public bool useDify = false;
-    public string difyApiUrl = "";
-    // DifyのAPIを使う場合はAPIキーを指定する
-    public string difyApiKey = "";
+    public DifyConfig dify = new DifyConfig();
     // ローカルのLLMを使う場合はモデル名を指定する(ggufファイル)
-    public string modelName = "gemma3.gguf";
+    public string modelName = "gemma-3.gguf";
     // ローカルLLM（実応答）システムプロンプトの記述されたファイル名
     public string systemPromptFile = "systemprompt.txt";
     // ローカルLLM（感情判定）システムプロンプトの記述されたファイル名
@@ -19,9 +17,10 @@ public class LLMConfig
     public int topK = 40; // トップKサンプリングのK値
     public int numGPULayers = 0; // GPUで処理するレイヤー数(0はCPUのみ)
     public LLMConfig() { }
-    public LLMConfig(string promptFileName,float temperature)
+    public LLMConfig(string promptFileName,float temperature,string handoverConversationIdKeyName)
     {
         this.systemPromptFile = promptFileName;
         this.temperature = temperature;
+        this.dify.handoverConversationIdKeyName = handoverConversationIdKeyName;
     }
 }

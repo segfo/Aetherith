@@ -78,8 +78,9 @@ internal static class DifyClient
         var sseClient = new SseClient();
         string fullMessage = string.Empty;
         bool isFirstReply = true;
-        await Task.Run(async () =>
-            await sseClient.StartSseAsync(msg, conf.difyApiUrl, conf.difyApiKey, message =>
+        string conversion_id = PlayerPrefs.GetString(conf.dify.handoverConversationIdKeyName);
+        await Task.Run(async () => {
+            await sseClient.StartSseAsync(msg, conf.dify.apiUrl, conf.dify.apiKey, conversion_id, message =>
             {
                 try
                 {
@@ -93,6 +94,14 @@ internal static class DifyClient
                                 isFirstReply = false;
                                 PrepareReplyOnceCall?.Invoke();
                             }
+                            // 継続して会話をするID
+                            string conversationId = decode["conversation_id"]?.ToString();
+                            if (!string.IsNullOrEmpty(conversationId))
+                            {
+                                PlayerPrefs.SetString(conf.dify.handoverConversationIdKeyName, conversationId);
+                                PlayerPrefs.Save(); // 明示的に保存
+                            }
+                            // 回答
                             var msg = decode["answer"].ToString();
                             HandleReplyCallback?.Invoke(msg);
                             fullMessage += msg;
@@ -103,7 +112,7 @@ internal static class DifyClient
                 {
                     Debug.Log(e);
                 }
-            })
+            }); }
         );
         return fullMessage;
     }
@@ -117,6 +126,7 @@ public class RemoteDifyCharacterChat : ILLMChat
 
     public RemoteDifyCharacterChat(string url, string api_key)
     {
+        DifyConfig.InitConversationHandover(AppConfigManager.Instance.Config.characterLlm);
         this.url = url;
         this.api_key = api_key;
     }
@@ -189,6 +199,7 @@ public class RemoteDifyLlmEmotionChat : ILLMChat
 
     public RemoteDifyLlmEmotionChat(string url,string api_key)
     {
+        DifyConfig.InitConversationHandover(AppConfigManager.Instance.Config.emotionLlm);
         this.url = url;
         this.api_key = api_key;
     }

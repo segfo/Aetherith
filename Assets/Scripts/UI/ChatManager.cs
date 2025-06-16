@@ -92,8 +92,8 @@ public class ChatManager : MonoBehaviour
         if (externalApiUse(config.characterLlm))
         {
             this.llmCharacter = new RemoteDifyCharacterChat(
-                AppConfigManager.Instance.Config.characterLlm.difyApiUrl,
-                AppConfigManager.Instance.Config.characterLlm.difyApiKey
+                AppConfigManager.Instance.Config.characterLlm.dify.apiUrl,
+                AppConfigManager.Instance.Config.characterLlm.dify.apiKey
             );
             // 外部API使用時の初期化（省略）
             return;
@@ -118,8 +118,8 @@ public class ChatManager : MonoBehaviour
         {
             // 外部API使用時の初期化（省略）
             this.llmCharacterEmotional = new RemoteDifyLlmEmotionChat(
-                AppConfigManager.Instance.Config.characterLlm.difyApiUrl,
-                AppConfigManager.Instance.Config.characterLlm.difyApiKey
+                AppConfigManager.Instance.Config.characterLlm.dify.apiUrl,
+                AppConfigManager.Instance.Config.characterLlm.dify.apiKey
             );
             return;
         }
@@ -387,7 +387,6 @@ public class ChatManager : MonoBehaviour
                 {
                     // 瞬きを無効化する。目は開いたままにする
                     // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
-                    //blinkController.SetBlinkEnabled(false,0.0f);
                     // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
                     blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
                 }
