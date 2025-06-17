@@ -16,7 +16,7 @@ public class TypewriterEffect : MonoBehaviour
 
     private ITextWriterTarget writerTarget;
 
-    private readonly Queue<(string text, bool clearBeforeTyping)> typingQueue = new();
+    private readonly Queue<(string text, bool clearBeforeTyping,TaskCompletionSource<bool>)> typingQueue = new();
     private CancellationTokenSource cancellationTokenSource;
     private bool isTyping = false;
     [SerializeField] private LipSyncSimulator lipSync;
@@ -40,31 +40,35 @@ public class TypewriterEffect : MonoBehaviour
     /// <summary>
     /// キューに追加して順番にタイプライティングを行う（テキストクリアあり）
     /// </summary>
-    public void StartTyping(string text)
+    public Task StartTyping(string text)
     {
+        var tcs = new TaskCompletionSource<bool>();
         lock (typingQueue)
         {
-            typingQueue.Enqueue((text, true));
+            typingQueue.Enqueue((text, true, tcs));
         }
         if (isTyping == false)
         {
             TryStartNextTyping();
         }
+        return tcs.Task;
     }
 
     /// <summary>
     /// キューに追加して順番にタイプライティングを行う（テキスト追記）
     /// </summary>
-    public void StartTypingAppend(string text)
+    public Task StartTypingAppend(string text)
     {
+        var tcs = new TaskCompletionSource<bool>();
         lock (typingQueue)
         {
-            typingQueue.Enqueue((text, false));
+            typingQueue.Enqueue((text, false, tcs));
         }
         if (isTyping == false)
         {
             TryStartNextTyping();
         }
+        return tcs.Task;
     }
 
     /// <summary>
@@ -72,7 +76,7 @@ public class TypewriterEffect : MonoBehaviour
     /// </summary>
     private void TryStartNextTyping()
     {
-        (string text, bool clearBeforeTyping) nextTask;
+        (string text, bool clearBeforeTyping, TaskCompletionSource<bool> tcs) nextTask;
         lock (typingQueue)
         {
             if (typingQueue.Count == 0){
@@ -80,13 +84,13 @@ public class TypewriterEffect : MonoBehaviour
             }
             nextTask = typingQueue.Dequeue();
         }
-        _ = StartTypingInternalAsync(nextTask.text, nextTask.clearBeforeTyping);
+        _ = StartTypingInternalAsync(nextTask.text, nextTask.clearBeforeTyping,nextTask.tcs);
     }
 
     /// <summary>
     /// 内部のタイプライティング処理。キャンセル可能。
     /// </summary>
-    private async Task StartTypingInternalAsync(string text, bool clearBeforeTyping)
+    private async Task StartTypingInternalAsync(string text, bool clearBeforeTyping, TaskCompletionSource<bool> tcs)
     {
         isTyping = true;
         if (writerTarget == null)
@@ -126,6 +130,7 @@ public class TypewriterEffect : MonoBehaviour
             cancellationTokenSource.Dispose();
             cancellationTokenSource = null;
             isTyping = false;
+            if (typingQueue.Count==0) { tcs.SetResult(true); }
             // 次があれば自動で開始
             TryStartNextTyping();
         }

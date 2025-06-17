@@ -12,9 +12,12 @@ using UniVRM10;
 
 enum LipSyncState
 {
-    Continue,OnComplete,Finalized
+    Initialized,Continue,OnComplete,Finalized
 }
-
+public enum ChatManagerInitializeState
+{
+    InitializePending, Initialized, Ready
+}
 
 public class ChatManager : MonoBehaviour
 {
@@ -31,10 +34,10 @@ public class ChatManager : MonoBehaviour
     private LLM llmEmotional = null;
     private GameObject characterLLM = null;
     private GameObject emotionalLLM = null;
-    public bool Initialized { get; private set; } = false;
+    public ChatManagerInitializeState InitializeState { get; private set; } = ChatManagerInitializeState.InitializePending;
     private MainThreadDispatcher mainThreadDispatcher;
     private BlinkController blinkController;
-    private LipSyncState onComplete = LipSyncState.Continue;
+    private LipSyncState onComplete = LipSyncState.Initialized;
 
     // 残リソース一覧
     private Dictionary<LoadResources, string> loadResources;
@@ -61,7 +64,7 @@ public class ChatManager : MonoBehaviour
     async void Start()
     {
         chatUI.InputFieldSetEnable(false);
-        chatUI.StartTypingAppendSystem("SYSTEM: LLMをセットアップしています...\n");
+        _ = chatUI.StartTypingAppendSystem("SYSTEM: LLMをセットアップしています...\n");
 
         AppConfig config = AppConfigManager.Instance.Config;
 
@@ -193,33 +196,34 @@ public class ChatManager : MonoBehaviour
     enum LoadResources{
         VRM,MainCharacterLLM, EmotionCharacterLLM
     }
-    private void LoadedResource(LoadResources loadResource)
+    private async void LoadedResource(LoadResources loadResource)
     {
         try {
             if (loadResources.ContainsKey(loadResource))
             {
-                chatUI.StartTypingAppendSystem($"SYSTEM：{loadResources[loadResource]}のセットアップが完了しました。\n");
+                _ = chatUI.StartTypingAppendSystem($"SYSTEM：{loadResources[loadResource]}のセットアップが完了しました。\n");
                 loadResources.Remove(loadResource);
                 // 全てのリソースが読み込まれたのでチャットUIを有効にする
                 if (loadResources.Count == 0)
                 {
                     AppConfig config = AppConfigManager.Instance.Config;
-                    chatUI.StartTypingSystem(config.welcomeMessage);
+                    InitializeState = ChatManagerInitializeState.Initialized;
+                    await chatUI.StartTypingSystem(config.welcomeMessage);
                     chatUI.InputFieldSetEnable(true);
                     chatUI.AddInputFieldEventHandler(OnSubmit);
                     chatUI.ActivateInputField();
-                    Initialized = true;
+                    InitializeState = ChatManagerInitializeState.Ready;
                     return;
                 }
                 // 残りのリソースを表示する
-                chatUI.StartTypingAppendSystem("SYSTEM：しばらくお待ちください。\n");
-                chatUI.StartTypingAppendSystem("SYSTEM：セットアップ中のリソース\n");
+                _ = chatUI.StartTypingAppendSystem("SYSTEM：しばらくお待ちください。\n");
+                _ = chatUI.StartTypingAppendSystem("SYSTEM：セットアップ中のリソース\n");
                 string reamining_resource = "";
                 foreach (var resource in loadResources)
                 {
                     reamining_resource += $" - {resource.Value}\n";
                 }
-                 chatUI.StartTypingAppendSystem(reamining_resource);
+                 _ = chatUI.StartTypingAppendSystem(reamining_resource);
             }
             else
             {
@@ -313,6 +317,12 @@ public class ChatManager : MonoBehaviour
 
     async public void OnSubmit(string _input)
     {
+        // Continueなら実行中
+        if (onComplete==LipSyncState.Continue) {
+            return;
+        }
+        // 入力フィールドを消す
+        chatUI.InputFieldSetEnable(false);
         firstReply = true;
         ExpressionController.Instance.ResetVrmExpression();
         string userInput = chatUI.GetInputField();
@@ -324,7 +334,7 @@ public class ChatManager : MonoBehaviour
             // 待ちモーションを再生する
             thinkingAnimation.DoThinking();
             // 考え中メッセージを出して、入力欄を消す
-            chatUI.StartTypingSystem(waitMessage);
+            _ = chatUI.StartTypingSystem(waitMessage);
             chatUI.ClearInputField();
             // 感情推定AIを呼び出す　
             string emotionText = await llmCharacterEmotional.Chat(userInput);
@@ -421,6 +431,8 @@ public class ChatManager : MonoBehaviour
         //Debug.Log($"{totalSyllableCount} < {llmCharacter.TotalSyllableCount}");
         if (llmCharacter.TotalSyllableCount==0 || totalSyllableCount < llmCharacter.TotalSyllableCount|| onComplete!=LipSyncState.OnComplete) { return; }
         onComplete = LipSyncState.Finalized;
+        // 入力フィールドを再表示する
+        chatUI.InputFieldSetEnable(true);
         Debug.Log("LipSyncEnd");
         // まだLipSync中だったらOnCompleteの処理を遅らせる
         lipSyncSimulator.LipSyncEnd();

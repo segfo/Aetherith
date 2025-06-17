@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -219,14 +220,15 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         onInputTextSubmit = onSubmit;
 
     }
-    public void StartTypingSystem(string text)
+    public Task StartTypingSystem(string text)
     {
-        typewriterSystem?.StartTyping(text);
+        return typewriterSystem?.StartTyping(text);
     }
 
-    public void StartTypingAppendSystem(string text)
+
+    public Task StartTypingAppendSystem(string text)
     {
-        typewriterSystem?.StartTypingAppend(text);
+        return typewriterSystem?.StartTypingAppend(text);
     }
 
     public void StopTypingSystem()
@@ -234,14 +236,14 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         typewriterSystem?.StopTyping();
     }
 
-    public void StartTyping(string text)
+    public Task StartTyping(string text)
     {
-        typewriterBot?.StartTyping(text);
+        return typewriterBot?.StartTyping(text);
     }
 
-    public void StartTypingAppend(string text)
+    public Task StartTypingAppend(string text)
     {
-        typewriterBot?.StartTypingAppend(text);
+        return typewriterBot?.StartTypingAppend(text);
     }
 
     public void StopTyping()

@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using UniVRM10;
-using Kirurobo;
-using System.Threading.Tasks;
-using UnityEngine.Localization.Settings;
+﻿using Kirurobo;
 using System;
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.Localization.Settings;
+using UniVRM10;
+using static ChatManager;
 
 public class CharacterController : MonoBehaviour
 {
@@ -81,31 +82,34 @@ public class CharacterController : MonoBehaviour
     // キャラクターが振られたときの処理
     void OnShaken()
     {
-        // 表情を全部戻す
-        ExpressionController.Instance.ResetVrmExpression();
-        // 瞬きを停止して、目を閉じる
-        blinkController?.SetBlinkEnabled(false, 1f);
-
-        float waitTime = shakeDizzyAnimationPlayer.PlayDizzy(vrmInstance.GetComponent<Animator>());
         // 初期化が済んでいなければ追記モード+リップシンクなしで動作させる
-        if (chatManager.Initialized)
+        if (chatManager.InitializeState == ChatManagerInitializeState.Ready)
         {
             chatManager.TypingText(AppConfigManager.Instance.Config.shakeMessage + "\n");
-        } else { 
-            chatManager.TypingAppendTextSystem(AppConfigManager.Instance.Config.shakeMessage + "\n"); 
         }
-        // ゆっくり目を開ける
-        Task.Run(async () =>
+        else if (chatManager.InitializeState == ChatManagerInitializeState.InitializePending)
         {
-            await Task.Delay((int)(waitTime * 1000));
-
-            mainThreadDispatcher.Enqueue(() =>
+            chatManager.TypingAppendTextSystem(AppConfigManager.Instance.Config.shakeMessage + "\n");
+        }
+        if (chatManager.InitializeState != ChatManagerInitializeState.Initialized) {
+            // 表情を全部戻す
+            ExpressionController.Instance.ResetVrmExpression();
+            // 瞬きを停止して、目を閉じる
+            blinkController?.SetBlinkEnabled(false, 1f);
+            float waitTime = shakeDizzyAnimationPlayer.PlayDizzy(vrmInstance.GetComponent<Animator>());
+            // ゆっくり目を開ける
+            Task.Run(async () =>
             {
-                ExpressionController.Instance.StartExpressionFadeout(0.0f,0.15f);
+                await Task.Delay((int)(waitTime * 1000));
+
+                mainThreadDispatcher.Enqueue(() =>
+                {
+                    ExpressionController.Instance.StartExpressionFadeout(0.0f, 0.15f);
+                });
+                await Task.Delay(1600); // 1.6秒待つ
+                blinkController?.SetBlinkEnabled(true, 0f);
             });
-            await Task.Delay(1600); // 1.6秒待つ
-            blinkController?.SetBlinkEnabled(true, 0f);
-        });
+        }
     }
 
     void SetLayerRecursively(GameObject obj, int layer)
