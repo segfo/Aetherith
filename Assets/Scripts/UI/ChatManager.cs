@@ -58,7 +58,7 @@ public class ChatManager : MonoBehaviour
 
     bool externalApiUse(LLMConfig llm)
     {
-        return llm.useDify; //||llm.useOllama
+        return llm.useLLM!=LLMProvider.Local;
     }
 
     async void Start()
@@ -95,8 +95,8 @@ public class ChatManager : MonoBehaviour
         if (externalApiUse(config.characterLlm))
         {
             this.llmCharacter = new RemoteDifyCharacterChat(
-                AppConfigManager.Instance.Config.characterLlm.dify.apiUrl,
-                AppConfigManager.Instance.Config.characterLlm.dify.apiKey
+                AppConfigManager.Instance.Config.characterLlm.Dify.apiUrl,
+                AppConfigManager.Instance.Config.characterLlm.Dify.apiKey
             );
             // 外部API使用時の初期化（省略）
             return;
@@ -106,10 +106,10 @@ public class ChatManager : MonoBehaviour
         llm = characterLLM.AddComponent<LLM>();
         llmCharacter = characterLLM.AddComponent<LLMCharacter>();
         this.llmCharacter = new LocalLlmCharacterChat(llmCharacter);
-        SetupLLMCharacter(config.characterLlm.local, llmCharacter, llm, "あなたは優秀なAIアシスタントです。");
+        SetupLLMCharacter(config.characterLlm.Local, llmCharacter, llm, "あなたは優秀なAIアシスタントです。");
         await Task.Run(() =>
         {
-            SetLocalModelPath(llm, config.characterLlm.local.modelName);
+            SetLocalModelPath(llm, config.characterLlm.Local.modelName);
         });
         
     }
@@ -121,13 +121,13 @@ public class ChatManager : MonoBehaviour
         {
             // 外部API使用時の初期化（省略）
             this.llmCharacterEmotional = new RemoteDifyLlmEmotionChat(
-                AppConfigManager.Instance.Config.characterLlm.dify.apiUrl,
-                AppConfigManager.Instance.Config.characterLlm.dify.apiKey
+                AppConfigManager.Instance.Config.characterLlm.Dify.apiUrl,
+                AppConfigManager.Instance.Config.characterLlm.Dify.apiKey
             );
             return;
         }
 
-        bool useSameLLM = config.characterLlm.local.modelName == config.emotionLlm.local.modelName && !externalApiUse(config.characterLlm);
+        bool useSameLLM = config.characterLlm.Local.modelName == config.emotionLlm.Local.modelName && !externalApiUse(config.characterLlm);
         if (useSameLLM)
         {
             // 同一モデル名＆キャラもローカル → 共通インスタンス
@@ -140,13 +140,13 @@ public class ChatManager : MonoBehaviour
             llmCharacterEmotional = emotionalLLM.AddComponent<LLMCharacter>();
         }
         this.llmCharacterEmotional = new LocalLlmEmotionChat(llmCharacterEmotional);
-        SetupLLMCharacter(config.emotionLlm.local, llmCharacterEmotional, llmEmotional,
+        SetupLLMCharacter(config.emotionLlm.Local, llmCharacterEmotional, llmEmotional,
             "あなたは優秀な感情判定アシスタントです。ユーザの発言に応じてAIの感情を推定します。");
         if (!useSameLLM)
         {
             await Task.Run(() =>
             {
-                SetLocalModelPath(llmEmotional, config.emotionLlm.local.modelName);
+                SetLocalModelPath(llmEmotional, config.emotionLlm.Local.modelName);
             });
         }
     }
@@ -236,8 +236,8 @@ public class ChatManager : MonoBehaviour
         }
     }
     private string UseLLMName(LLMConfig conf) {
-        if (conf.useDify) {
-            return "Remote(Dify)";
+        if (externalApiUse(conf)) {
+            return $"Remote({conf.useLLM})";
         }
         else
         {

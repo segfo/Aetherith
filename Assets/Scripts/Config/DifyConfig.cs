@@ -11,9 +11,9 @@ public class DifyConfig {
     public static void InitConversationHandover(LLMConfig conf)
     {
         // 会話引継ぎモードがオフの時は、新しい会話を始める。
-        if (!conf.dify.conversationHandover)
+        if (!conf.Dify.conversationHandover)
         {
-            PlayerPrefs.SetString(conf.dify.handoverConversationIdKeyName, string.Empty);
+            PlayerPrefs.SetString(conf.Dify.handoverConversationIdKeyName, string.Empty);
             PlayerPrefs.Save(); // 明示的に保存する
         }
     }

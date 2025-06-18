@@ -78,9 +78,9 @@ internal static class DifyClient
         var sseClient = new SseClient();
         string fullMessage = string.Empty;
         bool isFirstReply = true;
-        string conversion_id = PlayerPrefs.GetString(conf.dify.handoverConversationIdKeyName);
+        string conversion_id = PlayerPrefs.GetString(conf.Dify.handoverConversationIdKeyName);
         await Task.Run(async () => {
-            await sseClient.StartSseAsync(msg, conf.dify.apiUrl, conf.dify.apiKey, conversion_id, message =>
+            await sseClient.StartSseAsync(msg, conf.Dify.apiUrl, conf.Dify.apiKey, conversion_id, message =>
             {
                 try
                 {
@@ -98,7 +98,7 @@ internal static class DifyClient
                             string conversationId = decode["conversation_id"]?.ToString();
                             if (!string.IsNullOrEmpty(conversationId))
                             {
-                                PlayerPrefs.SetString(conf.dify.handoverConversationIdKeyName, conversationId);
+                                PlayerPrefs.SetString(conf.Dify.handoverConversationIdKeyName, conversationId);
                                 PlayerPrefs.Save(); // 明示的に保存
                             }
                             // 回答

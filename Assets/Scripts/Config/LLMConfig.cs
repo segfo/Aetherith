@@ -1,15 +1,23 @@
-﻿[System.Serializable]
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum LLMProvider
+{
+    Local,Dify
+}
+
 public class LLMConfig
 {
-    // DifyのAPIを使う
-    public bool useDify = false;
-    public DifyConfig dify = new DifyConfig();
-    public LocalLLMConfig local = new LocalLLMConfig();
+    // どのLLMを使うか
+    public LLMProvider useLLM = LLMProvider.Local;
+    public DifyConfig Dify = new DifyConfig();
+    public LocalLLMConfig Local = new LocalLLMConfig();
     public LLMConfig() { }
     public LLMConfig(string promptFileName,float temperature,string handoverConversationIdKeyName)
     {
-        this.local.systemPromptFile = promptFileName;
-        this.local.temperature = temperature;
-        this.dify.handoverConversationIdKeyName = handoverConversationIdKeyName;
+        this.Local.systemPromptFile = promptFileName;
+        this.Local.temperature = temperature;
+        this.Dify.handoverConversationIdKeyName = handoverConversationIdKeyName;
     }
 }

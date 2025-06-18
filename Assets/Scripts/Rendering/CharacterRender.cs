@@ -58,15 +58,15 @@ public class CharacterRender : MonoBehaviour
             // Tonemappingの設定を行う
             if (tonemapping != null)
             {
-                int tmmode = config.vrm.ToneMappingMode;
+                ToneMappingMode tmmode = config.vrm.ToneMapping;
                 switch(tmmode){
-                    case 0:
+                    case ToneMappingMode.None:
                         tonemapping.mode.value = TonemappingMode.None;
                         break;
-                    case 1:
+                    case ToneMappingMode.Neutral:
                         tonemapping.mode.value = TonemappingMode.Neutral;
                         break;
-                    case 2:
+                    case ToneMappingMode.ACES:
                         tonemapping.mode.value = TonemappingMode.ACES;
                         break;
                     default:

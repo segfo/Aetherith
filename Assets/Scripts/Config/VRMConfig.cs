@@ -1,7 +1,10 @@
-﻿[System.Serializable]
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+[System.Serializable]
 public class VRMConfig
 {
-    public int ToneMappingMode = 0; // 0: None, 1: Neutral, 2: ACES
+    public ToneMappingMode ToneMapping = ToneMappingMode.None; // 0: None, 1: Neutral, 2: ACES
     public float LightIntensity = 1f;  // 明るさ: 0.0f ～ 1.0f
     public string LightColorRGBA = "#FFF0E0FF";  // ライトの色（肌が白くなりすぎないように）
     public float ShadowStrength = 0.3000000f; // 影の強さ: 0.0f ～ 1.0f
@@ -16,6 +19,13 @@ public class VRMConfig
     public BlinkExclusionExpressionThreshold blinkExclusionExpressionThreshold = new BlinkExclusionExpressionThreshold();
     public bool blinkDisable = false; // 瞬きを無効にする（糸目キャラ用）
 }
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum ToneMappingMode
+{
+    None,Neutral,ACES
+}
+
 public class SpringBone
 {
     // 外力の適用度合い（大きければ大きいほどすぐ動く）
