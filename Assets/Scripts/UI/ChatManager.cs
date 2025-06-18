@@ -106,10 +106,10 @@ public class ChatManager : MonoBehaviour
         llm = characterLLM.AddComponent<LLM>();
         llmCharacter = characterLLM.AddComponent<LLMCharacter>();
         this.llmCharacter = new LocalLlmCharacterChat(llmCharacter);
-        SetupLLMCharacter(config.characterLlm, llmCharacter, llm, "あなたは優秀なAIアシスタントです。");
+        SetupLLMCharacter(config.characterLlm.local, llmCharacter, llm, "あなたは優秀なAIアシスタントです。");
         await Task.Run(() =>
         {
-            SetLocalModelPath(llm, config.characterLlm.modelName);
+            SetLocalModelPath(llm, config.characterLlm.local.modelName);
         });
         
     }
@@ -127,7 +127,7 @@ public class ChatManager : MonoBehaviour
             return;
         }
 
-        bool useSameLLM = config.characterLlm.modelName == config.emotionLlm.modelName && !externalApiUse(config.characterLlm);
+        bool useSameLLM = config.characterLlm.local.modelName == config.emotionLlm.local.modelName && !externalApiUse(config.characterLlm);
         if (useSameLLM)
         {
             // 同一モデル名＆キャラもローカル → 共通インスタンス
@@ -140,13 +140,13 @@ public class ChatManager : MonoBehaviour
             llmCharacterEmotional = emotionalLLM.AddComponent<LLMCharacter>();
         }
         this.llmCharacterEmotional = new LocalLlmEmotionChat(llmCharacterEmotional);
-        SetupLLMCharacter(config.emotionLlm, llmCharacterEmotional, llmEmotional,
+        SetupLLMCharacter(config.emotionLlm.local, llmCharacterEmotional, llmEmotional,
             "あなたは優秀な感情判定アシスタントです。ユーザの発言に応じてAIの感情を推定します。");
         if (!useSameLLM)
         {
             await Task.Run(() =>
             {
-                SetLocalModelPath(llmEmotional, config.emotionLlm.modelName);
+                SetLocalModelPath(llmEmotional, config.emotionLlm.local.modelName);
             });
         }
     }
@@ -177,7 +177,7 @@ public class ChatManager : MonoBehaviour
         _ = llmCharacterEmotional?.Warmup(EmotionAiWarmupCompleted);
     }
 
-    private void SetupLLMCharacter(LLMConfig config, LLMCharacter character, LLM llm, string defaultPrompt)
+    private void SetupLLMCharacter(LocalLLMConfig config, LLMCharacter character, LLM llm, string defaultPrompt)
     {
         string promptPath = SafeFileReader.PathVerifier(Application.streamingAssetsPath, Path.Combine(Application.streamingAssetsPath, config.systemPromptFile));
         string promptText = SafeFileReader.ReadOrCreateTextFile(promptPath, Encoding.UTF8, defaultPrompt);
