@@ -1,7 +1,7 @@
 # Aetherith
 Avatar Engine THE Responsive Interface Tunable Helperの略。  
-好きなアバターを設定して好きなLLM（GGUF量子化）を好きなプロンプトで動かせます。  
-たまに動くよ。好きなアニメーション入れてもいいかもね。（将来の話）  
+好きなアバターを設定して好きなLLM（GGUF量子化されたもの）を好きなプロンプトで動かせます。  
+Dify API連携も可能なので任意のDifyチャットフローを動かせます  
 
 # 使い方
 1. [Releaseページ](https://github.com/segfo/Aetherith/releases)から最新のアプリをダウンロードしてください。
@@ -95,24 +95,26 @@ LLM `Assets/StreamingAssets/LLM/`
 設定ファイル動的ロード機能の対象外です（適用にはアプリの再起動が必要です）
 | フィールド名             | 説明            |
 | ------------------ |  ------------------ |
-| `useDify`          | Difyを使うかどうか   |
-| `difyApiUrl`       | 接続先のエンドポイント    |
-| `difyApiKey`       | Difyの認証キー        |
-| `modelName`        | ローカルで使うAIモデルのファイル名（gguf） |
-| `systemPromptFile` | システムプロンプトのファイル名 |
-| `userName`         | ユーザーの名前  |
-| `assistantName`    | アシスタントの名前     |
-| `maxContextLength` | 最大コンテキスト長     |
-| `temperature`      | AIの自由さ・創造性のレベル     |
-| `topP`             | トップPフィルタリング / 応答の多様性制御（確率フィルター）  |
-| `topK`             | トップKフィルタリング / 応答候補の数の制限          |
-| `numGPULayers`     | GPUにオフロードするレイヤー数。GPUがあれば使ってください。スペックに見合わない数字だと動かなくなるので1から始めたほうがよいです。 |
+| `useLLM`          | 使うLLMの種類（`Local`/`Dify`）   |
+| `dify.apiUrl`       | 接続先のエンドポイント    |
+| `dify.apiKey`       | Difyの認証キー        |
+| `dify.conversationHandover` | 今回の会話を次回のアプリ起動時でも引き継ぐかどうか |
+| `dify.handoverConversationIdKeyName` | 会話引継ぎIDを記録するための記憶領域の名前（任意・CharacterとEmotionの設定で被らないようにしてください） |
+| `local.modelName`        | ローカルで使うAIモデルのファイル名（gguf） |
+| `local.systemPromptFile` | システムプロンプトのファイル名 |
+| `local.userName`         | ユーザーの名前  |
+| `local.assistantName`    | アシスタントの名前     |
+| `local.maxContextLength` | 最大コンテキスト長     |
+| `local.temperature`      | AIの自由さ・創造性のレベル     |
+| `local.topP`             | トップPフィルタリング / 応答の多様性制御（確率フィルター）  |
+| `local.topK`             | トップKフィルタリング / 応答候補の数の制限          |
+| `local.numGPULayers`     | GPUにオフロードするレイヤー数。GPUがあれば使ってください。スペックに見合わない数字だと動かなくなるので1から始めたほうがよいです。 |
 
 ### **キャラクターの見た目設定（`vrm`）**
 
 | フィールド名                   | 説明  |
 | ----------------------------- | ------------ |
-| `ToneMappingMode`             | トーンマッピングモード    |
+| `ToneMappingMode`             | トーンマッピングモード(`None`/`Neutral`/`ACES`)    |
 | `LightIntensity`              | ライトの強さ   |
 | `LightColorRGBA`              | ライトの色 （肌色調整など）   |
 | `ShadowStrength`              | キャラクターの影の濃さ     |
