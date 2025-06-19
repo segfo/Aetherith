@@ -2,9 +2,9 @@
 using UnityEngine.EventSystems;
 using Kirurobo;
 
-public class WindowDragger : MonoBehaviour, IBeginDragHandler, IDragHandler
+public class WindowDragger : MonoBehaviour, IPointerDownHandler, IDragHandler
 {
-    private Vector2 dragStartPos;
+    private Vector2 pointerDownPos;
     private Vector2 offset;
     private UniWindowController window;
 
@@ -13,18 +13,20 @@ public class WindowDragger : MonoBehaviour, IBeginDragHandler, IDragHandler
         window = GameObject.FindAnyObjectByType<UniWindowController>();
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
-        if (window == null) return;
-        dragStartPos = eventData.position;
-        offset = window.windowPosition - window.cursorPosition;
+        pointerDownPos = eventData.position;
+        if (window != null)
+        {
+            offset = window.windowPosition - window.cursorPosition;
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         if (window == null) return;
 
-        Vector2 delta = eventData.position - dragStartPos;
+        // マウスカーソルの現在位置に、最初に計算したオフセットを加えてウィンドウを移動する
         window.windowPosition = window.cursorPosition + offset;
     }
 }
