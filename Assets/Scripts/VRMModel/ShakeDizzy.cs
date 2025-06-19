@@ -28,8 +28,7 @@ public class ShakeDizzyAnimationPlayer : MonoBehaviour
             Debug.LogWarning("DizzyLayer が Animator に存在しません");
             yield break;
         }
-        // 1. フェードイン処理（LayerWeightを0から1へ）
-        yield return AnimationUtil.AnimationFade(animator,layerIndex,fadeDuration, 0f, 1f);
+        // 1. 振られた直後はフェードイン不要なのでいきなりONする
         animator.SetLayerWeight(layerIndex, 1f);
         animator.Play("Dizzy", layerIndex);
         // 2. アニメーションの再生を待つ
