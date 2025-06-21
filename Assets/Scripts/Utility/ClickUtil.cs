@@ -30,7 +30,7 @@ public class ClickUtil : MonoBehaviour, IPointerClickHandler
         while (isClick)
         {
             times += Time.deltaTime;
-            if (times < 0.25f)
+            if (times < AppConfigManager.Instance.Config.doubleClickThreshold)
             {
                 yield return null;
             }

@@ -14,6 +14,7 @@ public class AppConfig
     public float shakeForceThreshold = 0.15f; // シェイクの閾値
     public float botChatTypingInterval = 0.025f; // チャットに出力される文字の時間間隔(Bot)
     public float systemChatTypingInterval = 0.025f; // チャットに出力される文字の時間間隔（システム）
+    public float doubleClickThreshold = 0.25f; // ダブルクリック判定をする間隔
     public enum WindowStackOrders
     {
         Normal = 0, Topmost = 1, Bottommost = 2,

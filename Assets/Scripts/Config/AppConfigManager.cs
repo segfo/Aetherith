@@ -38,8 +38,8 @@ public class AppConfigManager
                     uniWindowController.isBottommost = false;
                     break;
                 case AppConfig.WindowStackOrders.Topmost:
-                    uniWindowController.isTopmost = true;
                     uniWindowController.isBottommost = false;
+                    uniWindowController.isTopmost = true;
                     break;
                 case AppConfig.WindowStackOrders.Bottommost:
                     uniWindowController.isTopmost = false;

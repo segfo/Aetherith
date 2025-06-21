@@ -9,7 +9,6 @@ public class ChatWindowMinimize : MonoBehaviour
     [SerializeField] ClickUtil clickUtil;
     [SerializeField] CharacterController characterController;
     private bool chatWindowEnabled = true;
-    private Transform originalChatWindowTransform;
     void Start()
     {
         var rect = GetComponent<RectTransform>().rect;
