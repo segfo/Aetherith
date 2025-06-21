@@ -1,10 +1,6 @@
-﻿using Kirurobo;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
 using UniVRM10;
-using static ChatManager;
 
 public class CharacterController : MonoBehaviour
 {
@@ -14,7 +10,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private ShakeDetector shakeDetector;
     [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
 
-    public Vrm10Instance vrmInstance { get; private set; }
+    public Vrm10Instance vrmInstance { get; private set; } = null;
     private BlinkController blinkController;
     private ArmMotionManager armMotionManager;
     private MainThreadDispatcher mainThreadDispatcher;
