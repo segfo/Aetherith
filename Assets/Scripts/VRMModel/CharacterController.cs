@@ -22,6 +22,10 @@ public class CharacterController : MonoBehaviour
 
     private void Awake()
     {
+        vrmLoader.OnVrmLoadError += (path) =>
+        {
+            chatManager.TypingAppendTextSystem($"SYSTEM: VRMモデルのロードに失敗しました。設定を見直してください。(再起動が必要です)\n---パス---\n{path.Replace("\\", "/")}\n-----\n");
+        };
         vrmLoader.OnVrmLoaded += OnVrmLoaded;
         chatManager.TypingAppendTextSystem("SYSTEM: VRMモデルを読み込んでいます...\n");
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;

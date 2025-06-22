@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UniVRM10;
 
@@ -109,7 +108,7 @@ public class ChatManager : MonoBehaviour
         SetupLLMCharacter(config.characterLlm.Local, llmCharacter, llm, "あなたは優秀なAIアシスタントです。");
         await Task.Run(() =>
         {
-            SetLocalModelPath(llm, config.characterLlm.Local.modelName);
+            SetLocalModelPath(llm, config.characterLlm.Local.modelName, "キャラクターAI");
         });
         
     }
@@ -133,6 +132,7 @@ public class ChatManager : MonoBehaviour
             // 同一モデル名＆キャラもローカル → 共通インスタンス
             llmEmotional = llm;
             llmCharacterEmotional = characterLLM.AddComponent<LLMCharacter>();
+            TypingAppendTextSystem($"SYSTEM: [感情・表情推定AI] はロード対象のLLMファイルが同一であるため、キャラクターAIと共通のLLMを使います。\n");
         }
         else
         {
@@ -146,19 +146,25 @@ public class ChatManager : MonoBehaviour
         {
             await Task.Run(() =>
             {
-                SetLocalModelPath(llmEmotional, config.emotionLlm.Local.modelName);
+                SetLocalModelPath(llmEmotional, config.emotionLlm.Local.modelName, "感情・表情推定AI");
             });
         }
     }
 
-    private void SetLocalModelPath(LLM llmInstance, string modelName)
+    private void SetLocalModelPath(LLM llmInstance, string modelName,string purposeName)
     {
 #if UNITY_EDITOR
         mainThreadDispatcher.Enqueue(() => {
 #endif
             string modelPath = Path.Combine(Application.streamingAssetsPath, "LLM", modelName);
             string verifiedPath = SafeFileReader.PathVerifier(Application.streamingAssetsPath, modelPath);
-            llmInstance.SetModel(verifiedPath);
+            try
+            {
+                llmInstance.SetModel(verifiedPath);
+            }catch(Exception)
+            {
+                TypingAppendTextSystem($"SYSTEM: [{purposeName}] のロードに失敗しました。設定を見直してください。(再起動が必要です)\n---パス---\n{verifiedPath.Replace("\\", "/")}\n-----\n");
+            }
 #if UNITY_EDITOR
         });
 #endif
