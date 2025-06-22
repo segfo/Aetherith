@@ -12,7 +12,8 @@ public class VRMLoader : MonoBehaviour
 
     public GameObject LoadedModel { get; private set; }
 
-    public event Action<GameObject> OnVrmLoaded; // ← 他クラスに通知
+    public event Action<GameObject> OnVrmLoaded; // ロード完了時の通知
+    public event Action<string> OnVrmLoadError; // ロード不能時の通知
 
     // ここではモデルのロードとスケールの変更のみをする。
     // VRMのカメラ位置の設定はCharacterController.csで行う。
@@ -37,11 +38,11 @@ public class VRMLoader : MonoBehaviour
         else
         {
             Debug.LogError("モデルの読み込みに失敗しました。");
+            vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
+            string basePath = Path.Combine(Application.streamingAssetsPath, "VRM");
+            string path = SafeFileReader.PathVerifier(basePath, Path.Combine(basePath, vrmFileName));
+            OnVrmLoadError?.Invoke(path);
         }
-        //AppConfigManager.Instance.OnConfigUpdated += (config) =>
-        //{
-        //    LoadVrmModel();
-        //};
     }
     UniTask<LoadedVRMInfo> LoadVrmModel()
     {
