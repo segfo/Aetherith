@@ -79,9 +79,9 @@ public class ChatManager : MonoBehaviour
         await InitializeEmotionLLM(config);
 
         // 設定反映
-        waitMessage = config.waitMessage;
+        waitMessage = config.chat.waitMessage;
         AppConfigManager.Instance.OnConfigUpdated += (newConfig) => {
-            waitMessage = newConfig.waitMessage;
+            waitMessage = newConfig.chat.waitMessage;
         };
 
         // 最後にGameObjectを有効化してロード
@@ -208,7 +208,7 @@ public class ChatManager : MonoBehaviour
                 {
                     AppConfig config = AppConfigManager.Instance.Config;
                     InitializeState = ChatManagerInitializeState.Initialized;
-                    await chatUI.StartTypingSystem(config.welcomeMessage);
+                    await chatUI.StartTypingSystem(config.chat.welcomeMessage);
                     chatUI.InputFieldSetEnable(true);
                     chatUI.AddInputFieldEventHandler(OnSubmit);
                     chatUI.ActivateInputField();

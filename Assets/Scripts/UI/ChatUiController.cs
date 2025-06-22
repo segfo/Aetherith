@@ -41,17 +41,33 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
     }
     void ApplyConfig(AppConfig config)
     {
-        typewriterBot.SetTypingInterval(AppConfigManager.Instance.Config.botChatTypingInterval);
-        typewriterSystem.SetTypingInterval(AppConfigManager.Instance.Config.systemChatTypingInterval);
+        typewriterBot.SetTypingInterval(AppConfigManager.Instance.Config.chat.botChatTypingInterval);
+        typewriterSystem.SetTypingInterval(AppConfigManager.Instance.Config.chat.systemChatTypingInterval);
         // inputFieldの色を表示する
         responseArea.GetComponent<Image>().color = CharacterRender.ParseHexColor(
-             config.chatWindowBgRGBA,
-             AppConfigManager.FallbackInstance.Config.chatWindowBgRGBA
+             config.chat.windowBgRGBA,
+             AppConfigManager.FallbackInstance.Config.chat.windowBgRGBA
          );
         inputField.GetComponent<Image>().color = CharacterRender.ParseHexColor(
-            config.chatInputWindowBgRGBA,
-            AppConfigManager.FallbackInstance.Config.chatInputWindowBgRGBA
+            config.chat.inputWindowBgRGBA,
+            AppConfigManager.FallbackInstance.Config.chat.inputWindowBgRGBA
         );
+        // プレースホルダを変更する
+        if (AppConfigManager.Instance.Config.chat.sendOnEnter) {
+            UpdatePlaceholder("Enterで送信");
+        }
+        else
+        {
+            UpdatePlaceholder("Shift+Enterで送信");
+        }
+    }
+
+    public void UpdatePlaceholder(string newText)
+    {
+        if (inputField != null && inputField.placeholder is Text placeholderText)
+        {
+            placeholderText.text = newText;
+        }
     }
 
     void AdjustChatUi()
@@ -113,7 +129,7 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         if (Input.GetKeyDown(KeyCode.Return))
         {
             bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            if (shift)
+            if (shift^AppConfigManager.Instance.Config.chat.sendOnEnter)
             {
                 // 先頭一致
                 if (inputField.text.StartsWith("/exit")) {

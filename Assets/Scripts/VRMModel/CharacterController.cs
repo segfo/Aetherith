@@ -81,11 +81,11 @@ public class CharacterController : MonoBehaviour
         // 初期化が済んでいなければ追記モード+リップシンクなしで動作させる
         if (chatManager.InitializeState == ChatManagerInitializeState.Ready)
         {
-            chatManager.TypingText(AppConfigManager.Instance.Config.shakeMessage + "\n");
+            chatManager.TypingText(AppConfigManager.Instance.Config.chat.shakeMessage + "\n");
         }
         else if (chatManager.InitializeState == ChatManagerInitializeState.InitializePending)
         {
-            chatManager.TypingAppendTextSystem(AppConfigManager.Instance.Config.shakeMessage + "\n");
+            chatManager.TypingAppendTextSystem(AppConfigManager.Instance.Config.chat.shakeMessage + "\n");
         }
         if (chatManager.InitializeState != ChatManagerInitializeState.Initialized) {
             // 表情を全部戻す

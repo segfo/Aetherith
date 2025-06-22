@@ -201,7 +201,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 438814072}
   m_HandleRect: {fileID: 438814071}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1787,7 +1787,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Shift+Enter\u3067\u9001\u4FE1"
+  m_Text: 
 --- !u!222 &1596838827
 CanvasRenderer:
   m_ObjectHideFlags: 0
