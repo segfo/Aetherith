@@ -57,7 +57,7 @@ public class ChatManager : MonoBehaviour
 
     bool externalApiUse(LLMConfig llm)
     {
-        return llm.useLLM!=LLMProvider.Local;
+        return llm.LLMProvider!=LLMProvider.Local;
     }
 
     async void Start()
@@ -243,7 +243,7 @@ public class ChatManager : MonoBehaviour
     }
     private string UseLLMName(LLMConfig conf) {
         if (externalApiUse(conf)) {
-            return $"Remote({conf.useLLM})";
+            return $"Remote({conf.LLMProvider})";
         }
         else
         {
@@ -327,52 +327,54 @@ public class ChatManager : MonoBehaviour
         if (onComplete==LipSyncState.Continue) {
             return;
         }
+        string userInput = chatUI.GetInputField();
+        Debug.Log("OnSubmit called");
+        // 入力が空なら入力フィールドを空にして終わる
+        if (string.IsNullOrWhiteSpace(userInput)){
+            chatUI.ClearInputField();
+            return;
+        }
+        Debug.Log("Input: " + userInput);
         // 入力フィールドを消す
         chatUI.InputFieldSetEnable(false);
         firstReply = true;
+        // VRMの表情をリセットする
         ExpressionController.Instance.ResetVrmExpression();
-        string userInput = chatUI.GetInputField();
-        Debug.Log("OnSubmit called");
-        if (!string.IsNullOrWhiteSpace(userInput))
+        // 待ちモーションを再生する
+        thinkingAnimation.DoThinking();
+        // 考え中メッセージを出して、入力欄を消す
+        _ = chatUI.StartTypingSystem(waitMessage);
+        chatUI.ClearInputField();
+        // 感情推定AIを呼び出す　
+        string emotionText = await llmCharacterEmotional.Chat(userInput);
+        string extractString = Regex.Match(emotionText.Replace("\r","").Replace("\n",""), @"```json(.+)```").Groups[1].Value;
+        if (extractString == "") { extractString = emotionText; }
+        Debug.Log("Emotion JSON: " + emotionText.Replace("\r", "").Replace("\n", ""));
+        Debug.Log("Extracted Emotion JSON: "+extractString);
+        try
         {
-            Debug.Log("Input: " + userInput);
-
-            // 待ちモーションを再生する
-            thinkingAnimation.DoThinking();
-            // 考え中メッセージを出して、入力欄を消す
-            _ = chatUI.StartTypingSystem(waitMessage);
-            chatUI.ClearInputField();
-            // 感情推定AIを呼び出す　
-            string emotionText = await llmCharacterEmotional.Chat(userInput);
-            string extractString = Regex.Match(emotionText.Replace("\r","").Replace("\n",""), @"```json(.+)```").Groups[1].Value;
-            if (extractString == "") { extractString = emotionText; }
-            Debug.Log("Emotion JSON: " + emotionText.Replace("\r", "").Replace("\n", ""));
-            Debug.Log("Extracted Emotion JSON: "+extractString);
-            try
-            {
-                expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(extractString);
-            }
-            catch (JsonException e)
-            {
-                Debug.LogError("JSON Parse Error: " + e.Message);
-                expressionList = new Dictionary<string, float>
-                {
-                    { "Happy", 0.0f },
-                    { "Sad", 0.0f },
-                    { "Angry", 0.0f },
-                    { "Surprised", 0.0f },
-                    { "Relaxed", 0.0f },
-                    { "Neutral", 0.0f }
-                };
-            }
-            // 感情を取得し表情に反映する。
-            // VRMの表情を変更する処理を追加する。
-            // LLMからは {"Happy": "0.6", "Sad": "0.2", ...} のようなJSONが返ってくる。
-            _ = llmCharacter.Chat(userInput, ClearChatText , HandleReply, OnComplete);
-            // 待機メッセージを表示し、入力フォームをクリアする
-            // ここはローカルLLM/リモートLLMのどちらでも処理する
-            //llmCharacter.AddPlayerMessage(userInput);
+            expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(extractString);
         }
+        catch (JsonException e)
+        {
+            Debug.LogError("JSON Parse Error: " + e.Message);
+            expressionList = new Dictionary<string, float>
+            {
+                { "Happy", 0.0f },
+                { "Sad", 0.0f },
+                { "Angry", 0.0f },
+                { "Surprised", 0.0f },
+                { "Relaxed", 0.0f },
+                { "Neutral", 0.0f }
+            };
+        }
+        // 感情を取得し表情に反映する。
+        // VRMの表情を変更する処理を追加する。
+        // LLMからは {"Happy": "0.6", "Sad": "0.2", ...} のようなJSONが返ってくる。
+        _ = llmCharacter.Chat(userInput, ClearChatText , HandleReply, OnComplete);
+        // 待機メッセージを表示し、入力フォームをクリアする
+        // ここはローカルLLM/リモートLLMのどちらでも処理する
+        //llmCharacter.AddPlayerMessage(userInput);
         onComplete = LipSyncState.Continue;
         lipSyncSimulator.LipSyncStart();
     }

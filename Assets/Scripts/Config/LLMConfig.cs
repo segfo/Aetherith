@@ -10,7 +10,7 @@ public enum LLMProvider
 public class LLMConfig
 {
     // どのLLMを使うか
-    public LLMProvider useLLM = LLMProvider.Local;
+    public LLMProvider LLMProvider = LLMProvider.Local;
     public DifyConfig Dify = new DifyConfig();
     public LocalLLMConfig Local = new LocalLLMConfig();
     public LLMConfig() { }
