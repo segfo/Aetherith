@@ -95,11 +95,13 @@ LLM `Assets/StreamingAssets/LLM/`
 設定ファイル動的ロード機能の対象外です（適用にはアプリの再起動が必要です）
 | フィールド名             | 説明            |
 | ------------------ |  ------------------ |
-| `useLLM`          | 使うLLMの種類（`Local`/`Dify`）   |
-| `Dify` |useLLM="Dify"の時に使用される設定項目群|
-| `Local` |useLLM="Local"の時に使用される設定項目群|
+| `LLMProvider`      | 使うLLMプロバイダ（`Local`/`Dify`）   |
+| `Dify` |LLMProvider="Dify"の時に使用される設定項目群（Dify API）|
+| `Local` |LLMProvider="Local"の時に使用される設定項目群（ローカルLLM）|
 
-#### **AI関連設定（`useLLM`=`Dify`の時）**
+#### **AI関連設定（`LLMProvider`=`Dify`の時）**
+DifyのAPIを使います。チャットワークフローに対してのみ使用できます。
+
 | フィールド名             | 説明            |
 | ------------------ |  ------------------ |
 | `apiUrl`       | 接続先のエンドポイント    |
@@ -107,7 +109,10 @@ LLM `Assets/StreamingAssets/LLM/`
 | `conversationHandover` | 今回の会話を次回のアプリ起動時でも引き継ぐかどうか |
 | `handoverConversationIdKeyName` | 会話引継ぎIDを記録するための記憶領域の名前（任意・CharacterとEmotionの設定で被らないようにしてください） |
 
-#### **AI関連設定（`useLLM`=`Local`の時）**
+#### **AI関連設定（`LLMProvider`=`Local`の時）**
+ローカルの組み込みLLMエンジンを使います。
+ggufファイルや人格を構成するシステムプロンプトのファイルを指定します。
+
 | フィールド名             | 説明            |
 | ------------------ |  ------------------ |
 | `modelName`        | ローカルで使うAIモデルのファイル名（gguf） |
