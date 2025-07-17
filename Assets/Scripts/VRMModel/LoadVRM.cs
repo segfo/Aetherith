@@ -17,7 +17,6 @@ namespace uDesktopMascot
     /// </summary>
     public static class LoadVRM
     {
-
         /// <summary>
         /// アニメーションコントローラーを設定
         /// </summary>

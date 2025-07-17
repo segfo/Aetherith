@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UniVRM10;
 
@@ -15,20 +17,26 @@ public class CharacterController : MonoBehaviour
     private ArmMotionManager armMotionManager;
     private MainThreadDispatcher mainThreadDispatcher;
     private GameObject model;
+    private Vector3 initialCameraPosition;
+    private Quaternion initialCameraRotation;
     private void Start()
     {
         mainThreadDispatcher = MainThreadDispatcher.Instance;
+        initialCameraPosition = Camera.main.transform.position;
+        initialCameraRotation = Camera.main.transform.rotation;
     }
 
     private void Awake()
     {
         vrmLoader.OnVrmLoadError += (path) =>
         {
-            chatManager.TypingAppendTextSystem($"SYSTEM: VRMモデルのロードに失敗しました。設定を見直してください。(再起動が必要です)\n---パス---\n{path.Replace("\\", "/")}\n-----\n");
+            chatManager.TypingAppendTextSystem($"SYSTEM: VRMモデルのロードに失敗しました。設定を見直してください。\n---パス---\n{path.Replace("\\", "/")}\n-----\n");
         };
         vrmLoader.OnVrmLoaded += OnVrmLoaded;
         chatManager.TypingAppendTextSystem("SYSTEM: VRMモデルを読み込んでいます...\n");
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
+        vrmLoader.BeforeVrmUnload += BeforeVrmUnload;
+        vrmLoader.OnVrmUnload += OnVrmUnload;
     }
 
     private void OnConfigUpdated(AppConfig config)
@@ -60,6 +68,17 @@ public class CharacterController : MonoBehaviour
         Vector3 faceDir = head.forward.normalized;
         // 実際のカメラ調整処理
         CameraConfigApply(cam, modelHeight, scaleFactor, faceDir);
+    }
+    public void BeforeVrmUnload()
+    {
+        Debug.Log("VRMモデルのアンロードを開始します。");
+        chatManager.TypingTextSystem($"SYSTEM: VRMモデルのリロードを行います。\n");
+    }
+    public void OnVrmUnload()
+    {
+        Transform cameraTransform = Camera.main.transform;
+        cameraTransform.position = initialCameraPosition;
+        cameraTransform.rotation = initialCameraRotation;
     }
 
     private void OnVrmLoaded(GameObject model)

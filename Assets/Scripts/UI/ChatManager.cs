@@ -59,9 +59,21 @@ public class ChatManager : MonoBehaviour
     {
         return llm.LLMProvider!=LLMProvider.Local;
     }
-
+    void BeforeVrmUnload()
+    {
+        chatUI.InputFieldSetEnable(false);
+    }
+    void OnVrmUnload()
+    {
+        loadResources = new Dictionary<LoadResources, string>
+        {
+            { LoadResources.VRM,"VRMモデル"}
+        };
+    }
     async void Start()
     {
+        VRMLoader.Instance.BeforeVrmUnload += BeforeVrmUnload;
+        VRMLoader.Instance.OnVrmUnload += OnVrmUnload;
         chatUI.InputFieldSetEnable(false);
         _ = chatUI.StartTypingAppendSystem("SYSTEM: LLMをセットアップしています...\n");
 
@@ -110,7 +122,6 @@ public class ChatManager : MonoBehaviour
         {
             SetLocalModelPath(llm, config.characterLlm.Local.modelName, "キャラクターAI");
         });
-        
     }
 
     private async Task InitializeEmotionLLM(AppConfig config)
