@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UniVRM10;
 
-public class CharacterController : MonoBehaviour
+public class CharacterController : MonoBehaviour,IVRMCharacter
 {
     [SerializeField] private VRMLoader vrmLoader;
     [SerializeField] private ChatManager chatManager;
@@ -13,7 +13,14 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
 
     public Vrm10Instance vrmInstance { get; private set; } = null;
-    private BlinkController blinkController;
+
+    public string Name { get; private set; } = string.Empty;
+
+    public Animator Animator { get; private set; } = null;
+
+    public bool ready { get; private set; } = false;
+
+    public BlinkController blinkController { get; private set; } = null;
     private ArmMotionManager armMotionManager;
     private MainThreadDispatcher mainThreadDispatcher;
     private GameObject model;
@@ -53,6 +60,7 @@ public class CharacterController : MonoBehaviour
     {
         var animator = model.GetComponent<Animator>();
         if (animator == null) return;
+        this.Animator= animator;
         Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
         Transform hips = animator.GetBoneTransform(HumanBodyBones.Hips);
         if (head == null || hips == null) return;
@@ -73,6 +81,7 @@ public class CharacterController : MonoBehaviour
     {
         Debug.Log("VRMモデルのアンロードを開始します。");
         chatManager.TypingTextSystem($"SYSTEM: VRMモデルのリロードを行います。\n");
+        ready = false;
     }
     public void OnVrmUnload()
     {
@@ -96,6 +105,7 @@ public class CharacterController : MonoBehaviour
         chatManager.VrmLoadCompleted();
         springBoneExternalForce.Initialize();
         shakeDetector.OnShaken += OnShaken;
+        ready = true;
     }
 
     // キャラクターが振られたときの処理

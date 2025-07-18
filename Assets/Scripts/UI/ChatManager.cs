@@ -23,9 +23,11 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private ChatUIController chatUI;
     [SerializeField] private string logFilePath = "chat_log.txt";
     [SerializeField] private string waitMessage = "\"（考え中です…）\"";
-    [SerializeField] private CharacterController vrmCharacter;
+    //[SerializeField] private CharacterController vrmCharacter;
+    [SerializeField] private IVRMCharacter vrmCharacter;
     [SerializeField] private LipSyncSimulator lipSyncSimulator;
     [SerializeField] private ThinkingMotionManager thinkingAnimation;
+    [SerializeField] private VRMLoader[] vrmLoaders;
 
     private ILLMChat llmCharacter = null;
     private ILLMChat llmCharacterEmotional = null;
@@ -72,8 +74,11 @@ public class ChatManager : MonoBehaviour
     }
     async void Start()
     {
-        VRMLoader.Instance.BeforeVrmUnload += BeforeVrmUnload;
-        VRMLoader.Instance.OnVrmUnload += OnVrmUnload;
+        foreach(VRMLoader loader in vrmLoaders)
+        {
+            loader.BeforeVrmUnload += BeforeVrmUnload;
+            loader.OnVrmUnload += OnVrmUnload;
+        }
         chatUI.InputFieldSetEnable(false);
         _ = chatUI.StartTypingAppendSystem("SYSTEM: LLMをセットアップしています...\n");
 
@@ -279,8 +284,8 @@ public class ChatManager : MonoBehaviour
     public void VrmLoadCompleted()
     {
         // VRMモデルのロードが完了しので、BlinkControllerを取得しておく。
-        blinkController = vrmCharacter.vrmInstance.GetComponent<BlinkController>();
-        thinkingAnimation.SetAnimator(vrmCharacter.vrmInstance.GetComponent<Animator>());
+        blinkController = vrmCharacter.blinkController;
+        thinkingAnimation.SetAnimator(vrmCharacter.Animator);
         mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.VRM);
@@ -308,27 +313,6 @@ public class ChatManager : MonoBehaviour
         chatUI.StartTyping(msg);
     }
 
-    private void SetVrmExpression(Dictionary<string, float> expressionList)
-    {
-        try
-        {
-            foreach (KeyValuePair<string, float> kvp in expressionList)
-            {
-                ExpressionKey exp = ExpressionKey.Neutral;
-                ExpressionController.ExpressionList.TryGetValue(kvp.Key, out exp);
-                vrmCharacter.SetExpression(exp, kvp.Value);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("SetVrmExpression: " + e.Message);
-            foreach (KeyValuePair<string, ExpressionKey> kvp in ExpressionController.ExpressionList)
-            {
-                vrmCharacter.SetExpression(kvp.Value, 0);
-            }
-        }
-    }
-
     Dictionary<string, float> expressionList;
     bool firstReply = true;
 
@@ -351,6 +335,7 @@ public class ChatManager : MonoBehaviour
         firstReply = true;
         // VRMの表情をリセットする
         ExpressionController.Instance.ResetVrmExpression();
+        // TODO:待ちモーション再生機能やらはIVRMCaracterを経由したCharacterControllerに実装するべきな気がしている。（つまりAPI化する）
         // 待ちモーションを再生する
         thinkingAnimation.DoThinking();
         // 考え中メッセージを出して、入力欄を消す
@@ -362,6 +347,8 @@ public class ChatManager : MonoBehaviour
         if (extractString == "") { extractString = emotionText; }
         Debug.Log("Emotion JSON: " + emotionText.Replace("\r", "").Replace("\n", ""));
         Debug.Log("Extracted Emotion JSON: "+extractString);
+
+        // ここで、キャラクタ操作用インタフェースを呼び出す。
         try
         {
             expressionList = JsonConvert.DeserializeObject<Dictionary<string, float>>(extractString);
@@ -399,7 +386,29 @@ public class ChatManager : MonoBehaviour
     {
         System.IO.File.AppendAllText(logFilePath, message + "\n");
     }
-
+    // TODO:CharacterControllerに移動する
+    // TODO:待ちモーション再生機能やらはIVRMCaracterを経由したCharacterControllerに実装するべきな気がしている。（つまりAPI化する）
+    private void SetVrmExpression(Dictionary<string, float> expressionList)
+    {
+        try
+        {
+            foreach (KeyValuePair<string, float> kvp in expressionList)
+            {
+                ExpressionKey exp = ExpressionKey.Neutral;
+                ExpressionController.ExpressionList.TryGetValue(kvp.Key, out exp);
+                vrmCharacter.SetExpression(exp, kvp.Value);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("SetVrmExpression: " + e.Message);
+            foreach (KeyValuePair<string, ExpressionKey> kvp in ExpressionController.ExpressionList)
+            {
+                vrmCharacter.SetExpression(kvp.Value, 0);
+            }
+        }
+    }
+    // TODO:待ちモーション再生機能やらはIVRMCaracterを経由したCharacterControllerに実装するべきな気がしている。（つまりAPI化する）
     async void VRMExpressionChange()
     {
         BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionThreshold;

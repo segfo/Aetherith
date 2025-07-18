@@ -7,14 +7,14 @@ public class ChatWindowMinimize : MonoBehaviour
 {
     [SerializeField] GameObject chatWindow;
     [SerializeField] ClickUtil clickUtil;
-    [SerializeField] CharacterController characterController;
+    [SerializeField] CharacterBinding characterInfo;
     private bool chatWindowEnabled = true;
     void Start()
     {
         var rect = GetComponent<RectTransform>().rect;
         clickUtil.DoubleClick += () => {
             // VRMがロードされてないなら隠さない。
-            if (characterController.vrmInstance==null) {
+            if (!characterInfo.ready) {
                 return;
             }
             chatWindowEnabled = !chatWindowEnabled;

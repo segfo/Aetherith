@@ -14,8 +14,6 @@ public class VRMLoader : MonoBehaviour
     private bool vrmLoadError = false; // ロードエラーが発生したかどうかのフラグ
 
     public GameObject LoadedModel { get; private set; }
-    static public VRMLoader Instance { get; private set; } // シングルトンインスタンス
-
     public event Action<GameObject> OnVrmLoaded; // ロード完了時の通知
     public event Action<string> OnVrmLoadError; // ロード不能時の通知
     public event Action BeforeVrmUnload; // VRMアンロード前の通知ata
@@ -24,9 +22,6 @@ public class VRMLoader : MonoBehaviour
     // VRMのカメラ位置の設定はCharacterController.csで行う。
     private async void Start()
     {
-        if(Instance == null) {
-            Instance = this; // シングルトンインスタンスの設定
-        }
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
         vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
         await LoadVrm();

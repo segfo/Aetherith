@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ChatUIController : MonoBehaviour,ITextWriterTarget
 {
-    [SerializeField] private CharacterController characterController;
+    [SerializeField] private IVRMCharacter character;
     [SerializeField] private GameObject chatWindow;
     [SerializeField] private TextMeshProUGUI tmpText;
     [SerializeField] private InputField inputField;
@@ -72,8 +72,8 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 
     void AdjustChatUi()
     {
-        if (characterController == null || characterController.vrmInstance == null) return;
-        var animator = characterController.vrmInstance.GetComponent<Animator>();
+        if (!character.ready) return;
+        var animator = character.Animator;
         var headTransform = animator.GetBoneTransform(HumanBodyBones.Head);
         if (headTransform == null) return;
         RectTransform rectTransform = GetComponent<RectTransform>();
