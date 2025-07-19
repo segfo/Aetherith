@@ -8,12 +8,15 @@ public class BlinkController : MonoBehaviour
     private float blinkInterval = 4f; // 人間の平均的な瞬きの回数はおおよそ3秒に1回なので、3を基準に2～4秒おきに瞬きするようにする。
     private float blinkDuration = 0.1f; // 瞬きの持続時間
     private bool isBlinkEnabled = true;
-
-    void Start()
+    private bool Initialized = false;
+    public void InitController(bool blinkDisable)
     {
+        if (Initialized) { return; }
+        Initialized = true;
         // 瞬きの無効化をする設定を利用して初期化する。
         // 瞬きが無効 = falseは瞬きが有効であるため、論理反転した値を設定しておく。
-        isBlinkEnabled = !AppConfigManager.Instance.Config.vrm.blinkDisable;
+        
+        isBlinkEnabled = !blinkDisable;
         vrmInstance = GetComponent<Vrm10Instance>();
         if (vrmInstance != null)
         {
@@ -24,7 +27,7 @@ public class BlinkController : MonoBehaviour
             Debug.LogWarning("Vrm10Instance が見つかりません。");
         }
         AppConfigManager.Instance.OnConfigUpdated += (AppConfig config) => {
-            isBlinkEnabled = !config.vrm.blinkDisable;
+            isBlinkEnabled = !blinkDisable;
         };
     }
 

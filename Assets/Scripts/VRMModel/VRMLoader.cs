@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 public class VRMLoader : MonoBehaviour
 {
-    [SerializeField] private string vrmFileName = "";
+    public int vrmFileConfigSelector { get; private set; } =  0;
+    private String vrmFileName = "";
     private bool vrmLoaded = false; // 初期化済みフラグ
     private bool vrmLoadError = false; // ロードエラーが発生したかどうかのフラグ
 
@@ -23,15 +24,14 @@ public class VRMLoader : MonoBehaviour
     private async void Start()
     {
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
-        vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
         await LoadVrm();
     }
 
     void OnConfigUpdated(AppConfig config)
     {
-        if (config.vrm.FileName != vrmFileName && vrmLoaded) {
+        if (config.vrm[vrmFileConfigSelector].FileName != vrmFileName && vrmLoaded) {
             vrmLoaded = false;
-            vrmFileName = config.vrm.FileName;
+            vrmFileName = config.vrm[vrmFileConfigSelector].FileName;
             LoadVrm();
         }
         else
@@ -59,7 +59,7 @@ public class VRMLoader : MonoBehaviour
         }
         if (loadedModelInfo != null)
         {
-            float scale = AppConfigManager.Instance.Config.vrm.Scale;
+            float scale = AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].Scale;
             GameObject model = loadedModelInfo.Model;
             model.transform.position = Vector3.zero;
             Animator animator = model.GetComponent<Animator>() ?? model.AddComponent<Animator>();
@@ -89,7 +89,7 @@ public class VRMLoader : MonoBehaviour
                 return;
             }
             Debug.LogError("モデルの読み込みに失敗しました。");
-            vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
+            vrmFileName = AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].FileName;
             string basePath = Path.Combine(Application.streamingAssetsPath, "VRM");
             string path = SafeFileReader.PathVerifier(basePath, Path.Combine(basePath, vrmFileName));
             OnVrmLoadError?.Invoke(path);
@@ -98,7 +98,7 @@ public class VRMLoader : MonoBehaviour
     }
     UniTask<LoadedVRMInfo> LoadVrmModel()
     {
-        vrmFileName = AppConfigManager.Instance.Config.vrm.FileName;
+        vrmFileName = AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].FileName;
         Debug.Log("VRMLoader - VRMモデルの読み込みを開始します。");
         var cancellationToken = new CancellationTokenSource().Token;
         string basePath = Path.Combine(Application.streamingAssetsPath, "VRM");

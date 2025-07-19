@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class ChatUIController : MonoBehaviour,ITextWriterTarget
 {
-    [SerializeField] private IVRMCharacter character;
+    [SerializeField] private CharacterBinding character;
     [SerializeField] private GameObject chatWindow;
     [SerializeField] private TextMeshProUGUI tmpText;
     [SerializeField] private InputField inputField;
@@ -74,12 +74,15 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
     {
         if (!character.ready) return;
         var animator = character.Animator;
+        if (animator == null) {
+            Debug.Log("animator null.");
+            return; }
         var headTransform = animator.GetBoneTransform(HumanBodyBones.Head);
         if (headTransform == null) return;
         RectTransform rectTransform = GetComponent<RectTransform>();
         Canvas canvas = GetComponentInParent<Canvas>();
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        float scaleFactor = AppConfigManager.Instance.Config.vrm.Scale; // スケールを取得
+        float scaleFactor = AppConfigManager.Instance.Config.vrm[character.vrmFileConfigSelector].Scale; // スケールを取得
 
         // UIの高さ（Canvas基準のピクセル単位）
         float windowHeight = rectTransform.rect.height;
@@ -88,7 +91,7 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
         // ワールド空間での水平軸のオフセット
         float horizontalOffset = 0.25f * scaleFactor;
         // ワールド空間での垂直軸のオフセット
-        float verticalOffsetWorld = AppConfigManager.Instance.Config.vrm.VrmDisplayOffsetY;
+        float verticalOffsetWorld = AppConfigManager.Instance.Config.vrm[character.vrmFileConfigSelector].VrmDisplayOffsetY;
 
         // 頭の位置からX方向に一定距離ずらす（カメラの右方向基準で）
         Vector3 baseWorldPos = headTransform.position + Camera.main.transform.right * horizontalOffset;
@@ -107,8 +110,8 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 
         // スクリーン → RectTransformローカル座標へ変換
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, finalScreenPos, Camera.main, out localPos);
-        localPos.x += AppConfigManager.Instance.Config.vrm.ChatInputOffsetX * scaleFactor; // X軸のオフセット
-        localPos.y += AppConfigManager.Instance.Config.vrm.ChatInputOffsetY * scaleFactor; // Y軸のオフセット
+        localPos.x += AppConfigManager.Instance.Config.vrm[character.vrmFileConfigSelector].ChatInputOffsetX * scaleFactor; // X軸のオフセット
+        localPos.y += AppConfigManager.Instance.Config.vrm[character.vrmFileConfigSelector].ChatInputOffsetY * scaleFactor; // Y軸のオフセット
         // ローカル座標を反映
         rectTransform.localPosition = localPos;
 

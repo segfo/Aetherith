@@ -23,10 +23,7 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private ChatUIController chatUI;
     [SerializeField] private string logFilePath = "chat_log.txt";
     [SerializeField] private string waitMessage = "\"（考え中です…）\"";
-    //[SerializeField] private CharacterController vrmCharacter;
-    [SerializeField] private IVRMCharacter vrmCharacter;
-    [SerializeField] private LipSyncSimulator lipSyncSimulator;
-    [SerializeField] private ThinkingMotionManager thinkingAnimation;
+    [SerializeField] private CharacterBinding vrmCharacter;
     [SerializeField] private VRMLoader[] vrmLoaders;
 
     private ILLMChat llmCharacter = null;
@@ -54,7 +51,7 @@ public class ChatManager : MonoBehaviour
             { LoadResources.MainCharacterLLM, $"キャラクターAI ({UseLLMName(AppConfigManager.Instance.Config.characterLlm)})" },
             { LoadResources.EmotionCharacterLLM, $"感情・表情推定AI ({UseLLMName(AppConfigManager.Instance.Config.emotionLlm)})"},
         };
-        lipSyncSimulator.OnLipSyncEnd += DoFinalizeAfterLipSync;
+        vrmCharacter.lipSync.OnLipSyncEnd += DoFinalizeAfterLipSync;
     }
 
     bool externalApiUse(LLMConfig llm)
@@ -285,7 +282,6 @@ public class ChatManager : MonoBehaviour
     {
         // VRMモデルのロードが完了しので、BlinkControllerを取得しておく。
         blinkController = vrmCharacter.blinkController;
-        thinkingAnimation.SetAnimator(vrmCharacter.Animator);
         mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.VRM);
@@ -335,9 +331,8 @@ public class ChatManager : MonoBehaviour
         firstReply = true;
         // VRMの表情をリセットする
         ExpressionController.Instance.ResetVrmExpression();
-        // TODO:待ちモーション再生機能やらはIVRMCaracterを経由したCharacterControllerに実装するべきな気がしている。（つまりAPI化する）
         // 待ちモーションを再生する
-        thinkingAnimation.DoThinking();
+        vrmCharacter.DoThinking();
         // 考え中メッセージを出して、入力欄を消す
         _ = chatUI.StartTypingSystem(waitMessage);
         chatUI.ClearInputField();
@@ -374,7 +369,7 @@ public class ChatManager : MonoBehaviour
         // ここはローカルLLM/リモートLLMのどちらでも処理する
         //llmCharacter.AddPlayerMessage(userInput);
         onComplete = LipSyncState.Continue;
-        lipSyncSimulator.LipSyncStart();
+        vrmCharacter.lipSync.LipSyncStart();
     }
 
     void ClearChatText()
@@ -386,8 +381,6 @@ public class ChatManager : MonoBehaviour
     {
         System.IO.File.AppendAllText(logFilePath, message + "\n");
     }
-    // TODO:CharacterControllerに移動する
-    // TODO:待ちモーション再生機能やらはIVRMCaracterを経由したCharacterControllerに実装するべきな気がしている。（つまりAPI化する）
     private void SetVrmExpression(Dictionary<string, float> expressionList)
     {
         try
@@ -411,14 +404,14 @@ public class ChatManager : MonoBehaviour
     // TODO:待ちモーション再生機能やらはIVRMCaracterを経由したCharacterControllerに実装するべきな気がしている。（つまりAPI化する）
     async void VRMExpressionChange()
     {
-        BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm.blinkExclusionExpressionThreshold;
+        BlinkExclusionExpressionThreshold filter = AppConfigManager.Instance.Config.vrm[vrmCharacter.vrmFileConfigSelector].blinkExclusionExpressionThreshold;
         // 表情の閾値が超えていたら瞬きを止める(blinkDisableなら瞬きをする。例えば目を開けてびっくりした表情などの時)
         try
         {
             if (firstReply)
             {
                 // 考え中アニメーションから元に戻す
-                await thinkingAnimation.DoneThinking();
+                await vrmCharacter.DoneThinking();
                 if (expressionList["Happy"] > filter.Happy || expressionList["Sad"] > filter.Sad ||
                     expressionList["Angry"] > filter.Angry || expressionList["Surprised"] > filter.Surprise ||
                     expressionList["Relaxed"] > filter.Relaxed || expressionList["Neutral"] > filter.Neutral)
@@ -426,7 +419,7 @@ public class ChatManager : MonoBehaviour
                     // 瞬きを無効化する。目は開いたままにする
                     // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
                     // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
-                    blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
+                    blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm[vrmCharacter.vrmFileConfigSelector].blinkDisable, 0.0f);
                 }
                 firstReply = false;
             }
@@ -451,7 +444,7 @@ public class ChatManager : MonoBehaviour
         Debug.Log("OnCompleted");
         if (onComplete == LipSyncState.Continue) {
             onComplete = LipSyncState.OnComplete;
-            DoFinalizeAfterLipSync(lipSyncSimulator.TotalSyllableCount);
+            DoFinalizeAfterLipSync(vrmCharacter.lipSync.TotalSyllableCount);
         }
     }
     public void DoFinalizeAfterLipSync(int totalSyllableCount)
@@ -463,7 +456,7 @@ public class ChatManager : MonoBehaviour
         chatUI.InputFieldSetEnable(true);
         Debug.Log("LipSyncEnd");
         // まだLipSync中だったらOnCompleteの処理を遅らせる
-        lipSyncSimulator.LipSyncEnd();
+        vrmCharacter.lipSync.LipSyncEnd();
         // 表情を戻す
         float wait = UnityEngine.Random.Range(1.0f, 2.0f);
         float fadeoutPlay = UnityEngine.Random.Range(1.5f, 3.0f);
@@ -473,7 +466,7 @@ public class ChatManager : MonoBehaviour
         {
             // 目が開くまで瞬きを待つ
             await Task.Delay((int)((wait + fadeoutPlay) * 1000));
-            blinkController.SetBlinkEnabled(!AppConfigManager.Instance.Config.vrm.blinkDisable, 0.0f);
+            blinkController.SetBlinkEnabled(!AppConfigManager.Instance.Config.vrm[vrmCharacter.vrmFileConfigSelector].blinkDisable, 0.0f);
         });
     }
 }

@@ -1,15 +1,16 @@
-﻿using System;
-using UniHumanoid;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UniVRM10;
 
 public class CharacterRender : MonoBehaviour
 {
     [SerializeField] private Volume volume;
     [SerializeField] private Light directionalLight;
+    private int vrmFileConfigSelector = 0;
     private void Start()
     {
+        vrmFileConfigSelector = GetComponent<CharacterController>().vrmFileConfigSelector;
         OnConfigUpdated(AppConfigManager.Instance.Config);
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
     }
@@ -24,13 +25,13 @@ public class CharacterRender : MonoBehaviour
     {
         // ライトの色
         directionalLight.color = ParseHexColor(
-            config.vrm.LightColorRGBA,
-            config.vrm.LightColorRGBA
+            config.vrm[vrmFileConfigSelector].LightColorRGBA,
+            config.vrm[vrmFileConfigSelector].LightColorRGBA
         );
         // ライトの強さ
-        directionalLight.intensity = config.vrm.LightIntensity;
+        directionalLight.intensity = config.vrm[vrmFileConfigSelector].LightIntensity;
         // 影の強さ
-        directionalLight.shadowStrength = config.vrm.ShadowStrength;
+        directionalLight.shadowStrength = config.vrm[vrmFileConfigSelector].ShadowStrength;
     }
     
     public static Color ParseHexColor(string hex,string fallback)
@@ -58,7 +59,7 @@ public class CharacterRender : MonoBehaviour
             // Tonemappingの設定を行う
             if (tonemapping != null)
             {
-                ToneMappingMode tmmode = config.vrm.ToneMapping;
+                ToneMappingMode tmmode = config.vrm[vrmFileConfigSelector].ToneMapping;
                 switch(tmmode){
                     case ToneMappingMode.None:
                         tonemapping.mode.value = TonemappingMode.None;

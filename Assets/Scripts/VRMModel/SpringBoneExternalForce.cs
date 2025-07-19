@@ -22,8 +22,8 @@ public class SpringBoneExternalForce : MonoBehaviour
     void ConfigApply(AppConfig config)
     {
         shakeForceThreshold = config.shakeForceThreshold;
-        forceMultiplier = config.vrm.springBone.ExternalForceMultiplier;
-        maximumMovementForce = config.vrm.springBone.MaximumMovementForce;
+        forceMultiplier = config.vrm[characterController.vrmFileConfigSelector].springBone.ExternalForceMultiplier;
+        maximumMovementForce = config.vrm[characterController.vrmFileConfigSelector].springBone.MaximumMovementForce;
     }
     public void Initialize()
     {
