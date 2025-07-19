@@ -10,9 +10,9 @@ using Unity.VisualScripting;
 
 public class VRMLoader : MonoBehaviour
 {
-    public int vrmFileConfigSelector =  0;
+    public int vrmFileConfigSelector { get; private set; } =  0; // ロード中のVRMファイルの設定ファイルのインデックス
     private String vrmFileName = "";
-    private bool vrmLoaded = false; // 初期化済みフラグ
+    private bool vrmLoaded  = false; // 初期化済みフラグ
     private bool vrmLoadError = false; // ロードエラーが発生したかどうかのフラグ
 
     public GameObject LoadedModel { get; private set; }
@@ -27,6 +27,11 @@ public class VRMLoader : MonoBehaviour
     {
         AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
         await LoadVrm();
+    }
+
+    public void SetVrmFileConfigSelector(int selector)
+    {
+        vrmFileConfigSelector = selector % AppConfigManager.Instance.Config.vrm.Length;
     }
 
     void OnConfigUpdated(AppConfig config)

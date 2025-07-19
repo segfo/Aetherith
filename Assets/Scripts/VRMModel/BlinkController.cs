@@ -26,11 +26,7 @@ public class BlinkController : MonoBehaviour
         {
             Debug.LogWarning("Vrm10Instance が見つかりません。");
         }
-        AppConfigManager.Instance.OnConfigUpdated += (AppConfig config) => {
-            isBlinkEnabled = !blinkDisable;
-        };
     }
-
     // <summary>
     // enabled: true=有効, false=無効   // 瞬きの有効/無効を設定する 
     // open: 0.0=閉じる, 1.0=開く   // 瞬きの開き具合を0～1の実数で設定する。

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-
+// VRMLoaderの姉妹クラス
+// VRMのクリックに関する初期設定クラス
+// FullBodyColliderSetup.csとセットで使用する
 public class VrmClickDetector : MonoBehaviour
 {
     public GameObject vrmRoot; // VRMのルート（Animatorがアタッチされている）
@@ -59,7 +61,8 @@ public class VrmClickDetector : MonoBehaviour
 
     private void OnFootDoubleClicked(Transform footTransform)
     {
-        if (!AppConfigManager.Instance.Config.MetamorphoseEnabled) {
+        int vrmListCont = AppConfigManager.Instance.Config.vrm.Length;
+        if (!AppConfigManager.Instance.Config.MetamorphoseEnabled || vrmListCont==1 ) {
             return; // 「変身」機能が無効な場合は何もしない
         }
         Debug.Log($"Double clicked on foot: {footTransform.name}");
@@ -69,7 +72,8 @@ public class VrmClickDetector : MonoBehaviour
         // Character1Controller GameObjectを得る
         var characterController = GameObject.Find("CharacterController");
         VRMLoader vrmLoader = characterController.GetComponent<VRMLoader>();
-        vrmLoader.vrmFileConfigSelector = (vrmLoader.vrmFileConfigSelector + 1) % AppConfigManager.Instance.Config.vrm.Length;
+
+        vrmLoader.SetVrmFileConfigSelector((vrmLoader.vrmFileConfigSelector + 1) % vrmListCont);
         // VRMの再ロードを強制する。（設定ファイルが再読み込みされたように見せる）
         GameObject.Find("CharacterController").GetComponent<VRMLoader>().VRMReload();
     }

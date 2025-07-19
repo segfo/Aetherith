@@ -421,7 +421,7 @@ public class ChatManager : MonoBehaviour
                 {
                     // 瞬きを無効化する。目は開いたままにする
                     // 第二引数のopenが0.0f（開く）なのは表情のモーフィングで上書きされるため開いたままでよい
-                    // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する　
+                    // 糸目キャラが驚いたときに目を開けるとか、怒った時に目を開ける表情になるとか、そういう時に瞬きを有効化する
                     blinkController.SetBlinkEnabled(AppConfigManager.Instance.Config.vrm[vrmCharacter.vrmFileConfigSelector].blinkDisable, 0.0f);
                 }
                 firstReply = false;

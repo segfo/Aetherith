@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-
+// VRMLoaderの姉妹クラス
+// VRMClickDetectorとセットで使用する
 public class FullBodyColliderSetup : MonoBehaviour
 {
     public GameObject vrmRoot;

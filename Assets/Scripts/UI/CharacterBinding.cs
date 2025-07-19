@@ -17,6 +17,7 @@ class CharacterBinding : MonoBehaviour, IVRMCharacter
 
     public bool ready => character.ready;
 
+    // メタモルフォーゼで切り替えているキャラの番号
     public int vrmFileConfigSelector => character.vrmFileConfigSelector;
 
     public void SetExpression(ExpressionKey exp, float value)

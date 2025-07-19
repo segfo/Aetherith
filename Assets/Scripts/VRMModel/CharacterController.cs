@@ -54,6 +54,8 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         model.transform.localScale = new Vector3(scale, scale, scale);
         // カメラの調整
         AdjustCameraFromConfig(config);
+        // 瞬きの設定を更新する
+        blinkController.SetBlinkEnabled(!AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].blinkDisable, 0);
     }
 
     private void AdjustCameraFromConfig(AppConfig config)
