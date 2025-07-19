@@ -13,13 +13,11 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
     [SerializeField] private ShakeDetector shakeDetector;
     [SerializeField] private ShakeDizzyAnimationPlayer shakeDizzyAnimationPlayer;
     [SerializeField] private ThinkingMotionManager thinkingAnimation;
+    [SerializeField] private CharacterBinding characterBinding;
 
     public Vrm10Instance vrmInstance { get; private set; } = null;
-
     public string Name { get; private set; } = string.Empty;
-
     public Animator Animator { get; private set; } = null;
-
     public bool ready { get; private set; } = false;
     public int vrmFileConfigSelector => GetComponent<VRMLoader>().vrmFileConfigSelector;
 
@@ -34,21 +32,20 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         mainThreadDispatcher = MainThreadDispatcher.Instance;
         initialCameraPosition = Camera.main.transform.position;
         initialCameraRotation = Camera.main.transform.rotation;
-    }
-
-    private void Awake()
-    {
+        // まずはこいつを初期化しておく
+        characterBinding.SetCharacter(this);
+        AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
+        vrmLoader.BeforeVrmUnload += BeforeVrmUnload;
+        vrmLoader.OnVrmUnload += OnVrmUnload;
+        vrmLoader.OnVrmUnload += characterBinding.GetOnVrmUnload();
+        vrmLoader.BeforeVrmUnload += characterBinding.GetBeforeVrmUnload();
+        vrmLoader.OnVrmLoaded += OnVrmLoaded;
         vrmLoader.OnVrmLoadError += (path) =>
         {
             chatManager.TypingAppendTextSystem($"SYSTEM: VRMモデルのロードに失敗しました。設定を見直してください。\n---パス---\n{path.Replace("\\", "/")}\n-----\n");
         };
-        vrmLoader.OnVrmLoaded += OnVrmLoaded;
         chatManager.TypingAppendTextSystem("SYSTEM: VRMモデルを読み込んでいます...\n");
-        AppConfigManager.Instance.OnConfigUpdated += OnConfigUpdated;
-        vrmLoader.BeforeVrmUnload += BeforeVrmUnload;
-        vrmLoader.OnVrmUnload += OnVrmUnload;
     }
-
     private void OnConfigUpdated(AppConfig config)
     {
         if (model == null) { return; }
@@ -62,7 +59,7 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
     private void AdjustCameraFromConfig(AppConfig config)
     {
         var animator = model.GetComponent<Animator>();
-        if (animator == null) return;
+        if (animator == null) { Debug.LogError("animator is null"); return; }
         this.Animator = animator;
         Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
         Transform hips = animator.GetBoneTransform(HumanBodyBones.Hips);
@@ -73,7 +70,7 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         // カメラの中央を補正する
         Vector3 centerPos = new Vector3(camTransformPos.x, hips.position.y, camTransformPos.z);
         hips.position -= hips.position - centerPos;
-        float scaleFactor = AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].Scale;
+        float scaleFactor = config.vrm[vrmFileConfigSelector].Scale;
         float modelScale = model.transform.lossyScale.y;
         float modelHeight = Mathf.Abs(head.position.y - hips.position.y) / modelScale;
         Vector3 faceDir = head.forward.normalized;
@@ -105,12 +102,16 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         Debug.Log("ArmMotionManagerをモデルに追加しました。");
         int vrmLayer = LayerMask.NameToLayer("VRM");
         SetLayerRecursively(model, vrmLayer);
-        // IVRMCharacter.Animator経由でAnimatorコンポーネントを使う場合は必ずAdjustCameraToVrmInitの処理以降で呼び出すこと
-        AdjustCameraToVrmInit(model);
-        chatManager.VrmLoadCompleted();
-        springBoneExternalForce.Initialize();
+
+        // animatorを設定して保存する
+        var animator = model.GetComponent<Animator>();
+        Animator = animator;
+        if (animator == null) return;
+        AdjustCameraToVrmInit(model,animator);
         shakeDetector.OnShaken += OnShaken;
         thinkingAnimation.SetAnimator(Animator);
+        chatManager.VrmLoadCompleted();
+        springBoneExternalForce.Initialize();
         ready = true;
     }
 
@@ -156,11 +157,9 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         }
     }
     Vector3 camTransformPos = Vector3.zero;
-    void AdjustCameraToVrmInit(GameObject model)
+    void AdjustCameraToVrmInit(GameObject model,Animator animator)
     {
         this.model = model;
-        var animator = model.GetComponent<Animator>();
-        if (animator == null) return;
         Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
         Transform hips = animator.GetBoneTransform(HumanBodyBones.Hips);
         if (head == null || hips == null) return;
@@ -181,8 +180,6 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         // ここからVRMの頭の先端を画面の上部に調整するための計算
         float modelScale = model.transform.lossyScale.y;
         float modelHeight = Mathf.Abs(head.position.y - hips.position.y) / modelScale;
-        ///
-
         /// VRMの腰ボーンを画面の中央に調整する場合は以下をコメントアウトする
         // cam.transform.position = new Vector3(cam.transform.position.x + offset.x, cam.transform.position.y + offset.y, faceDir.z * 2);
         float scaleFactor = AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].Scale;

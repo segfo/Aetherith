@@ -72,11 +72,10 @@ public class ChatUIController : MonoBehaviour,ITextWriterTarget
 
     void AdjustChatUi()
     {
+        // characterがロードされていない場合は何もしない
         if (!character.ready) return;
         var animator = character.Animator;
-        if (animator == null) {
-            Debug.Log("animator null.");
-            return; }
+        if (animator == null) { return; }
         var headTransform = animator.GetBoneTransform(HumanBodyBones.Head);
         if (headTransform == null) return;
         RectTransform rectTransform = GetComponent<RectTransform>();

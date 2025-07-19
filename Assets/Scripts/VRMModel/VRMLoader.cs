@@ -6,10 +6,11 @@ using System.IO;
 using static uDesktopMascot.LoadVRM;
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 public class VRMLoader : MonoBehaviour
 {
-    public int vrmFileConfigSelector { get; private set; } =  0;
+    public int vrmFileConfigSelector =  0;
     private String vrmFileName = "";
     private bool vrmLoaded = false; // 初期化済みフラグ
     private bool vrmLoadError = false; // ロードエラーが発生したかどうかのフラグ
@@ -19,6 +20,7 @@ public class VRMLoader : MonoBehaviour
     public event Action<string> OnVrmLoadError; // ロード不能時の通知
     public event Action BeforeVrmUnload; // VRMアンロード前の通知ata
     public event Action OnVrmUnload; // VRMアンロード開始時の通知
+    [SerializeField] private string VRMGameObjectName = String.Empty;
     // ここではモデルのロードとスケールの変更のみをする。
     // VRMのカメラ位置の設定はCharacterController.csで行う。
     private async void Start()
@@ -40,10 +42,15 @@ public class VRMLoader : MonoBehaviour
         }
     }
 
+    public void VRMReload()
+    {
+        OnConfigUpdated(AppConfigManager.Instance.Config);
+    }
+
     private async Task LoadVrm()
     {
         // VRMのゲームコンテナを削除する。
-        GameObject obj = GameObject.Find("VRM1");
+        GameObject obj = GameObject.Find(VRMGameObjectName);
         // obj!=nullの場合又はvrmLoadErrorがtrueの場合は、VRMのアンロード前の通知を行う。
         if (obj!=null||vrmLoadError)
         {
@@ -59,11 +66,20 @@ public class VRMLoader : MonoBehaviour
         }
         if (loadedModelInfo != null)
         {
+            // 初回ロード時
             float scale = AppConfigManager.Instance.Config.vrm[vrmFileConfigSelector].Scale;
             GameObject model = loadedModelInfo.Model;
             model.transform.position = Vector3.zero;
+            VrmClickDetector footClickDetector = model.GetComponent<VrmClickDetector>() ?? model.AddComponent<VrmClickDetector>();
             Animator animator = model.GetComponent<Animator>() ?? model.AddComponent<Animator>();
+            footClickDetector.vrmRoot = model;
             LoadVRM.UpdateAnimationController(animator);
+            footClickDetector.Ready();
+            // Colliderの設定を追加する
+            var colliderSetup = model.GetComponent<FullBodyColliderSetup>() ?? model.AddComponent<FullBodyColliderSetup>();
+            colliderSetup.vrmRoot = model;
+            colliderSetup.AddFullBodyColliders();
+
             model.transform.localScale = new Vector3(scale, scale, scale); // スケールを大きくする
             LoadedModel = model;
             if (obj != null)
@@ -71,11 +87,9 @@ public class VRMLoader : MonoBehaviour
                 Debug.Log("古いVRMオブジェクトを削除します。");
                 Destroy(obj); // 古いVRMオブジェクトを削除する
             }
-            else
-            {
-                Debug.LogWarning("VRM_Oldオブジェクトが見つかりませんでした。");
-            }
             Debug.Log($"モデル名: {loadedModelInfo.ModelName}");
+            // ロード出来たらVRM1という名前から変更する
+            GameObject.Find("VRM1").name = VRMGameObjectName;
             OnVrmLoaded?.Invoke(model);
         }
         else
@@ -83,6 +97,8 @@ public class VRMLoader : MonoBehaviour
             vrmLoadError = true;
             if (obj != null)
             {
+                // ロード出来たらVRM1という名前から変更する
+                GameObject.Find("VRM1").name = VRMGameObjectName;
                 OnVrmLoaded?.Invoke(LoadedModel);
                 obj.SetActive(true);
                 vrmLoaded = true; // モデルがロード済みであることを示す

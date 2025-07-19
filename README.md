@@ -78,7 +78,7 @@ LLM `Assets/StreamingAssets/LLM/`
 | -----------------------| ----------------- |
 | `characterLlm`         | キャラクターの会話AI設定     |
 | `emotionLlm`           | 感情分析用AI設定         |
-| `vrm`                  | キャラクターの見た目・動き設定   |
+| `vrm[]`                  | キャラクターの見た目・動き設定です。変身機能（MetamorphoseEnabled）が有効なときは、ここに設定した任意の数のVRMを順に切り替え可能になります。|
 | `BackgroundWindowTransparent` | ウィンドウの背景を透明にするかどうかを設定します。（trueで透明、falseで不透明）チャットUIやキャラクターの配置調整に使用します |
 | `WindowStackOrder` | ウィンドウの挙動（通常：0,最前面：1,最背面：2）を定義します |
 | `ClickThrough` | クリックスルー機能を有効化するかどうか（true：有効、false：無効） |
@@ -90,6 +90,7 @@ LLM `Assets/StreamingAssets/LLM/`
 | `shakeForceThreshold`  | 振られたと判定する強さ       |
 | `botChatTypingInterval`   | 文字の表示スピード（Botのセリフ・リップシンク速度調整用） |
 | `systemChatTypingInterval`   | 文字の表示スピード（システムメッセージの速度調整用） |
+| `MetamorphoseEnabled` | 変身機能（VRM切り替え機能）の有効・無効化スイッチです。trueの場合VRMの右足（画面上における左側の足）をダブルクリックすることでVRMが順番に切り替わります。VRMを変身させたい場合にどうぞ。それぞれのVRMに詳細な挙動の設定が可能ですのでこだわってみてください。 |
 
 ### **AI関連設定（`characterLlm`と`emotionLlm`）**
 設定ファイル動的ロード機能の対象外です（適用にはアプリの再起動が必要です）

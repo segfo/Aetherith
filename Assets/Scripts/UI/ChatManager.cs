@@ -24,7 +24,7 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private string logFilePath = "chat_log.txt";
     [SerializeField] private string waitMessage = "\"（考え中です…）\"";
     [SerializeField] private CharacterBinding vrmCharacter;
-    [SerializeField] private VRMLoader[] vrmLoaders;
+    [SerializeField] private VRMLoader vrmLoader;
 
     private ILLMChat llmCharacter = null;
     private ILLMChat llmCharacterEmotional = null;
@@ -44,6 +44,7 @@ public class ChatManager : MonoBehaviour
     // プロンプトの初期化、ユーザ名・AIキャラクタ名の初期化、使用するモデルの初期化などを行う。
     void Awake()
     {
+        vrmCharacter.InitEvent += OnInit;
         mainThreadDispatcher = MainThreadDispatcher.Instance;
         loadResources = new Dictionary<LoadResources, string>
         {
@@ -51,7 +52,11 @@ public class ChatManager : MonoBehaviour
             { LoadResources.MainCharacterLLM, $"キャラクターAI ({UseLLMName(AppConfigManager.Instance.Config.characterLlm)})" },
             { LoadResources.EmotionCharacterLLM, $"感情・表情推定AI ({UseLLMName(AppConfigManager.Instance.Config.emotionLlm)})"},
         };
-        vrmCharacter.lipSync.OnLipSyncEnd += DoFinalizeAfterLipSync;
+    }
+    void OnInit()
+    {
+        vrmCharacter.GetBeforeVrmUnloadEventHandler = () => BeforeVrmUnload;
+        vrmCharacter.GetOnVrmUnloadEventHandler = () => OnVrmUnload;
     }
 
     bool externalApiUse(LLMConfig llm)
@@ -60,10 +65,12 @@ public class ChatManager : MonoBehaviour
     }
     void BeforeVrmUnload()
     {
+        Debug.LogWarning("これ呼ばれてる？BeforeVrmUnload");
         chatUI.InputFieldSetEnable(false);
     }
     void OnVrmUnload()
     {
+        Debug.LogWarning("これ呼ばれてる？OnVrmUnload");
         loadResources = new Dictionary<LoadResources, string>
         {
             { LoadResources.VRM,"VRMモデル"}
@@ -71,11 +78,6 @@ public class ChatManager : MonoBehaviour
     }
     async void Start()
     {
-        foreach(VRMLoader loader in vrmLoaders)
-        {
-            loader.BeforeVrmUnload += BeforeVrmUnload;
-            loader.OnVrmUnload += OnVrmUnload;
-        }
         chatUI.InputFieldSetEnable(false);
         _ = chatUI.StartTypingAppendSystem("SYSTEM: LLMをセットアップしています...\n");
 
@@ -282,6 +284,7 @@ public class ChatManager : MonoBehaviour
     {
         // VRMモデルのロードが完了しので、BlinkControllerを取得しておく。
         blinkController = vrmCharacter.blinkController;
+        vrmCharacter.lipSync.OnLipSyncEnd += DoFinalizeAfterLipSync;
         mainThreadDispatcher.Enqueue(() =>
         {
             LoadedResource(LoadResources.VRM);

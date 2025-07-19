@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks.Triggers;
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UniVRM10;
@@ -6,6 +7,7 @@ using UniVRM10;
 class CharacterBinding : MonoBehaviour, IVRMCharacter
 {
     [SerializeField] private CharacterController character;
+    public event Action InitEvent;
     public LipSyncSimulator lipSync { get; private set; }
     public string Name => character.Name;
 
@@ -41,10 +43,18 @@ class CharacterBinding : MonoBehaviour, IVRMCharacter
     void InitCharacter()
     {
         lipSync = character.GetComponent<LipSyncSimulator>();
+        InitEvent();
+    }
+    // InitEventを呼び出すことで設定される。
+    public Func<Action> GetBeforeVrmUnloadEventHandler;
+    public Func<Action> GetOnVrmUnloadEventHandler;
+    internal Action GetBeforeVrmUnload()
+    {
+        return GetBeforeVrmUnloadEventHandler();
     }
 
-    private void Awake()
+    internal Action GetOnVrmUnload()
     {
-        InitCharacter();
+        return GetOnVrmUnloadEventHandler();
     }
 }
