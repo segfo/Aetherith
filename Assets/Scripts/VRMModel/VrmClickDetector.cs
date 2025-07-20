@@ -58,23 +58,32 @@ public class VrmClickDetector : MonoBehaviour
         // 足ボーンの子孫も含めてチェック（例: 足にMeshColliderなどがついている場合）
         return clickedTransform.IsChildOf(leftFoot) || clickedTransform.IsChildOf(rightFoot);
     }
-
+    enum HitType
+    {
+        LeftFoot,
+        RightFoot
+    }
     private void OnFootDoubleClicked(Transform footTransform)
     {
-        int vrmListCont = AppConfigManager.Instance.Config.vrm.Length;
-        if (!AppConfigManager.Instance.Config.MetamorphoseEnabled || vrmListCont==1 ) {
-            return; // 「変身」機能が無効な場合は何もしない
+        // 足ボーンの子孫も含めてチェック（例: 足にMeshColliderなどがついている場合）
+        if (footTransform.IsChildOf(rightFoot))
+        {
+            int vrmListCont = AppConfigManager.Instance.Config.vrm.Length;
+            if (!AppConfigManager.Instance.Config.MetamorphoseEnabled || vrmListCont == 1)
+            {
+                return; // 「変身」機能が無効な場合は何もしない
+            }
+            Debug.Log($"Double clicked on foot: {footTransform.name}");
+            // 足へのダブルクリックイベント発火
+            // 必要に応じてイベント等にする
+            // VRMの設定ファイルのインデックスを変更する（CharacterController）
+            // Character1Controller GameObjectを得る
+            var characterController = GameObject.Find("CharacterController");
+            if (characterController == null) { Debug.LogError("致命的なエラー: 必須コンポーネントのCharacterControllerがヒエラルキーにありません"); }
+            VRMLoader vrmLoader = characterController.GetComponent<VRMLoader>();
+            vrmLoader.SetVrmFileConfigSelector((vrmLoader.vrmFileConfigSelector + 1) % vrmListCont);
+            // VRMの再ロードを強制する。（設定ファイルが再読み込みされたように見せる）
+            GameObject.Find("CharacterController").GetComponent<VRMLoader>().VRMReload();
         }
-        Debug.Log($"Double clicked on foot: {footTransform.name}");
-        // 足へのダブルクリックイベント発火
-        // 必要に応じてイベント等にする
-        // VRMの設定ファイルのインデックスを変更する（CharacterController）
-        // Character1Controller GameObjectを得る
-        var characterController = GameObject.Find("CharacterController");
-        VRMLoader vrmLoader = characterController.GetComponent<VRMLoader>();
-
-        vrmLoader.SetVrmFileConfigSelector((vrmLoader.vrmFileConfigSelector + 1) % vrmListCont);
-        // VRMの再ロードを強制する。（設定ファイルが再読み込みされたように見せる）
-        GameObject.Find("CharacterController").GetComponent<VRMLoader>().VRMReload();
     }
 }

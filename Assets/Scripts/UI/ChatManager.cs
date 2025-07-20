@@ -329,6 +329,8 @@ public class ChatManager : MonoBehaviour
             return;
         }
         Debug.Log("Input: " + userInput);
+        // メタモルフォーゼ機能の無効化
+        AppConfigManager.Instance.Config.MetamorphoseEnabled = false;
         // 入力フィールドを消す
         chatUI.InputFieldSetEnable(false);
         firstReply = true;
@@ -449,6 +451,9 @@ public class ChatManager : MonoBehaviour
             onComplete = LipSyncState.OnComplete;
             DoFinalizeAfterLipSync(vrmCharacter.lipSync.TotalSyllableCount);
         }
+        // ここで完了したことを設定に書き込む（VRMメタモルフォーゼ機能の再有効化）
+        AppConfigManager.Instance.Config.MetamorphoseEnabled = true;
+
     }
     public void DoFinalizeAfterLipSync(int totalSyllableCount)
     {

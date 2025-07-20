@@ -19,10 +19,10 @@ public class FullBodyColliderSetup : MonoBehaviour
         (HumanBodyBones.RightLowerArm,Vector3.zero,            0.04f, 0.25f, 0),
         (HumanBodyBones.LeftUpperLeg, Vector3.zero,            0.06f, 0.3f, 1),
         (HumanBodyBones.LeftLowerLeg, Vector3.zero,            0.05f, 0.45f, 1),
-        (HumanBodyBones.LeftFoot,     Vector3.zero,            0.05f, 0.2f, 1),
+        (HumanBodyBones.LeftFoot,     Vector3.zero,            0.04f, 0.1f, 1),
         (HumanBodyBones.RightUpperLeg,Vector3.zero,            0.06f, 0.3f, 1),
         (HumanBodyBones.RightLowerLeg,Vector3.zero,            0.05f, 0.45f, 1),
-        (HumanBodyBones.RightFoot,    Vector3.zero,            0.05f, 0.2f, 1),
+        (HumanBodyBones.RightFoot,    Vector3.zero,            0.04f, 0.1f, 1),
     };
 
     public void AddFullBodyColliders()

@@ -14,7 +14,6 @@ public class VRMLoader : MonoBehaviour
     private String vrmFileName = "";
     private bool vrmLoaded  = false; // 初期化済みフラグ
     private bool vrmLoadError = false; // ロードエラーが発生したかどうかのフラグ
-
     public GameObject LoadedModel { get; private set; }
     public event Action<GameObject> OnVrmLoaded; // ロード完了時の通知
     public event Action<string> OnVrmLoadError; // ロード不能時の通知
