@@ -1,7 +1,4 @@
-﻿using LLMUnity;
-using System.IO;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 using UniVRM10;
 
@@ -91,7 +88,6 @@ public class CharacterController : MonoBehaviour, IVRMCharacter
         cameraTransform.position = initialCameraPosition;
         cameraTransform.rotation = initialCameraRotation;
     }
-
     private void OnVrmLoaded(GameObject model)
     {
         // VRMモデルのインスタンスを保持しておく。外部から扱えるようにするため。

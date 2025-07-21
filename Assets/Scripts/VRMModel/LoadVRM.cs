@@ -4,11 +4,8 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Unity.Logging;
-using UniGLTF;
 using UniVRM10;
-using Console = System.Console;
 using Object = UnityEngine.Object;
-using Unity.Burst.CompilerServices;
 
 namespace uDesktopMascot
 {
