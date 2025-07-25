@@ -89,7 +89,7 @@ public class VrmClickDetector : MonoBehaviour
             // Character1Controller GameObjectを得る
             vrmLoader.SetVrmFileConfigSelector((vrmLoader.vrmFileConfigSelector + 1) % vrmListCont);
             // VRMの再ロードを強制する。（設定ファイルが再読み込みされたように見せる）
-            GameObject.Find("CharacterController").GetComponent<VRMLoader>().VRMReload();
+            vrmLoader.VRMReload();
         }
     }
 }

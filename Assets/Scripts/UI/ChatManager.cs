@@ -24,7 +24,6 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private string logFilePath = "chat_log.txt";
     [SerializeField] private string waitMessage = "\"（考え中です…）\"";
     [SerializeField] private CharacterBinding vrmCharacter;
-    [SerializeField] private VRMLoader vrmLoader;
 
     private ILLMChat llmCharacter = null;
     private ILLMChat llmCharacterEmotional = null;

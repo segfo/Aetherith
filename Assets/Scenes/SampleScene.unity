@@ -201,7 +201,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 438814072}
   m_HandleRect: {fileID: 438814071}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typingInterval: 0.025
-  lipSync: {fileID: 0}
+  lipSync: {fileID: 824634579}
 --- !u!4 &420341532
 Transform:
   m_ObjectHideFlags: 0
@@ -1129,7 +1129,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1484054546}
   m_HandleRect: {fileID: 1484054545}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1182,6 +1182,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a022ae269b19c0641a93f5b50ae20428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &824634579 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7241669147541995353, guid: b693f940646d0c244b23170cd32e1f21, type: 3}
+  m_PrefabInstance: {fileID: 8806235123293868815}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f127b309d2880e14fab9ac16f7b12153, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &832575517
@@ -1352,6 +1363,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1161837980}
   - component: {fileID: 1161837981}
+  - component: {fileID: 1161837982}
   m_Layer: 0
   m_Name: MainObject
   m_TagString: Untagged
@@ -1388,6 +1400,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a76dce6db11b2684a9453fe2be1622f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1161837982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161837978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6d5cf9425a11b42a6ea7e895467c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1261813677
@@ -1822,7 +1846,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.00012207031}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1692404415

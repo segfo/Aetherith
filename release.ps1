@@ -32,7 +32,7 @@ Get-ChildItem -Path $source -Recurse -File | ForEach-Object {
         }
     }
     # 除外対象であり、例外ファイルでもない → スキップ
-    if (($relativePath -like "$excludePath*") -and -not $isException -or ($relativePath -like "*DoNotShip*")) {
+    if (($relativePath -like "$excludePath*") -and -not $isException -or ($relativePath -like "*DoNotShip*") -or ($relativePath -like "*DontShip*")) {
         Write-Host "スキップ: $relativePath"
     } else {
         if (!(Test-Path $destDir)) {
